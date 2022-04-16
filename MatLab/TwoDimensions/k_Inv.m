@@ -1,5 +1,5 @@
 function [qStar] = k_Inv(q0, xe, params)
-% q = k⁻¹(xₑ)  Inverse Kinematic Model.
+% q = k⁻¹(xₑ)  [UTILITY] Inverse Kinematic Model.
 %              Returns: q ~ Joint Variables for END EFFECTOR Postion xₑ
 %              xe:      [X Y Z ϕ θ Ψ]ᵀ
 %              qStar:   necessary joint variables
