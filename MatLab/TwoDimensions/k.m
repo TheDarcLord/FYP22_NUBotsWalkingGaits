@@ -1,5 +1,6 @@
 function [xe, T16, Transforms] = k(q, params)
-% k(q)  Forward Kinematic Model.
+% k(q)  [2D Model] Forward Kinematic Model - FKM
+%       
 %       Returns: [T16 Transforms] for an array of 'q'
 %       T16:        Transform from ONE to END EFFECTOR
 %       Transforms: All other Homogenous Transforms
