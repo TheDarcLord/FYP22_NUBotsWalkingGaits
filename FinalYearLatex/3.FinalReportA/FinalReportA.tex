@@ -1,0 +1,345 @@
+\documentclass{UoNMCHA}
+\usepackage[authoryear]{natbib}
+\usepackage{array,booktabs} % For nice tables
+\usepackage{amsmath,amsfonts,amssymb} % For nice maths
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{subfig}
+\usepackage{hyperref}
+\usepackage[parfill]{parskip}   % For replacing paragraph indenting with a newline instead
+
+% Number equations per section
+\numberwithin{equation}{section}
+
+\hypersetup{
+%    bookmarks=true,         % show bookmarks bar?
+%    unicode=false,          % non-Latin characters in AcrobatÕs bookmarks
+%    pdftoolbar=true,        % show AcrobatÕs toolbar?
+%    pdfmenubar=true,        % show AcrobatÕs menu?
+%    pdffitwindow=false,     % window fit to page when opened
+%    pdfstartview={FitH},    % fits the width of the page to the window
+%    pdftitle={My title},    % title
+%    pdfauthor={Author},     % author
+%    pdfsubject={Subject},   % subject of the document
+%    pdfcreator={Creator},   % creator of the document
+%    pdfproducer={Producer}, % producer of the document
+%    pdfkeywords={keyword1} {key2} {key3}, % list of keywords
+%    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=blue,          % color of internal links
+    citecolor=blue,        % color of links to bibliography
+%    filecolor=magenta,      % color of file links
+    urlcolor=blue           % color of external links
+}
+
+\definecolor{MATLABKeyword}{rgb}{0,0,1}
+\definecolor{MATLABComment}{rgb}{0.1328125,0.54296875,0.1328125}
+\definecolor{MATLABString}{rgb}{0.625,0.125,0.9375}
+\lstset{language=Matlab,
+    basicstyle=\small\ttfamily,
+    keywordstyle=\color{MATLABKeyword},
+    %identifierstyle=,
+    commentstyle=\color{MATLABComment},
+    stringstyle=\color{MATLABString},
+    numberstyle=\tiny,
+    %numbers=left,
+    basewidth=0.5em}
+    
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{CStyle}{
+    backgroundcolor=\color{backgroundColour},   
+    commentstyle=\color{mGreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{mGray},
+    stringstyle=\color{mPurple},
+    % basicstyle=\footnotesize,
+    basicstyle=\scriptsize\ttfamily,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=C
+}
+
+\firstpage{1}    % Set page number for first page
+\UoNMCHAreportNo{MCHA3500} %Report number
+\UoNMCHAyear{2020}   % Year
+\shorttitle{FYP Report - Short Title} %For odd pages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\title{MCHA3500 project report template \\
+{\small November 2020}}
+\author[UoNMCHA]{Student Name}
+\address[UoNMCHA]{
+Student of Mechatronics Engineering,\\
+The University of Newcastle, Callaghan, NSW 2308, AUSTRALIA \\
+Student Number: 3...... \\
+E-mail: \href{mailto:First.Last@uon.edu.au}{\textsf{First.Last@uon.edu.au}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+\onecolumn
+
+\vspace{-5mm}
+\section*{Abstract}
+\vspace{-3mm}
+Remember that your abstract may include the following information:
+\begin{itemize}
+    \item Defines the intention of the report.
+    \item Places the report in context so the reader knows why it is important to read it.
+    \item Why is it important?
+    \item What problem is addressed?
+    \item Briefly states the results
+    \item Briefly presents the implications and recommendations
+\end{itemize}
+Ensure that your abstract is less than 200 words.
+%%%%%%%%%%%%%%
+\vspace{-2mm}
+\section*{Acknowledgements}
+\vspace{-3mm}
+You may like to say thank you to someone that helped you with your project.
+\newpage
+\tableofcontents
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+To organise your introduction section you can use the following structure:
+\begin{itemize}
+    \item \textbf{Position}: Show there is a problem and that it is important to solve it.
+    \item \textbf{Problem}: Describe the specifics of the problem you are trying to address
+    \item \textbf{Proposal}: Discuss how you are going to address this problem. Use the literature to back-up your approach to the problem, or to highlight that what you are doing has not been done before
+\end{itemize}
+Here you need to sell why what you are doing is important, and what benefits will it bring if you are successful and solve the problem? 
+%
+\subsection{Subsection title}
+You can use subsections within any section of the report. 
+\subsection{Subsection title}
+Recall that you need at least two subsections per section.
+\subsubsection{Subsubsection 1}
+Do not use more than 2 levels of sub-sectioning.
+\subsubsection{Subsubsection 2}
+Do not use more than 2 levels of sub-sectioning.
+
+The rest of the report is organised as follows. Section~\ref{sec:Core Section} describes items related to the core content. Section~\ref{sec:Conclusion} concludes the report. Appendix~\ref{app:Table} shows an example of how to make a Table.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Core Section}\label{sec:Core Section}
+In this section, examples of equations, figures, lists and code are provided.
+
+\subsection{Mathematics}
+\LaTeX \ is very good for writing equations. Equations can be included in-line by using the \$ symbols $y=m x + h$. Alternatively, equations can be written separately by using the \verb|equation| environment---see \eqref{eq:EquationLine} below.
+\begin{equation}\label{eq:EquationLine}
+    y=m x + h.
+\end{equation}
+When you use the \verb|equaiton|, the expressions will be automatically numbered. If you do not want a number to be assigned, include an asterisk * when beginning the equation environment:
+\begin{equation*}
+    z=m_z x^2 + h_z.
+\end{equation*}
+The split command can be used within an equation environment to separate equations over multiple lines. Use an ampersand \& on each line to specify how the equations should be aligned. Using split only provides a single equation number for multiple lines.
+\begin{equation}\label{eq:SS1}
+    \begin{split}
+        \dot x &= Ax + Bu, \\
+        y &= Cx + Du.
+    \end{split}
+\end{equation}
+If you want to have each line of a multi-line equation numbered, you can make used of the \verb|align| environment,
+\begin{align}
+    \dot x &= Ax + Bu,  \label{eq:State} \\
+    y &= Cx + Du, \label{eq:Output} 
+\end{align}
+where \eqref{eq:State} is the first equation and \eqref{eq:Output} is the second. If you want to distinguish vectors from scalars you can use \textbf{bold} for vectors and matrices:
+\begin{equation*} 
+    \begin{split}
+        \dot{\mathbf{x}} &= \mathbf{A} \mathbf{x} + \mathbf{B} u, \\
+        y &= \mathbf{C} \mathbf{x} + \mathbf{D} u,
+    \end{split}
+\end{equation*}
+where $u$ and $y$ are scalar variables and $\mathbf{x}$ is a vector variable.
+
+Matrices can be written by using the \verb|bmatrix| command:
+\begin{equation*}
+    \mathbf{A} =
+    \begin{bmatrix}
+        A_{11} & A_{12} & \dots & &A_{1n} \\
+        A_{21} & A_{22} &  \dots & &\vdots \\
+        \vdots & \vdots & \ddots& &  \vdots\\
+        A_{m1} & A_{m2} & \dots & &A_{mn}
+    \end{bmatrix}.
+\end{equation*}
+
+Greek letters can be written within equations by using appropriate commands. A few useful examples are:
+\begin{itemize}
+\item $\alpha, \beta$
+\item $\gamma, \Gamma$
+\item $\theta, \Theta$
+\item $\phi, \Phi, \varphi$
+\end{itemize}
+You can also write Greek letters in bold using the \verb|boldsymbol| command: $\boldsymbol{\alpha}$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Figures}
+Figures can be included in your document by using the \verb|figure| environment. Note that the position of the figure is decided by the latex compiler when creating the final document. Don't be surprised if it does not appear exactly where you expected it. Figure~\ref{fig:Sinc} below shows a plot of the function $\sin(x)/x$.
+\begin{figure}[ht]
+    \begin{center}
+        %\includegraphics[width=.6\linewidth]{Figures/SincPlot}
+        %\caption{Here goes the caption.}
+        %\label{fig:Sinc}
+    \end{center}
+\end{figure}
+
+Figures can be created using your favourite graphics editor before being included in your LaTeX document. If I need to make a simple diagram, I use powerpoint and select the drawing and save it as a pdf. For example, look at Figure~\ref{fig:MechaSys}.
+\begin{figure}[ht]
+    \begin{center}
+        %\includegraphics[width=.6\linewidth]{Figures/MechaSys}
+        %\caption{Here goes the caption.}
+        %\label{fig:MechaSys}
+    \end{center}
+\end{figure}
+
+To import the figures from Matlab, follow the following procedure:
+\begin{enumerate}
+    \item Add labels and legends (don't forget to include units in the labels of each axis.)
+    \item From the file menu tag on the figure select export set up
+    \item Change the font size to 14 and click apply to figure
+    \item Export the figure as eps
+    \item Import it in LaTeX using the include graphics within a \verb|figure| environment.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Lists}
+To create lists use the environments \verb|itemize|, \verb|enumerate|, or \verb|description|
+
+The following is generated using \emph{itemize}
+\begin{itemize}
+    \item This is item 1 
+    \item This is item 2
+\end{itemize}
+%
+The following is generated using \emph{enumerate}
+\begin{enumerate}[1)]
+    \item This is item 1 
+    \begin{enumerate}[a)]
+        \item Subitem a
+        \item Subitem b
+        \begin{enumerate}[i)]
+            \item Subsubitem i
+            \item Subsubitem ii
+        \end{enumerate}
+    \end{enumerate}
+    \item This is item 2
+\end{enumerate}
+%
+The following is generated using \emph{description}
+\begin{description}
+    \item[foo)] This is item 1 
+    \item[bar)] This is item 2
+\end{description}
+
+\subsection{Code listings}
+
+To include a syntax-highlighted code listing, you can use the \emph{listings} package. The default options are specified by the \verb|\lstset| command. The default settings for this document have been configured for Matlab code. There are 3 main commands, all of which can include options to override the defaults:
+\begin{enumerate}
+    \item \verb|\lstinline|: Command for including code fragments inline with the text, as an alternative to \verb|\verb|. For example, we might describe function prototypes such as \lstinline[style=CStyle,breaklines=true]|int main(int argc, char *argv[])|.
+    
+    \item \verb|\begin{lstlisting}|,\ldots,\verb|\end{lstlisting}|: Environment for including a source code listing---embedded in the LaTeX source---in a box or floating environment.
+	\begin{lstlisting}
+	figure(1)
+	hold on
+	grid on
+	% Plot the input voltage
+	plot(time,voltage)
+	% Plot the recovered voltage
+	plot(time,Ra*current + Kw*velocity,'+')
+	\end{lstlisting}
+	
+	The default style can be changed using the \texttt{style} command. A \texttt{CStyle} option has been defined within this temple for \texttt{.c} code.
+	\begin{lstlisting}[style=CStyle]
+	int add_function(int x, int y)
+	{
+	    /* Add inputs and return value */
+	    return x+y;
+	}
+	\end{lstlisting}
+	
+    \item \verb|\lstinputlisting|: Command for including a source code listing---loaded from an external file---in a box or floating environment. An example is shown in Listing~\ref{lst:matlabserial}.
+\end{enumerate}
+
+
+%\lstinputlisting[
+%    language=Matlab,
+%    float=h,
+%    numbers=left,
+%    xleftmargin=1cm,
+%    frame=shadowbox,
+%    caption={Matlab serial communication example.\label{lst:matlabserial}},
+%    morekeywords={try,catch}
+%    ]{Code/serialtest.m}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{References and Citations}\label{sec:RefCite}
+Bibliographies are generated by LaTeX when the \verb|bibliography| command is used at the end of the document---see the bottom of the template. The \verb|bibliography| command requires you to provide a \texttt{.bib} file that contains all of the reference used in the document. The format of the bibliography and citations can be specified by using the \verb|bibliographystyle| command.
+
+Bibliography \texttt{.bib} files can be created with a reference manager such as \href{https://www.jabref.org/}{JabRef}. To include a reference in your document, use the \verb|cite| command with the appropriate reference key. The appropriate key can be found within your reference manager. Alternatively, most reference editors have a short-cut to copy the cite command with key directly. In JarbRef, select the reference you want and press 'ctrl+k' to coppy the cite command with the corresponding key.
+
+\begin{figure}[ht]
+    \begin{center}
+        %\includegraphics[width=.8\linewidth]{Figures/jabrefeg}
+        %\caption{The bibtex reference key can be viewed in JabRef.}
+        %\label{fig:jabref}
+    \end{center}
+\end{figure}
+
+Variations on the \verb|cite| command are \verb|\citet{}| and \verb|\citep{}|---\cite{strunk2007elements}, \citep{strunk2007elements}, \citet{strunk2007elements}. You can combine more than one reference in a single citation \citep{troyka1999simon, jay1995write}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Conclusion}\label{sec:Conclusion}
+This is one of the most important parts of the report. In the conclusion section, you  should 
+\begin{itemize}
+\item briefly summarise the results,
+\item reflect on the work presented, 
+\item make recommendations,
+\item suggest future work or improvements.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{harvard}
+\bibliography{egBibtex} % This is the .bib file where the bibliography database is stored
+
+\appendix
+\newpage
+\section{Example of a Table}\label{app:Table}
+ %
+\begin{table}[h!]
+    \begin{center}\label{tab:MCHAProg}
+        \caption{Bachelor of Engineering Mechatronics First Year Program}\label{tab:notation}
+        {\footnotesize
+            \begin{tabular}{c l l l|}
+                \hline\hline \textbf{1st Year} & & \\
+                Semester & {Course Code} & {Course Name} \\ \hline 
+                1 & GENG1003 & Introduction to Procedural Programming \\
+                1 & GENG1500 & Introduction to Professional Engineering\\
+                1 & MATH1110 & Maths for Engineering, Science \& Technology 1
+\\
+                1 & PHYS1205 & Advanced Physics I\\ \hline
+                2 & CIVL1100 & Fundamentals of Engineering Mechanics\\
+                2 & ELEC1310 & Introduction to Electrical Engineering\\
+                2 & MATH1120 & Maths for Engineering, Science \& Technology 2 \\
+                2 & MECH1110 & Mechanical Drawing/CAD \& Workshop Practice\\ \hline
+            \end{tabular}
+        }
+    \end{center}
+\end{table}
+
+\end{document}
