@@ -5,10 +5,20 @@ function [qStar] = k_Inv(q0, xe, params)
 %              qStar:   necessary joint variables
 %
 % SOLUTION: qˣ = ARG MIN (q): qᵀ W q + (k(q) - xeˣ)ᵀ K (k(q) - xeˣ)
-    K = 1e6*eye(length(xe),length(xe));
+    K = 1e8*eye(length(xe),length(xe));
     W = 1*eye(length(q0),length(q0));
-    
-    argmin = @(q) q'*W*q + ( k(q,params) - xe)'*K*(k(q, params) - xe);
-    qStar = fmincon(argmin,q0);
+
+    fun = @(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2;
+    A = [];
+    b = [];
+    Aeq = [];
+    beq = [];
+    lb = [];
+    ub = [];
+    nonlcon = [];
+    options = optimoptions('fmincon','Display','notify','MaxFunctionEvaluations',1e4,'MaxIterations',1e4);
+
+    argmin = @(q) (q0 - q)'*W*(q0 - q) + ( k(q,params) - xe)'*K*(k(q, params) - xe);
+    qStar = fmincon(argmin,q0,A,b,Aeq,beq,lb,ub,nonlcon,options);
 
 end
