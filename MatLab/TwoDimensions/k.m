@@ -20,6 +20,34 @@ function [xe, T16, HTs] = k(q, params)
     L_upper     = params.femur;
     H           = params.HipWidth;
 
+    T16x = L_upper*sin(sigT14) - L_upper*sin(sigT12) - L_lower*sin(t1) + L_lower*sin(sigT15);
+    T16y = L_upper*cos(sigT12) - L_upper*cos(sigT14) + L_lower*cos(t1) - L_lower*cos(sigT15);
+    T16z = -H;
+   
+    T16 = [cos(sigT), -sin(sigT), 0, T16x;
+           sin(sigT),  cos(sigT), 0, T16y;
+                   0,          0, 1, T16z;
+                   0,          0, 0,    1];
+
+    %% End Effector Parameterisation
+    % R₁₁:  cθ₁cθ₂      Ψ = atan2( R₃₂, R₃₃)
+    % R₂₁:  sθ₁cθ₂      θ = atan2(-R₃₁, SQRT(R₃₂² + R₃₃²))
+    % R₃₁: -sθ₂         ϕ = atan2( R₂₁, R₁₁)
+    % R₃₂:  0
+    % R₃₃:  cθ₂
+
+    phi =   atan2( T16(3,2), T16(3,3) );  
+    theta = atan2(-T16(3,1), sqrt( T16(3,2)^2 + T16(3,3)^2 ) );
+    psi =   atan2( T16(2,1), T16(1,1) );
+   
+    
+    xe = [T16(1:3,4); % X Y Z
+          phi;        % ϕ
+          theta;      % θ
+          psi];       % Ψ
+    
+    %% Homogeneous Transforms
+
     RZ    = @(psi) ...
             [cos(psi) -sin(psi)  0  0;
              sin(psi)  cos(psi)  0  0;
@@ -28,35 +56,7 @@ function [xe, T16, HTs] = k(q, params)
     T     = @(x, y, z) ...
             [eye(3)     [x;y;z];
              zeros(1,3)      1];
-   
-    T16 = [cos(sigT), -sin(sigT), 0, L_upper*sin(sigT14) - L_upper*sin(sigT12) - L_lower*sin(t1) + L_lower*sin(sigT15);
-           sin(sigT),  cos(sigT), 0, L_upper*cos(sigT12) - L_upper*cos(sigT14) + L_lower*cos(t1) - L_lower*cos(sigT15);
-                   0,          0, 1, -H;
-                   0,          0, 0,  1];
 
-    % Ψ = atan2( R₃₂, R₃₃)
-    % θ = atan2( R₂₁, R₁₁)
-    % ϕ = atan2(-R₃₁, SQRT(R₃₂² + R₃₃²))
-    % 
-    % R₁₁:  cθ₁cθ₂
-    % R₂₁:  sθ₁cθ₂
-    % R₃₁: -sθ₂
-    % R₃₂:  0
-    % R₃₃:  cθ₂
-    phi     = 0;
-    theta   = 0;
-    psi     = 0;
-    if params.orientation == 1
-        phi =   atan2( T16(3,2), T16(3,3) );
-        theta = atan2(-T16(3,1), sqrt( T16(3,2)^2 + T16(3,3)^2 ) );
-        psi =   atan2( T16(2,1), T16(1,1) );
-    end
-    
-    xe = [T16(1:3,4); % X Y Z
-          phi;        % ϕ
-          theta;      % θ
-          psi];       % Ψ
-    
     HTs.A01 = T(0,0,0);
         HTs.A12 = RZ(t1)*T(0,L_lower,0);
         HTs.A23 = RZ(t2)*T(0,L_upper,0);
