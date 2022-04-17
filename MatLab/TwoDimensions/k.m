@@ -5,12 +5,16 @@ function [xe, T16, HTs] = k(q, params)
 %       T16:        Transform from ONE to END EFFECTOR
 %       Transforms: All other Homogenous Transforms
 
-    t1     = q(1); % θ₁     ankle
-    t2     = q(2); % θ₂     knee
-    t3     = q(3); % θ₃     hip
-    t4     = q(4); % θ₄     hip
-    t5     = q(5); % θ₅     knee
-    t6     = q(6); % θ₆     ankle
+    t1          = q(1);          % θ₁     ankle
+    t2          = q(2);          % θ₂     knee
+    t3          = q(3);          % θ₃     hip
+    t4          = q(4);          % θ₄     hip
+    t5          = q(5);          % θ₅     knee
+    t6          = q(6);          % θ₆     ankle
+    sigT        = sum(q);        % Σθᵢ    i=1:6
+    sigT15      = sum(q(1:5));   % Σθᵢ    i=1:5
+    sigT14      = sum(q(1:4));   % Σθᵢ    i=1:4
+    sigT12      = sum(q(1:2));   % Σθᵢ    i=1:2
 
     L_lower     = params.fibula;
     L_upper     = params.femur;
@@ -24,10 +28,12 @@ function [xe, T16, HTs] = k(q, params)
     T     = @(x, y, z) ...
             [eye(3)     [x;y;z];
              zeros(1,3)      1];
+   
+    T16 = [cos(sigT), -sin(sigT), 0, L_upper*sin(sigT14) - L_upper*sin(sigT12) - L_lower*sin(t1) + L_lower*sin(sigT15);
+           sin(sigT),  cos(sigT), 0, L_upper*cos(sigT12) - L_upper*cos(sigT14) + L_lower*cos(t1) - L_lower*cos(sigT15);
+                   0,          0, 1, -H;
+                   0,          0, 0,  1];
 
-    T16 = RZ(t1)*T(0,L_lower,0)*RZ(t2)*T(0,L_upper,0)*RZ(t3)*T(0,0,-H)* ... TO HIP
-          RZ(t4)*T(0,-L_upper,0)*RZ(t5)*T(0,-L_lower,0)*RZ(t6);
-    
     % Ψ = atan2( R₃₂, R₃₃)
     % θ = atan2( R₂₁, R₁₁)
     % ϕ = atan2(-R₃₁, SQRT(R₃₂² + R₃₃²))
