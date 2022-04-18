@@ -28,6 +28,9 @@ params.fibula       = 0.5;
 params.femur        = 0.5;
 params.HipWidth     = 0.25;
 H                   = params.HipWidth;
+params.r0Ag         = zeros(3,1);  % Ankle Position from 0rigin in Global
+params.step         = 2;           % OddStep:  LEFT FIXED
+                                   % EvenStep: RIGHT FIXED
 % Masses
 params.mass.femur   = 1;    % Thigh Bone
 params.mass.fibula  = 1;    % Paired with `tibia`
@@ -39,10 +42,10 @@ params.mass.pelvis  = 1.5;  % Waist
 
 model.q0 = [-pi/10; % θ₁
            2*pi/10; % θ₂
-            -pi/10;     % θ₃
+            -pi/10; % θ₃
              pi/10; % θ₄
           -2*pi/10; % θ₅
-             0];    % θ₆
+             pi/10];% θ₆
 
 model.xe0 = [0; % X
              0; % Y
@@ -123,11 +126,11 @@ figure('Name','Animation')
 
 for i=1:length(model.tspan)
     
-    [~, T16, HomegeneousTransforms] = k(model.q(:,i), params);
+    [~, ~, HomegeneousTransforms] = k(model.q(:,i), params);
     r0CoM = rCoM(model.q(:,i),params);
 
     % DEBUG
-    %[~, ~, HomegeneousTransforms] = k(model.q0, params);
+    %[~, T16, HomegeneousTransforms] = k(model.q0, params);
     %r0CoM = rCoM(model.q0, params);
 
     clf
@@ -136,41 +139,41 @@ for i=1:length(model.tspan)
     title("Step One")
     txt = " Time: " + num2str(model.tspan(i)) + " sec";
     text(0,2,2,txt)
-    % Z X Y
-    % ZERO
-    plot3([0 3], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
-    plot3([0 0], [0 3], [0 0],'g', 'LineWidth',0.5); % X
-    plot3([0 0], [0 0], [0 3],'b', 'LineWidth',0.5); % Y
+    
+    % ZERO:  Z      X      Y
+    plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
+    plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
+    plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
     plot3(Q(3,1:i),Q(1,1:i),Q(2,1:i), 'k-','LineWidth', 0.5)
     legend('+Z','+X','+Y', 'Trajectory','Autoupdate','off');
     % ONE
     r01 = HomegeneousTransforms.A01(1:3,4);
-    plot3(r01(3), r01(1), r01(2), 'gx', 'LineWidth',2);         % JOINT ONE
+    plot3(r01(3), r01(1), r01(2), 'gx', 'LineWidth',2);         % J ONE
     % TWO
     r02 = HomegeneousTransforms.A02(1:3,4);
-    plot3([r01(3) r02(3)], [r01(1) r02(1)], [r01(2) r02(2)],... % LINK
+    plot3([r01(3) r02(3)], [r01(1) r02(1)], [r01(2) r02(2)],... % L TWO
     'k', 'LineWidth',2);
-    plot3(r02(3), r02(1), r02(2) ,'gx', 'LineWidth',2);         % JOINT TWO
+    plot3(r02(3), r02(1), r02(2) ,'gx', 'LineWidth',2);         % J TWO
     % THREE
     r03 = HomegeneousTransforms.A03(1:3,4);
-    plot3([r02(3) r03(3)], [r02(1) r03(1)], [r02(2) r03(2)],... % LINK
+    plot3([r02(3) r03(3)], [r02(1) r03(1)], [r02(2) r03(2)],... % L THREE
     'k', 'LineWidth',2);
-    plot3(r03(3), r03(1), r03(2), 'gx', 'LineWidth',2);         % JOINT THREE
+    plot3(r03(3), r03(1), r03(2), 'gx', 'LineWidth',2);         % J THREE
     % FOUR
     r04 = HomegeneousTransforms.A04(1:3,4);
-    plot3([r03(3) r04(3)], [r03(1) r04(1)], [r03(2) r04(2)],... % LINK
+    plot3([r03(3) r04(3)], [r03(1) r04(1)], [r03(2) r04(2)],... % L FOUR
     'k', 'LineWidth',2);
-    plot3(r04(3), r04(1), r04(2), 'bx', 'LineWidth',2);         % JOINT FOUR
+    plot3(r04(3), r04(1), r04(2), 'bx', 'LineWidth',2);         % J FOUR
     % FIVE
     r05 = HomegeneousTransforms.A05(1:3,4);
-    plot3([r04(3) r05(3)], [r04(1) r05(1)], [r04(2) r05(2)],... % LINK
+    plot3([r04(3) r05(3)], [r04(1) r05(1)], [r04(2) r05(2)],... % L FIVE
     'k', 'LineWidth',2);
-    plot3(r05(3), r05(1), r05(2), 'bx', 'LineWidth',2);         % JOINT FIVE
+    plot3(r05(3), r05(1), r05(2), 'bx', 'LineWidth',2);         % J FIVE
     % SIX 
-    r06 = T16(1:3,4);
-    plot3([r05(3) r06(3)], [r05(1) r06(1)], [r05(2) r06(2)],... % LINK
+    r06 = HomegeneousTransforms.A06(1:3,4);
+    plot3([r05(3) r06(3)], [r05(1) r06(1)], [r05(2) r06(2)],... % L SIX
     'k', 'LineWidth',2);
-    plot3(r06(3), r06(1), r06(2), 'bx', 'LineWidth',2);         % JOINT SIX
+    plot3(r06(3), r06(1), r06(2), 'bx', 'LineWidth',2);         % J SIX
     
     % CoM
     plot3(r0CoM(3),r0CoM(1),0, 'rx', 'LineWidth',2);
