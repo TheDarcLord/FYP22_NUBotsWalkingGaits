@@ -4,39 +4,27 @@ clc
 
 tic % START TIMING
 
-%% NOTES:
-% 2D KINEMATICALLY REDUNDANT
-%
-% Rotation Parameterisation ZYX - Ψθϕ
-%   ϕ = atan2( R₃₂, R₃₃)
-%   θ = atan2(-R₃₁, SQRT(R₃₂² + R₃₃²))
-%   Ψ = atan2( R₂₁, R₁₁)
-% THIS PROBLEM:
-% R₁₁:  cθ₁cθ₂
-% R₂₁:  sθ₁cθ₂
-% R₃₁: -sθ₂
-% R₃₂:  0
-% R₃₃:  cθ₂
-    
 %% Setup
-params.framerate    = 20;
-params.orientation  = 1;
-model.tspan         = 0:(1 / params.framerate):6;
+params.framerate    = 50;
+model.tspan         = 0:(1 / params.framerate):12;
+
+params.spanLow      = ceil(length(model.tspan)/2);
+params.spanHigh     = ceil(length(model.tspan)/2)+1;
+
 model.q             = zeros(6,length(model.tspan)); % Making Space
 model.xe            = zeros(6,length(model.tspan)); % Making Space
 params.fibula       = 0.5;
 params.femur        = 0.5;
-params.HipWidth     = 0.25;
+params.HipWidth     = 0.1;
 H                   = params.HipWidth;
 params.r0Ag         = zeros(3,1);  % Ankle Position from 0rigin in Global
-params.step         = 2;           % OddStep:  LEFT FIXED
+params.step         = 1;           % OddStep:  LEFT FIXED
                                    % EvenStep: RIGHT FIXED
 % Masses
 params.mass.femur   = 1;    % Thigh Bone
 params.mass.fibula  = 1;    % Paired with `tibia`
 params.mass.joint   = 0.5;  % Knee Bone / Joints
 params.mass.pelvis  = 1.5;  % Waist 
-
 
 %% Initial Position & Orientation
 
@@ -47,6 +35,13 @@ model.q0 = [-pi/10; % θ₁
           -2*pi/10; % θ₅
              pi/10];% θ₆
 
+model.qTEST = [-0.5366
+                0.4927
+                0.0054
+                0.6093
+               -0.7262
+                0.1554];
+
 model.xe0 = [0; % X
              0; % Y
             -H; % Z
@@ -54,58 +49,38 @@ model.xe0 = [0; % X
              0; % θ
              0];% Ψ
 
+model.xeTEST = [ 0.4704;
+                 0.0145;
+                -0.2500;
+                      0;
+                      0;
+                      0];
+
 %% Trajectory
-D = diag(1:5,-1);   % Special D - Diag Matrix
+[Q, V, A] = trajectoryGeneration(model, params);
 
-q0 = [0.00  0.00  0.00;  % qX vX aX
-      0.00  0.00  0.00;  % qY vY aY
-     -H     0.00  0.00]; % qZ vZ aZ
-t0 = 0;
-tt0 = t0.^(0:5).';
-T0 = [tt0, D*tt0, D^2*tt0];
-
-q1 = [0.00  0.00  0.00;  % qX vX aX
-      0.00  0.00  0.00;  % qY vY aY
-     -H     0.00  0.00]; % qZ vZ aZ
-t1 = 1;
-tt1 = t1.^(0:5).';
-T1 = [tt1, D*tt1, D^2*tt1];
-
-q2 = [0.25  0.00  0.00;  % qX vX aX
-      0.25  0.00  0.00;  % qY vY aY
-     -H     0.00  0.00]; % qZ vZ aZ
-t2 = 3;
-tt2 = t2.^(0:5).';
-T2 = [tt2, D*tt2, D^2*tt2];
-
-q3 = [0.50  0.00  0.00;  % qX vX aX
-      0.00  0.00  0.00;  % qY vY aY
-     -H     0.00  0.00]; % qZ vZ aZ
-t3 = 4;
-tt3 = t3.^(0:5).';
-T3 = [tt3, D*tt3, D^2*tt3];
-
-q4 = [0.50  0.00  0.00;  % qX vX aX
-      0.00  0.00  0.00;  % qY vY aY
-     -H     0.00  0.00]; % qZ vZ aZ
-t4 = 5;
-tt4 = t4.^(0:5).';
-T4 = [tt4, D*tt4, D^2*tt4];
-
-q5 = [0.50  0.00  0.00;  % qX vX aX
-      0.00  0.00  0.00;  % qY vY aY
-     -H     0.00  0.00]; % qZ vZ aZ
-t5 = 6;
-tt5 = t5.^(0:5).';
-T5 = [tt5, D*tt5, D^2*tt5];
-
-C = [q0 q1 q2 q3 q4 q5]/[T0 T1 T2 T3 T4 T5];
-
-% Evaluate postions and time derivatives
-tt = model.tspan.^((0:5).');
-Q = C*tt;    % Targeting Postions First ... Worry about Velocities later
-V = C*D*tt;
-A = C*D^2*tt;
+% DEBUG
+figure('Name','Trajectory')
+    hold on
+    grid on
+    plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
+    plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
+    plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
+    plot3(Q(3,1:params.spanLow-1),...
+          Q(1,1:params.spanLow-1),...
+          Q(2,1:params.spanLow-1),...
+        'k-','LineWidth', 2);
+    plot3(Q(3,params.spanHigh:end),...
+          Q(1,params.spanHigh:end)+0.5,...
+          Q(2,params.spanHigh:end),...
+        'k-','LineWidth', 2);
+    legend('+Z','+X','+Y', 'Trajectories','Autoupdate','off');
+    title('Trajectory Debug')
+    axis([-1 1 -0.5 2 0 0.5]);
+    xlabel('Z','FontWeight','bold');
+    ylabel('X','FontWeight','bold');
+    zlabel('Y','FontWeight','bold');
+    view(135,35);
 
 %% LOOP
 
@@ -114,10 +89,19 @@ A = C*D^2*tt;
 model.q(:,1) = model.q0;
 [model.xe(:,1), ~, ~] = k(model.q0, params);
 
-for i=2:length(model.tspan)
+for i=2:params.spanLow
     model.xe(:,i) = [Q(:,i); zeros(3,1)];
     model.q(:,i) = k_Inv(model.q(:,i-1), model.xe(:,i), params);
 end
+
+    params.r0Ag = model.xe(1:3,params.spanLow);
+    params.step = 2;
+
+for i=params.spanHigh:length(model.tspan)
+    model.xe(:,i) = [Q(:,i); zeros(3,1)];
+    model.q(:,i) = k_Inv(model.q(:,i-1), model.xe(:,i), params);
+end
+
 
 toc % FINISH TIMING
 
@@ -125,27 +109,39 @@ toc % FINISH TIMING
 figure('Name','Animation')
 
 for i=1:length(model.tspan)
-    
-    [~, ~, HomegeneousTransforms] = k(model.q(:,i), params);
-    r0CoM = rCoM(model.q(:,i),params);
-
-    % DEBUG
-    %[~, T16, HomegeneousTransforms] = k(model.q0, params);
-    %r0CoM = rCoM(model.q0, params);
 
     clf
     hold on
     grid on
-    title("Step One")
+    
     txt = " Time: " + num2str(model.tspan(i)) + " sec";
     text(0,2,2,txt)
-    
+
+
+    if i > params.spanLow 
+        params.r0Ag = model.xe(1:3,params.spanLow);
+        params.step = 2;
+        j=params.spanHigh;
+    else 
+        params.r0Ag = zeros(3,1);
+        params.step = 1;
+        j=1;
+    end
+
+    [~, ~, HomegeneousTransforms] = k(model.q(:,i), params);
+    r0CoM = rCoM(model.q(:,i),params);
+
+    % DEBUG
+    %[xe, ~, HomegeneousTransforms] = k(model.qTEST, params);
+
     % ZERO:  Z      X      Y
     plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
     plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
     plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
-    plot3(Q(3,1:i),Q(1,1:i),Q(2,1:i), 'k-','LineWidth', 0.5)
+    plot3(Q(3,j:i),Q(1,j:i)+params.r0Ag(1),Q(2,j:i), 'k-','LineWidth', 0.5)
     legend('+Z','+X','+Y', 'Trajectory','Autoupdate','off');
+
+
     % ONE
     r01 = HomegeneousTransforms.A01(1:3,4);
     plot3(r01(3), r01(1), r01(2), 'gx', 'LineWidth',2);         % J ONE
@@ -174,9 +170,14 @@ for i=1:length(model.tspan)
     plot3([r05(3) r06(3)], [r05(1) r06(1)], [r05(2) r06(2)],... % L SIX
     'k', 'LineWidth',2);
     plot3(r06(3), r06(1), r06(2), 'bx', 'LineWidth',2);         % J SIX
-    
+
+    title("Stand | Initial Step | 2ND Step")
+    xlabel('Z','FontWeight','bold');
+    ylabel('X','FontWeight','bold');
+    zlabel('Y','FontWeight','bold');
+
     % CoM
-    plot3(r0CoM(3),r0CoM(1),0, 'rx', 'LineWidth',2);
+    plot3(r0CoM(3),r0CoM(1),0, 'rx', 'LineWidth',1.5);
 
     %        X    Y   Z
     %        Z    X   Y

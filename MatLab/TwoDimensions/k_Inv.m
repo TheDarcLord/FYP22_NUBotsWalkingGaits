@@ -6,9 +6,8 @@ function [qStar] = k_Inv(q0, xe, params)
 %
 % SOLUTION: qˣ = ARG MIN (q): qᵀ W q + (k(q) - xeˣ)ᵀ K (k(q) - xeˣ)
     K = 1e8*eye(length(xe),length(xe));
-    W = 1*eye(length(q0),length(q0));
-
-    fun = @(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2;
+    W = 1e3*eye(length(q0),length(q0));
+    
     A = [];
     b = [];
     Aeq = [];
