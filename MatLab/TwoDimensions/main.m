@@ -28,6 +28,9 @@ params.fibula       = 0.5;
 params.femur        = 0.5;
 params.HipWidth     = 0.25;
 H                   = params.HipWidth;
+params.r0Ag         = zeros(3,1);  % Ankle Position from 0rigin in Global
+params.step         = 2;           % OddStep:  LEFT FIXED
+                                   % EvenStep: RIGHT FIXED
 % Masses
 params.mass.femur   = 1;    % Thigh Bone
 params.mass.fibula  = 1;    % Paired with `tibia`

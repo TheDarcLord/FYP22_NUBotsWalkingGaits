@@ -82,24 +82,5 @@ function [xe, T61, HTs] = k(q, params)
                               0,           0, 1,    0;
                               0,           0, 0,    1];
     HTs.A06 = A06;
-
-%     HTs.A01 = T(0,0,0);
-%     HTs.A02 = [cos(q(1)), -sin(q(1)), 0, -Ll*sin(q(1));
-%                sin(q(1)),  cos(q(1)), 0,  Ll*cos(q(1));
-%                        0,          0, 1,                  0;
-%                        0,          0, 0,                  1];
-%     HTs.A03 = [cos(sigT12), -sin(sigT12), 0, -Lu*sin(sigT12)-Ll*sin(q(1));
-%                sin(sigT12),  cos(sigT12), 0,  Lu*cos(sigT12)+Ll*cos(q(1));
-%                          0,            0, 1,                            0;
-%                          0,            0, 0,                            1];
-%     HTs.A04 = [cos(sigT13), -sin(sigT13), 0, -Lu*sin(sigT12)-Ll*sin(q(1));
-%                sin(sigT13),  cos(sigT13), 0,  Lu*cos(sigT12)+Ll*cos(q(1));
-%                          0,            0, 1,                           -H;
-%                          0,            0, 0,                            1];
-%     HTs.A05 = [cos(sigT14), -sin(sigT14), 0,  Lu*(sin(sigT14)-sin(sigT12))-Ll*sin(q(1));
-%                sin(sigT14),  cos(sigT14), 0,  Lu*(cos(sigT12)-cos(sigT14))+Ll*cos(q(1));
-%                          0,            0, 1,                                         -H;
-%                          0,            0, 0,                                          1];
-%     HTs.A06 = HTs.A01*T61;
-
+    
 end
