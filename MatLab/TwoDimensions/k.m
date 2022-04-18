@@ -19,6 +19,7 @@ function [xe, T16, HTs] = k(q, params)
     sigT12      = sum(q(1:2));   % Σθᵢ    i=1:2
 
     %% HOMOGENOUS TRANSFORM
+    % LEFT FIXED
     T16x = Lu*(sin(sigT14) - sin(sigT12)) + ...
            Ll*(sin(sigT15) - sin( q(1) ));
     T16y = Lu*(cos(sigT12) - cos(sigT14)) + ...
@@ -50,23 +51,38 @@ function [xe, T16, HTs] = k(q, params)
     T     = @(x, y, z) [    eye(3), [x;y;z] ;
                         zeros(1,3),    1   ];
 
-    HTs.A01 = T(0,0,0);
-    HTs.A02 = [cos(q(1)), -sin(q(1)), 0, -Ll*sin(q(1));
-               sin(q(1)),  cos(q(1)), 0,  Ll*cos(q(1));
-                       0,          0, 1,                  0;
-                       0,          0, 0,                  1];
-    HTs.A03 = [cos(sigT12), -sin(sigT12), 0, -Lu*sin(sigT12)-Ll*sin(q(1));
-               sin(sigT12),  cos(sigT12), 0,  Lu*cos(sigT12)+Ll*cos(q(1));
-                         0,            0, 1,                            0;
-                         0,            0, 0,                            1];
-    HTs.A04 = [cos(sigT13), -sin(sigT13), 0, -Lu*sin(sigT12)-Ll*sin(q(1));
-               sin(sigT13),  cos(sigT13), 0,  Lu*cos(sigT12)+Ll*cos(q(1));
-                         0,            0, 1,                           -H;
-                         0,            0, 0,                            1];
-    HTs.A05 = [cos(sigT14), -sin(sigT14), 0,  Lu*(sin(sigT14)-sin(sigT12))-Ll*sin(q(1));
-               sin(sigT14),  cos(sigT14), 0,  Lu*(cos(sigT12)-cos(sigT14))+Ll*cos(q(1));
-                         0,            0, 1,                                         -H;
-                         0,            0, 0,                                          1];
-    HTs.A06 = HTs.A01*T16;
+    A01 = T(0,0,0);
+    HTs.A01 = A01;
+
+    % A01 * A12 = A02
+        A12x = -Ll*sin(q(1));
+        A12y =  Ll*cos(q(1));
+    HTs.A02  = A01*[cos( q(1) ), -sin( q(1) ), 0, A12x;
+                    sin( q(1) ),  cos( q(1) ), 0, A12y;
+                              0,            0, 1,    0;
+                              0,            0, 0,    1];
+    % A01 * A13 = A03
+        A13x = -Lu*sin(sigT12)-Ll*sin(q(1));
+        A13y =  Lu*cos(sigT12)+Ll*cos(q(1));
+    HTs.A03  = A01*[cos(sigT12), -sin(sigT12), 0, A13x;
+                    sin(sigT12),  cos(sigT12), 0, A13y;
+                              0,            0, 1,    0;
+                              0,            0, 0,    1];
+    % A01 * A14 = A04
+        A14x = -Lu*sin(sigT12)-Ll*sin(q(1));
+        A14y =  Lu*cos(sigT12)+Ll*cos(q(1));
+    HTs.A04  = A01*[cos(sigT13), -sin(sigT13), 0, A14x;
+                    sin(sigT13),  cos(sigT13), 0, A14y;
+                              0,            0, 1,   -H;
+                              0,            0, 0,    1];
+    % A01 * A15 = A05
+        A15x =  Lu*(sin(sigT14)-sin(sigT12))-Ll*sin(q(1));
+        A15y =  Lu*(cos(sigT12)-cos(sigT14))+Ll*cos(q(1));
+    HTs.A05  = A01*[cos(sigT14), -sin(sigT14), 0,  A15x;
+                    sin(sigT14),  cos(sigT14), 0,  A15y;
+                              0,            0, 1,    -H;
+                              0,            0, 0,     1];
+    % A01 * T16 = A06
+    HTs.A06 = A01*T16;
 
 end
