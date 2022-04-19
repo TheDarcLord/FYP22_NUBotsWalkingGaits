@@ -5,18 +5,18 @@ clc
 tic % START TIMING
 
 %% Setup
-params.framerate    = 50;
-model.tspan         = 0:(1 / params.framerate):12;
+params.framerate    = 10;
+model.tspan         = 0:(1 / params.framerate):18;
 
-params.spanLow      = ceil(length(model.tspan)/2);
-params.spanHigh     = ceil(length(model.tspan)/2)+1;
+model.q             = zeros(6,length(model.tspan)); % q   [θ₁θ₂θ₃θ₄θ₅θ₆]'
+model.xe            = zeros(6,length(model.tspan)); % xe  [XYZϕθΨ]'
+model.r01g          = zeros(3,length(model.tspan)); % A01 [XYZ]'
+model.r06g          = zeros(3,length(model.tspan)); % A06 [XYZ]'
 
-model.q             = zeros(6,length(model.tspan)); % Making Space
-model.xe            = zeros(6,length(model.tspan)); % Making Space
+% Physical Parameters
 params.fibula       = 0.5;
 params.femur        = 0.5;
-params.HipWidth     = 0.1;
-H                   = params.HipWidth;
+params.HipWidth     = 0.25;
 params.r0Ag         = zeros(3,1);  % Ankle Position from 0rigin in Global
 params.step         = 1;           % OddStep:  LEFT FIXED
                                    % EvenStep: RIGHT FIXED
@@ -28,86 +28,95 @@ params.mass.pelvis  = 1.5;  % Waist
 
 %% Initial Position & Orientation
 
-model.q0 = [-pi/10; % θ₁
-           2*pi/10; % θ₂
-            -pi/10; % θ₃
-             pi/10; % θ₄
-          -2*pi/10; % θ₅
-             pi/10];% θ₆
+model.q0 = [-pi/10;             % θ₁
+           2*pi/10;             % θ₂
+            -pi/10;             % θ₃
+             pi/10;             % θ₄
+          -2*pi/10;             % θ₅
+             pi/10];            % θ₆
 
-model.qTEST = [-0.5366
-                0.4927
-                0.0054
-                0.6093
-               -0.7262
-                0.1554];
-
-model.xe0 = [0; % X
-             0; % Y
-            -H; % Z
-             0; % ϕ
-             0; % θ
-             0];% Ψ
-
-model.xeTEST = [ 0.4704;
-                 0.0145;
-                -0.2500;
-                      0;
-                      0;
-                      0];
-
-%% Trajectory
-[Q, V, A] = trajectoryGeneration(model, params);
-
-% DEBUG
-figure('Name','Trajectory')
-    hold on
-    grid on
-    plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
-    plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
-    plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
-    plot3(Q(3,1:params.spanLow-1),...
-          Q(1,1:params.spanLow-1),...
-          Q(2,1:params.spanLow-1),...
-        'k-','LineWidth', 2);
-    plot3(Q(3,params.spanHigh:end),...
-          Q(1,params.spanHigh:end)+0.5,...
-          Q(2,params.spanHigh:end),...
-        'k-','LineWidth', 2);
-    legend('+Z','+X','+Y', 'Trajectories','Autoupdate','off');
-    title('Trajectory Debug')
-    axis([-1 1 -0.5 2 0 0.5]);
-    xlabel('Z','FontWeight','bold');
-    ylabel('X','FontWeight','bold');
-    zlabel('Y','FontWeight','bold');
-    view(135,35);
+model.xe0 = [0;                 % X
+             0;                 % Y
+            -params.HipWidth;   % Z
+             0;                 % ϕ
+             0;                 % θ
+             0];                % Ψ
 
 %% LOOP
+% Initial Conditions
+model.q(:,1)                = model.q0;
+[model.xe(:,1), ~, HTs]     = k(model.q0, params);
+model.r06g(:,1)             = HTs.A06(1:3,4);
+model.r01g(:,1)             = HTs.A01(1:3,4);
+params.r0Ag                 = model.r01g(:,1);
+[Q, V, A] = trajectoryGeneration(model, params); % Trajectory Generation
 
-% T0 - * TO DEAL WITH FOR LOOP*
-%model.xe(:,1) = model.xe0;
-model.q(:,1) = model.q0;
-[model.xe(:,1), ~, ~] = k(model.q0, params);
-
-for i=2:params.spanLow
-    model.xe(:,i) = [Q(:,i); zeros(3,1)];
-    model.q(:,i) = k_Inv(model.q(:,i-1), model.xe(:,i), params);
+for i=2:61
+    model.xe(:,i)   = [Q(:,i); zeros(3,1)];
+    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
+    [~, ~, HTs]     = k(model.q(:,i), params);
+    model.r01g(:,i) = HTs.A01(1:3,4);
+    model.r06g(:,i) = HTs.A06(1:3,4);
 end
 
-    params.r0Ag = model.xe(1:3,params.spanLow);
-    params.step = 2;
-
-for i=params.spanHigh:length(model.tspan)
-    model.xe(:,i) = [Q(:,i); zeros(3,1)];
-    model.q(:,i) = k_Inv(model.q(:,i-1), model.xe(:,i), params);
+params.r0Ag = model.r06g(:,61);
+params.step = 2;
+[Q, V, A] = trajectoryGeneration(model, params); % Trajectory Generation
+    
+for i=62:121
+    model.xe(:,i)   = [Q(:,i-61); zeros(3,1)];
+    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i) - [params.r0Ag;0;0;0], params);
+    [~, ~, HTs]     = k(model.q(:,i), params);
+    model.r01g(:,i) = HTs.A01(1:3,4);
+    model.r06g(:,i) = HTs.A06(1:3,4);
 end
 
+params.r0Ag = model.r01g(:,121);
+params.step = 3;
+[Q, V, A] = trajectoryGeneration(model, params); % Trajectory Generation
+    
+for i=122:length(model.tspan)
+    model.xe(:,i)   = [Q(:,i-121); zeros(3,1)];
+    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
+    [~, ~, HTs]     = k(model.q(:,i), params);
+    model.r01g(:,i) = HTs.A01(1:3,4);
+    model.r06g(:,i) = HTs.A06(1:3,4);
+end
 
 toc % FINISH TIMING
 
-%% Graph
-figure('Name','Animation')
+%% Graph/Figures 
+figure('Name','Joint Variables, q(t)')
+    hold on
+    plot(model.tspan,model.q(1,:),'r-','LineWidth',2);
+    plot(model.tspan,model.q(2,:),'g-','LineWidth',2);
+    plot(model.tspan,model.q(3,:),'b-','LineWidth',2);
+    plot(model.tspan,model.q(4,:),'c-','LineWidth',2);
+    plot(model.tspan,model.q(5,:),'y-','LineWidth',2);
+    plot(model.tspan,model.q(6,:),'m-','LineWidth',2);
+    set(gca,'Color','#CCCCCC');
+    xlabel('Time (t) ({\itSeconds})','FontWeight','bold');
+    ylabel('qθ_{1-6} ({\itRadians})','FontWeight','bold');
+    title('All Joint Variables: {\itθ}_{1-6}({\itt})','FontSize',12);
+    legend('θ₁','θ₂','θ₃', 'θ₄','θ₅','θ₆');
 
+figure('Name','Foot Movement')
+    hold on
+    grid on
+    title('Foot Trajectories','FontSize',12);
+    set(gca,'Color','#CCCCCC');
+    plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
+    plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
+    plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
+    plot3(model.r01g(3,:),model.r01g(1,:),model.r01g(2,:),...
+        'k-','LineWidth',2);
+    plot3(model.r06g(3,:),model.r06g(1,:),model.r06g(2,:),...
+        'b-','LineWidth',2);
+    legend('+Z','+X','+Y','Left','Right');
+    axis([-params.HipWidth - 0.2 0.2 -0.1 2 0 1]);
+    view(135,35);
+%%
+figure('Name','Animation')
 for i=1:length(model.tspan)
 
     clf
@@ -116,16 +125,16 @@ for i=1:length(model.tspan)
     
     txt = " Time: " + num2str(model.tspan(i)) + " sec";
     text(0,2,2,txt)
-
-
-    if i > params.spanLow 
-        params.r0Ag = model.xe(1:3,params.spanLow);
+    
+    if i > 121
+        params.r0Ag = model.r01g(:,121);
+        params.step = 3;
+    elseif i > 61
+        params.r0Ag = model.r06g(:,61);
         params.step = 2;
-        j=params.spanHigh;
     else 
-        params.r0Ag = zeros(3,1);
+        params.r0Ag = model.r01g(:,1);
         params.step = 1;
-        j=1;
     end
 
     [~, ~, HomegeneousTransforms] = k(model.q(:,i), params);
@@ -138,9 +147,8 @@ for i=1:length(model.tspan)
     plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
     plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
     plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
-    plot3(Q(3,j:i),Q(1,j:i)+params.r0Ag(1),Q(2,j:i), 'k-','LineWidth', 0.5)
+    %plot3(Q(3,j:i),Q(1,j:i)+params.r0Ag(1),Q(2,j:i), 'k-','LineWidth', 0.5)
     legend('+Z','+X','+Y', 'Trajectory','Autoupdate','off');
-
 
     % ONE
     r01 = HomegeneousTransforms.A01(1:3,4);

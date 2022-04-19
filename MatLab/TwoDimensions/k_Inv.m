@@ -6,14 +6,14 @@ function [qStar] = k_Inv(q0, xe, params)
 %
 % SOLUTION: qˣ = ARG MIN (q): qᵀ W q + (k(q) - xeˣ)ᵀ K (k(q) - xeˣ)
     K = 1e8*eye(length(xe),length(xe));
-    W = 1e3*eye(length(q0),length(q0));
+    W = 1e5*eye(length(q0),length(q0));
     
-    A = [];
-    b = [];
-    Aeq = [];
-    beq = [];
-    lb = [];
-    ub = [];
+    A       = [];
+    b       = [];
+    Aeq     = [];
+    beq     = [];
+    lb      = [];
+    ub      = [];
     nonlcon = [];
     options = optimoptions('fmincon','Display','notify','MaxFunctionEvaluations',1e4,'MaxIterations',1e4);
 
