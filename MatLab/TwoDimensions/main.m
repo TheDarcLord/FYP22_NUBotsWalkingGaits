@@ -12,7 +12,8 @@ model.q             = zeros(6,length(model.tspan)); % q   [θ₁θ₂θ₃θ₄�
 model.xe            = zeros(7,length(model.tspan)); % xe  [XYZϕθΨ]'
 model.r01g          = zeros(3,length(model.tspan)); % A01 [XYZ]'
 model.r06g          = zeros(3,length(model.tspan)); % A06 [XYZ]'
-model.r0Hg          = zeros(3,length(model.tspan)); % A0H [XYZ]'   
+model.r0Hg          = zeros(3,length(model.tspan)); % A0H [XYZ]'
+model.rCoM          = zeros(3,length(model.tspan)); % rCoM [XYZ]'
 
 % Physical Parameters
 params.fibula       = 0.5;
@@ -53,6 +54,7 @@ model.r06g(:,1)             = HTs.A06(1:3,4);
 model.r01g(:,1)             = HTs.A01(1:3,4);
 model.r0Hg(:,1)             = HTs.A0H(1:3,4);
 params.r0Ag                 = model.r01g(:,1);
+model.rCoM(:,1)             = rCoM(model.q(:,1),params);
 [Q,~,~] = trajectoryGeneration(model, params); % Trajectory Generation
 
 for i=2:61
@@ -62,6 +64,7 @@ for i=2:61
     model.r01g(:,i) = HTs.A01(1:3,4);
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
+    model.rCoM(:,i) = rCoM(model.q(:,i),params);
 end
 
 params.r0Ag = model.r06g(:,61);
@@ -75,6 +78,7 @@ for i=62:121
     model.r01g(:,i) = HTs.A01(1:3,4);
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
+    model.rCoM(:,i) = rCoM(model.q(:,i),params);
 end
 
 params.r0Ag = model.r01g(:,121);
@@ -88,6 +92,7 @@ for i=122:181
     model.r01g(:,i) = HTs.A01(1:3,4);
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
+    model.rCoM(:,i) = rCoM(model.q(:,i),params);
 end
 
 params.r0Ag = model.r06g(:,181);
@@ -101,6 +106,7 @@ for i=182:241
     model.r01g(:,i) = HTs.A01(1:3,4);
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
+    model.rCoM(:,i) = rCoM(model.q(:,i),params);
 end
 
 params.r0Ag = model.r01g(:,241);
@@ -114,6 +120,7 @@ for i=242:length(model.tspan)
     model.r01g(:,i) = HTs.A01(1:3,4);
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
+    model.rCoM(:,i) = rCoM(model.q(:,i),params);
 end
 
 toc % FINISH TIMING
@@ -133,10 +140,10 @@ figure('Name','Joint Variables, q(t)')
     title('All Joint Variables: {\itθ}_{1-6}({\itt})','FontSize',12);
     legend('θ₁','θ₂','θ₃', 'θ₄','θ₅','θ₆');
 
-figure('Name','Foot & Waist Movement')
+figure('Name','Foot,Waist,CoM Movement')
     hold on
     grid on
-    title('Foot Trajectories','FontSize',12);
+    title('Foot & Waist & CoM Trajectories','FontSize',12);
     set(gca,'Color','#CCCCCC');
     plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
     plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
@@ -147,10 +154,13 @@ figure('Name','Foot & Waist Movement')
         'g-','LineWidth',2);
     plot3(model.r0Hg(3,:),model.r0Hg(1,:),model.r0Hg(2,:),...
         'm-','LineWidth',2);
-    legend('+Z','+X','+Y','Left','Right','Waist');
+    plot3(model.rCoM(3,:),model.rCoM(1,:),zeros(1,length(model.tspan)),...
+        'r-','LineWidth',1);
+
+    legend('+Z','+X','+Y','Left','Right','Waist', 'CoM');
     axis([-(params.HipWidth+0.2) 0.2 min(model.r0Hg(1,:))-0.1 max(model.r0Hg(1,:))+0.2 0 1]);
     view(135,35);
-%%
+
 figure('Name','Animation')
 for i=1:length(model.tspan)
 
@@ -179,7 +189,7 @@ for i=1:length(model.tspan)
     end
     set(gca,'Color','#CCCCCC');
     [~, ~, HomegeneousTransforms] = k(model.q(:,i), params);
-    r0CoM = rCoM(model.q(:,i),params);
+    
 
     % DEBUG
     %[xe, ~, HomegeneousTransforms] = k(model.qTEST, params);
@@ -229,6 +239,7 @@ for i=1:length(model.tspan)
     zlabel('Y','FontWeight','bold');
 
     % CoM
+    r0CoM = model.rCoM(:,i);
     plot3(r0CoM(3),r0CoM(1),0, 'rx', 'LineWidth',1.5);
 
     %        X                         Y   Z
