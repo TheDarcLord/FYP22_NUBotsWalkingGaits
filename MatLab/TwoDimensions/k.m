@@ -89,6 +89,13 @@ function [xe, TAE, HTs] = k(q, params)
                         sin(sigT12),  cos(sigT12), 0, A13y;
                                   0,            0, 1,    0;
                                   0,            0, 0,    1];
+        % A0A * A1H = A0H
+            A1Hx = -Lu*sin(sigT12)-Ll*sin(q(1));
+            A1Hy =  Lu*cos(sigT12)+Ll*cos(q(1));
+        HTs.A0H  = A0A*[cos(sigT12), -sin(sigT12), 0, A1Hx;
+                        sin(sigT12),  cos(sigT12), 0, A1Hy;
+                                  0,            0, 1,  -H/2;
+                                  0,            0, 0,    1];
         % A0A * A14 = A04
             A14x = -Lu*sin(sigT12)-Ll*sin(q(1));
             A14y =  Lu*cos(sigT12)+Ll*cos(q(1));
@@ -108,6 +115,7 @@ function [xe, TAE, HTs] = k(q, params)
     elseif rem(STEP,2) == 0
         % A06 * T61 = A01
         HTs.A01  = A0A*T61;
+        % A06 * T62 = A02
             A62x = Lu*(sin(sigT56)-sin(sigT36))+Ll*sin(q(6));
             A62y = Lu*(cos(sigT56)-cos(sigT36))+Ll*cos(q(6));
         HTs.A02  = A0A*[cos(sigT36), sin(sigT36), 0, A62x;
@@ -120,6 +128,13 @@ function [xe, TAE, HTs] = k(q, params)
         HTs.A03  = A0A*[cos(sigT46), sin(sigT46), 0, A63x;
                        -sin(sigT46), cos(sigT46), 0, A63y;
                                   0,           0, 1,    H;
+                                  0,           0, 0,    1];
+        % A06 * A6H = A0H
+            A63x = Lu*sin(sigT56)+Ll*sin(q(6));
+            A63y = Lu*cos(sigT56)+Ll*cos(q(6));
+        HTs.A0H  = A0A*[cos(sigT46), sin(sigT46), 0, A63x;
+                       -sin(sigT46), cos(sigT46), 0, A63y;
+                                  0,           0, 1,   H/2;
                                   0,           0, 0,    1];
         % A06 * A64 = A04
             A64x = Lu*sin(sigT56)+Ll*sin(q(6));
