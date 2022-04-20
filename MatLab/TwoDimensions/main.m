@@ -1,6 +1,6 @@
 clear all
 close all
-clc
+clc 
 
 tic % START TIMING
 
@@ -51,7 +51,7 @@ model.r06g(:,1)             = HTs.A06(1:3,4);
 model.r01g(:,1)             = HTs.A01(1:3,4);
 model.r0Hg(:,1)             = HTs.A0H(1:3,4);
 params.r0Ag                 = model.r01g(:,1);
-[Q, V, A] = trajectoryGeneration(model, params); % Trajectory Generation
+[Q,~,~] = trajectoryGeneration(model, params); % Trajectory Generation
 
 for i=2:61
     model.xe(:,i)   = [Q(:,i); zeros(3,1)];
@@ -64,8 +64,8 @@ end
 
 params.r0Ag = model.r06g(:,61);
 params.step = 2;
-[Q, V, A] = trajectoryGeneration(model, params); % Trajectory Generation
-    
+[Q,~,~] = trajectoryGeneration(model, params); % Trajectory Generation
+
 for i=62:121
     model.xe(:,i)   = [Q(:,i-61); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
@@ -77,8 +77,8 @@ end
 
 params.r0Ag = model.r01g(:,121);
 params.step = 3;
-[Q, V, A] = trajectoryGeneration(model, params); % Trajectory Generation
-    
+[Q,~,~] = trajectoryGeneration(model, params); % Trajectory Generation
+
 for i=122:181
     model.xe(:,i)   = [Q(:,i-121); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
@@ -90,8 +90,8 @@ end
 
 params.r0Ag = model.r06g(:,181);
 params.step = 4;
-[Q, V, A] = trajectoryGeneration(model, params); % Trajectory Generation
-    
+[Q,~,~] = trajectoryGeneration(model, params); % Trajectory Generation
+
 for i=182:241
     model.xe(:,i)   = [Q(:,i-181); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
@@ -103,8 +103,8 @@ end
 
 params.r0Ag = model.r01g(:,241);
 params.step = 5;
-[Q, V, A] = trajectoryGeneration(model, params); % Trajectory Generation
-    
+[Q,~,~] = trajectoryGeneration(model, params); % Trajectory Generation
+
 for i=242:length(model.tspan)
     model.xe(:,i)   = [Q(:,i-241); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
