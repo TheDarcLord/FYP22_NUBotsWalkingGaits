@@ -17,7 +17,8 @@ function [qStar] = k_Inv(q0, xe, params)
     nonlcon = [];
     options = optimoptions('fmincon','Display','notify','MaxFunctionEvaluations',1e4,'MaxIterations',1e4);
 
-    argmin = @(q) (q0 - q)'*W*(q0 - q) + ( k(q,params) - xe)'*K*(k(q, params) - xe);
+    argmin = @(q) (q0 - q)'*W*(q0 - q) + ...
+            ( k(q,params) - xe)'*K*(k(q, params) - xe);
     qStar = fmincon(argmin,q0,A,b,Aeq,beq,lb,ub,nonlcon,options);
 
 end

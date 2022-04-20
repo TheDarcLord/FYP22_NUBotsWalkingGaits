@@ -151,4 +151,6 @@ function [xe, TAE, HTs] = k(q, params)
                                   0,           0, 0,    1];
         HTs.A06 = A0A;
     end
+
+    xe = [xe; HTs.A0H(2,4)];
 end
