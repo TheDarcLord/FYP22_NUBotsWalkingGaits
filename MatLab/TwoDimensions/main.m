@@ -8,12 +8,12 @@ tic % START TIMING
 params.framerate    = 10;
 model.tspan         = 0:(1 / params.framerate):12;
 
-model.q             = zeros(6,length(model.tspan)); % q   [θ₁θ₂θ₃θ₄θ₅θ₆]'
-model.xe            = zeros(7,length(model.tspan)); % xe  [XYZϕθΨ]'
-model.r01g          = zeros(3,length(model.tspan)); % A01 [XYZ]'
-model.r06g          = zeros(3,length(model.tspan)); % A06 [XYZ]'
-model.r0Hg          = zeros(3,length(model.tspan)); % A0H [XYZ]'
-model.rCoM          = zeros(3,length(model.tspan)); % rCoM [XYZ]'
+model.q             = zeros(6,length(model.tspan)); % q    [θ₁θ₂θ₃θ₄θ₅θ₆]ᵀ
+model.xe            = zeros(7,length(model.tspan)); % xe   [XYZϕθΨ]ᵀ
+model.r01g          = zeros(3,length(model.tspan)); % A01  [XYZ]ᵀ
+model.r06g          = zeros(3,length(model.tspan)); % A06  [XYZ]ᵀ
+model.r0Hg          = zeros(3,length(model.tspan)); % A0H  [XYZ]ᵀ
+model.rCoM          = zeros(3,length(model.tspan)); % rCoM [XYZ]ᵀ
 
 % Physical Parameters
 params.fibula       = 0.5;
@@ -22,7 +22,7 @@ params.HipWidth     = 0.25;
 params.r0Lg         = zeros(3,1);  % Right Position from 0rigin in Global
 params.r0Hg         = zeros(3,1);  % Waist Position from 0rigin in Global
 params.r0Rg         = zeros(3,1);  % Left  Position from 0rigin in Global
-params.step         = -1;          % LEFT  FIXED
+params.mode         = -1;          % LEFT  FIXED
 %                      0;          % BOTH  FIXED
 %                      1;          % RIGHT FIXED
 % Masses
@@ -51,7 +51,7 @@ params.r0Lg                 = model.r01g(:,1);
 params.r0Rg                 = model.r06g(:,1);
 params.r0Hg                 = model.r0Hg(:,1);
 params.waistHeight          = model.r0Hg(2,1);
-model.rCoM(:,1)             = rCoM(model.q(:,1),params);
+model.rCoM(:,1)             = rCoM(HTs,params);
 [Q,~,~] = trajectoryGeneration(model, 1:61,params); % Trajectory Generation
 
 for i=2:61
@@ -61,14 +61,14 @@ for i=2:61
     model.r01g(:,i) = HTs.A01(1:3,4);
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
-    model.rCoM(:,i) = rCoM(model.q(:,i),params);
+    model.rCoM(:,i) = rCoM(HTs,params);
 end
 
 params.r0Lg                 = model.r01g(:,61);
 params.r0Rg                 = model.r06g(:,61);
 params.r0Hg                 = model.r0Hg(:,61);
-params.step = 1;
-[Q,~,~] = trajectoryGeneration(model, 62:length(model.tspan),params); % Trajectory Generation
+params.mode = 1;
+[Q,~,~] = trajectoryGeneration(model, 62:121,params); % Trajectory Generation
 
 for i=62:length(model.tspan)
     model.xe(:,i)   = [Q(:,i-61); zeros(3,1); params.waistHeight];
@@ -77,7 +77,7 @@ for i=62:length(model.tspan)
     model.r01g(:,i) = HTs.A01(1:3,4);
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
-    model.rCoM(:,i) = rCoM(model.q(:,i),params);
+    model.rCoM(:,i) = rCoM(HTs,params);
 end
 
 toc % FINISH TIMING
@@ -132,12 +132,12 @@ for i=1:length(model.tspan)
         params.r0Lg = model.r01g(:,61);
         params.r0Rg = model.r06g(:,61);
         params.r0Hg = model.r0Hg(:,61);
-        params.step =  1;
+        params.mode =  1;
     else 
         params.r0Lg = model.r01g(:,1);
         params.r0Rg = model.r06g(:,1);
         params.r0Hg = model.r0Hg(:,1);
-        params.step = -1;
+        params.mode = -1;
     end
     set(gca,'Color','#CCCCCC');
     [~, ~, HomegeneousTransforms] = k(model.q(:,i), params);

@@ -23,7 +23,7 @@ function [Q, V, A] = trajectoryGeneration(model, span, params)
     %% SPECIAL MATRICES
     D = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!
     
-    if params.step == -1
+    if params.mode == -1
         %% RIGHT FREE
         TT = model.tspan(span).^((0:5).');  %[1;t;t²;t³;t⁴;t⁵] (t) Quintic!
         
@@ -47,7 +47,7 @@ function [Q, V, A] = trajectoryGeneration(model, span, params)
         t2 = t1 + 3;
         tt2 = t2.^(0:5).';
         T2 = [tt2, D*tt2, D^2*tt2];
-    elseif params.step == 1
+    elseif params.mode == 1
         %% LEFT FREE
         TT = model.tspan(span).^((0:5).');%[1;t;t²;t³;t⁴;t⁵] (t) Quintic!
         q0 = [rLX               0       0;  %  X  Ẋ  Ẍ 

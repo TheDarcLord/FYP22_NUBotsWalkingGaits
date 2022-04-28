@@ -29,7 +29,7 @@ function [xe, TAE, HTs] = k(q, params)
     sigT56      = sum(q(5:6));   % Σθᵢ    i=5:6
 
     %% HOMOGENOUS TRANSFORM
-    if params.step == -1
+    if params.mode == -1
         % LEFT FIXED
         T16x = Lu*(sin(sigT14) - sin(sigT12)) + ...
                Ll*(sin(sigT15) - sin( q(1) ));
@@ -42,7 +42,7 @@ function [xe, TAE, HTs] = k(q, params)
                        0,          0, 1, T16z;
                        0,          0, 0,    1];
         TAE = A0L*T16;
-    elseif params.step == 1
+    elseif params.mode == 1
         % RIGHT FIXED
         T61x = Lu*(sin(sigT56) - sin(sigT36)) + ...
                Ll*(sin( q(6) ) - sin(sigT26));
@@ -74,7 +74,7 @@ function [xe, TAE, HTs] = k(q, params)
     
     %% Homogeneous Transforms
     
-    if params.step == -1
+    if params.mode == -1
         HTs.A01 = A0L;
         % A0A * A12 = A02
             A12x = -Ll*sin(q(1));
@@ -113,7 +113,7 @@ function [xe, TAE, HTs] = k(q, params)
                                   0,            0, 0,     1];
         % A0A * T16 = A06
         HTs.A06 = A0L*T16;
-    elseif params.step == 1
+    elseif params.mode == 1
         % A06 * T61 = A01
         HTs.A01  = A0R*T61;
         % A06 * T62 = A02
