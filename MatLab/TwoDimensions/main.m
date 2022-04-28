@@ -19,12 +19,13 @@ model.rCoM          = zeros(3,length(model.tspan)); % rCoM [XYZ]ᵀ
 params.fibula       = 0.5;
 params.femur        = 0.5;
 params.HipWidth     = 0.25;
+params.StepSize     = 0.4;
 params.r0Lg         = zeros(3,1);  % Right Position from 0rigin in Global
 params.r0Hg         = zeros(3,1);  % Waist Position from 0rigin in Global
 params.r0Rg         = zeros(3,1);  % Left  Position from 0rigin in Global
-params.mode         = -1;          % LEFT  FIXED
-%                      0;          % BOTH  FIXED
-%                      1;          % RIGHT FIXED
+params.mode         = -1;          % LEFT  FIXED - FKM T16
+%                      0;          % BOTH  FIXED - FKM T1H T6H
+%                      1;          % RIGHT FIXED - FKM T61
 % Masses
 params.mass.femur   = 1;    % Thigh Bone
 params.mass.fibula  = 1;    % Paired with `tibia`
@@ -33,12 +34,12 @@ params.mass.pelvis  = 1.5;  % Waist
 
 %% Initial Position & Orientation
 
-model.q0 = [-pi/6;             % θ₁
-           2*pi/6;             % θ₂
-            -pi/6;             % θ₃
-             pi/6;             % θ₄
-          -2*pi/6;             % θ₅
-             pi/6];            % θ₆
+model.q0 = [-pi/6;      % θ₁
+           2*pi/6;      % θ₂
+            -pi/6;      % θ₃
+             pi/6;      % θ₄
+          -2*pi/6;      % θ₅
+             pi/6];     % θ₆
 
 %% LOOP
 % Initial Conditions
@@ -119,6 +120,9 @@ figure('Name','Foot,Waist,CoM Movement')
     view(135,35);
 
 figure('Name','Animation')
+% Preallocate IMAGE
+[IMAGE(1:length(model.tspan)).cdata]    = deal([]); 
+[IMAGE(1:length(model.tspan)).colormap] = deal([]); 
 for i=1:length(model.tspan)
 
     cla    % Clears Data but not Titles/Labels  

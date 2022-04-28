@@ -12,9 +12,9 @@ function [xe, TAE, HTs] = k(q, params)
     H      = params.HipWidth;
     
     A0L    = [eye(3), params.r0Lg;  % LEFT Ankle Position from 
-              zeros(1,3),       1]; %  0rigin in Global
+              zeros(1,3),       1]; %      0rigin in Global
     A0R    = [eye(3), params.r0Rg;  % RIGHT Ankle Position from 
-              zeros(1,3),       1]; %  0rigin in Global
+              zeros(1,3),       1]; %       0rigin in Global
 
     %% JOINT VARIABLES
     sigT        = sum(q);        % Σθᵢ    i=1:6
@@ -29,8 +29,7 @@ function [xe, TAE, HTs] = k(q, params)
     sigT56      = sum(q(5:6));   % Σθᵢ    i=5:6
 
     %% HOMOGENOUS TRANSFORM
-    if params.mode == -1
-        % LEFT FIXED
+    if params.mode == -1        % LEFT FIXED
         T16x = Lu*(sin(sigT14) - sin(sigT12)) + ...
                Ll*(sin(sigT15) - sin( q(1) ));
         T16y = Lu*(cos(sigT12) - cos(sigT14)) + ...
@@ -42,8 +41,9 @@ function [xe, TAE, HTs] = k(q, params)
                        0,          0, 1, T16z;
                        0,          0, 0,    1];
         TAE = A0L*T16;
-    elseif params.mode == 1
-        % RIGHT FIXED
+    elseif params.mode == 0     % BOTH FIXED
+        
+    elseif params.mode == 1     % RIGHT FIXED
         T61x = Lu*(sin(sigT56) - sin(sigT36)) + ...
                Ll*(sin( q(6) ) - sin(sigT26));
         T61y = Lu*(cos(sigT56) - cos(sigT36)) + ... 
@@ -113,6 +113,8 @@ function [xe, TAE, HTs] = k(q, params)
                                   0,            0, 0,     1];
         % A0A * T16 = A06
         HTs.A06 = A0L*T16;
+    elseif params.mode == 0
+        % 
     elseif params.mode == 1
         % A06 * T61 = A01
         HTs.A01  = A0R*T61;
