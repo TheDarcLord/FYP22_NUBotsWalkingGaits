@@ -42,7 +42,19 @@ function [xe, TAE, HTs] = k(q, params)
                        0,          0, 0,    1];
         TAE = A0L*T16;
     elseif params.mode == 0     % BOTH FIXED
-        
+        % Need to locate the CoM !
+        % Shift the waist instead...?
+        T16x = Lu*(sin(sigT14) - sin(sigT12)) + ...
+               Ll*(sin(sigT15) - sin( q(1) ));
+        T16y = Lu*(cos(sigT12) - cos(sigT14)) + ...
+               Ll*(cos( q(1) ) - cos(sigT15));
+        T16z = -H;
+       
+        T16 = [cos(sigT), -sin(sigT), 0, T16x;
+               sin(sigT),  cos(sigT), 0, T16y;
+                       0,          0, 1, T16z;
+                       0,          0, 0,    1];
+        TAE = A0L*T16;
     elseif params.mode == 1     % RIGHT FIXED
         T61x = Lu*(sin(sigT56) - sin(sigT36)) + ...
                Ll*(sin( q(6) ) - sin(sigT26));
@@ -56,24 +68,7 @@ function [xe, TAE, HTs] = k(q, params)
         TAE = A0R*T61;
     end
 
-    %% End Effector Parameterisation
-    % R₁₁:  cθ₁cθ₂      Ψ = atan2( R₃₂, R₃₃)
-    % R₂₁:  sθ₁cθ₂      θ = atan2(-R₃₁, SQRT(R₃₂² + R₃₃²))
-    % R₃₁: -sθ₂         ϕ = atan2( R₂₁, R₁₁)
-    % R₃₂:  0
-    % R₃₃:  cθ₂
-
-    phi =   atan2( TAE(3,2), TAE(3,3) );  
-    theta = atan2(-TAE(3,1), sqrt( TAE(3,2)^2 + TAE(3,3)^2 ) );
-    psi =   atan2( TAE(2,1), TAE(1,1) );
-    
-    xe = [TAE(1:3,4); % X Y Z
-          phi;        % ϕ
-          theta;      % θ
-          psi];       % Ψ
-    
     %% Homogeneous Transforms
-    
     if params.mode == -1
         HTs.A01 = A0L;
         % A0A * A12 = A02
@@ -114,7 +109,49 @@ function [xe, TAE, HTs] = k(q, params)
         % A0A * T16 = A06
         HTs.A06 = A0L*T16;
     elseif params.mode == 0
-        % 
+        HTs.A01 = A0L;
+        % A0A * A12 = A02
+            A12x = -Ll*sin(q(1));
+            A12y =  Ll*cos(q(1));
+        HTs.A02  = A0L*[cos( q(1) ), -sin( q(1) ), 0, A12x;
+                        sin( q(1) ),  cos( q(1) ), 0, A12y;
+                                  0,            0, 1,    0;
+                                  0,            0, 0,    1];
+        % A0A * A13 = A03
+            A13x = -Lu*sin(sigT12)-Ll*sin(q(1));
+            A13y =  Lu*cos(sigT12)+Ll*cos(q(1));
+        HTs.A03  = A0L*[cos(sigT12), -sin(sigT12), 0, A13x;
+                        sin(sigT12),  cos(sigT12), 0, A13y;
+                                  0,            0, 1,    0;
+                                  0,            0, 0,    1];
+        % A0A * A1H = A0H
+            A1Hx = -Lu*sin(sigT12)-Ll*sin(q(1));
+            A1Hy =  Lu*cos(sigT12)+Ll*cos(q(1));
+        HTs.A0H  = A0L*[cos(sigT12), -sin(sigT12), 0, A1Hx;
+                        sin(sigT12),  cos(sigT12), 0, A1Hy;
+                                  0,            0, 1,  -H/2;
+                                  0,            0, 0,    1];
+        % A0A * A14 = A04
+            A14x = -Lu*sin(sigT12)-Ll*sin(q(1));
+            A14y =  Lu*cos(sigT12)+Ll*cos(q(1));
+        HTs.A04  = A0L*[cos(sigT13), -sin(sigT13), 0, A14x;
+                        sin(sigT13),  cos(sigT13), 0, A14y;
+                                  0,            0, 1,   -H;
+                                  0,            0, 0,    1];
+        % A0A * A15 = A05
+            A15x =  Lu*(sin(sigT14)-sin(sigT12))-Ll*sin(q(1));
+            A15y =  Lu*(cos(sigT12)-cos(sigT14))+Ll*cos(q(1));
+        HTs.A05  = A0L*[cos(sigT14), -sin(sigT14), 0,  A15x;
+                        sin(sigT14),  cos(sigT14), 0,  A15y;
+                                  0,            0, 1,    -H;
+                                  0,            0, 0,     1];
+        % A0A * T16 = A06
+        HTs.A06 = A0L*T16;
+        
+        % Adjust TAE
+        rCM = rCoM(HTs,params);
+        TAE = [eye(3),    [rCM(1);0;rCM(3)];  % rCoM X & Z only
+               zeros(1,3),               1];  % Y vertical = 0
     elseif params.mode == 1
         % A06 * T61 = A01
         HTs.A01  = A0R*T61;
@@ -155,5 +192,21 @@ function [xe, TAE, HTs] = k(q, params)
         HTs.A06 = A0R;
     end
 
-    xe = [xe; HTs.A0H(2,4)];
+    %% End Effector Parameterisation
+    % R₁₁:  cθ₁cθ₂      Ψ = atan2( R₃₂, R₃₃)
+    % R₂₁:  sθ₁cθ₂      θ = atan2(-R₃₁, SQRT(R₃₂² + R₃₃²))
+    % R₃₁: -sθ₂         ϕ = atan2( R₂₁, R₁₁)
+    % R₃₂:  0
+    % R₃₃:  cθ₂
+
+    phi =   atan2( TAE(3,2), TAE(3,3) );  
+    theta = atan2(-TAE(3,1), sqrt( TAE(3,2)^2 + TAE(3,3)^2 ) );
+    psi =   atan2( TAE(2,1), TAE(1,1) );
+    
+    xe = [TAE(1:3,4); % X Y Z
+          phi;        % ϕ
+          theta;      % θ
+          psi];       % Ψ
+    
+    %xe = [xe; HTs.A0H(2,4)];
 end
