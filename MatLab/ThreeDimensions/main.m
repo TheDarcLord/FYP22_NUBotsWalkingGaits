@@ -131,40 +131,54 @@ end
 toc % FINISH TIMING
 
 %% Figures 
-% figure('Name','Joint Variables, q(t)')
-%     hold on
-%     plot(model.tspan,model.q(1,:),'r-','LineWidth',2);
-%     plot(model.tspan,model.q(2,:),'g-','LineWidth',2);
-%     plot(model.tspan,model.q(3,:),'b-','LineWidth',2);
-%     plot(model.tspan,model.q(4,:),'c-','LineWidth',2);
-%     plot(model.tspan,model.q(5,:),'y-','LineWidth',2);
-%     plot(model.tspan,model.q(6,:),'m-','LineWidth',2);
-%     set(gca,'Color','#CCCCCC');
-%     xlabel('Time (t) ({\itSeconds})','FontWeight','bold');
-%     ylabel('qθ_{1-6} ({\itRadians})','FontWeight','bold');
-%     title('All Joint Variables: {\itθ}_{1-6}({\itt})','FontSize',12);
-%     legend('θ₁','θ₂','θ₃', 'θ₄','θ₅','θ₆');
+figure('Name','Joint Variables, q(t)')
+    subplot(1,2,1)
+        hold on
+        plot(model.tspan,model.q(1,:),'r-','LineWidth',2);
+        plot(model.tspan,model.q(2,:),'g-','LineWidth',2);
+        plot(model.tspan,model.q(3,:),'b-','LineWidth',2);
+        plot(model.tspan,model.q(4,:),'c-','LineWidth',2);
+        plot(model.tspan,model.q(5,:),'y-','LineWidth',2);
+        plot(model.tspan,model.q(6,:),'m-','LineWidth',2);
+        set(gca,'Color','#CCCCCC');
+        xlabel('Time (t) ({\itSeconds})','FontWeight','bold');
+        ylabel('qθ_{1-6} ({\itRadians})','FontWeight','bold');
+        title('Joint Variables: {\itθ}_{1-6}({\itt})','FontSize',12);
+        legend('θ₁','θ₂','θ₃', 'θ₄','θ₅','θ₆');
+    subplot(1,2,2)
+        hold on
+        plot(model.tspan,model.q(7,:),'r-','LineWidth',2);
+        plot(model.tspan,model.q(8,:),'g-','LineWidth',2);
+        plot(model.tspan,model.q(9,:),'b-','LineWidth',2);
+        plot(model.tspan,model.q(10,:),'c-','LineWidth',2);
+        plot(model.tspan,model.q(11,:),'y-','LineWidth',2);
+        plot(model.tspan,model.q(12,:),'m-','LineWidth',2);
+        set(gca,'Color','#CCCCCC');
+        xlabel('Time (t) ({\itSeconds})','FontWeight','bold');
+        ylabel('qθ_{1-6} ({\itRadians})','FontWeight','bold');
+        title('Joint Variables: {\itθ}_{7-12}({\itt})','FontSize',12);
+        legend('θ₇','θ₈','θ₉','θ₁₀','θ₁₁','θ₁₂');
 
-% figure('Name','Foot,Waist,CoM Movement')
-%     hold on
-%     grid on
-%     title('Foot & Waist & CoM Trajectories','FontSize',12);
-%     set(gca,'Color','#CCCCCC');
-%     plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
-%     plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
-%     plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
-%     plot3(model.r01g(3,:),model.r01g(1,:),model.r01g(2,:),...
-%         'c-','LineWidth',2);
-%     plot3(model.r06g(3,:),model.r06g(1,:),model.r06g(2,:),...
-%         'g-','LineWidth',2);
-%     plot3(model.r0Hg(3,:),model.r0Hg(1,:),model.r0Hg(2,:),...
-%         'm-','LineWidth',2);
+figure('Name','Foot,Waist,CoM Movement')
+    hold on
+    grid on
+    title('Foot & Waist & CoM Trajectories','FontSize',12);
+    set(gca,'Color','#CCCCCC');
+    plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
+    plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
+    plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
+    plot3(model.r01g(3,:),model.r01g(1,:),model.r01g(2,:),...
+        'c-','LineWidth',2);
+    plot3(model.r012g(3,:),model.r012g(1,:),model.r012g(2,:),...
+        'g-','LineWidth',2);
+    plot3(model.r0Hg(3,:),model.r0Hg(1,:),model.r0Hg(2,:),...
+        'm-','LineWidth',2);
 %     plot3(model.rCoM(3,:),model.rCoM(1,:),model.rCoM(2,:),...
 %         'r-','LineWidth',1);
-% 
-%     legend('+Z','+X','+Y','Left','Right','Waist', 'CoM');
-%     axis([-(params.HipWidth+0.2) 0.2 min(model.r0Hg(1,:))-0.1 max(model.r0Hg(1,:))+0.2 0 1]);
-%     view(135,35);
+
+    legend('+Z','+X','+Y','Left','Right','Waist', 'CoM');
+    axis([-(params.HipWidth+0.2) 0.2 min(model.r0Hg(1,:))-0.1 max(model.r0Hg(1,:))+0.2 0 1]);
+    view(135,35);
 
 figure('Name','Animation')
 % Preallocate IMAGE
