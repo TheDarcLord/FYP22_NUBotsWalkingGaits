@@ -20,9 +20,9 @@ function [Q, V, A] = trajectoryGeneration(model, span, params)
     rLY = params.r0Lg(2);
     rLZ = params.r0Lg(2);
 
-    rCX = params.r0CoMg(1);
-    rCY = 0;
-    rCZ = params.r0CoMg(3);
+%     rCX = params.r0CoMg(1);
+%     rCY = 0;
+%     rCZ = params.r0CoMg(3);
 
     %% SPECIAL MATRICES
     D  = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!
