@@ -13,14 +13,6 @@ function [xe, TAE, HTs] = k(q, params)
                      sin(psi),  cos(psi), 0, 0;
                             0,         0, 1, 0;
                             0,         0, 0, 1];
-    Ry = @(theta)   [cos(theta), 0, sin(theta), 0;
-                              0, 1,          0, 0;
-                    -sin(theta), 0, cos(theta), 0;
-                              0, 0,          0, 1];
-    Rx = @(phi)     [1,        0,         0, 0;
-                     0, cos(phi), -sin(phi), 0;
-                     0, sin(phi),  cos(phi), 0;
-                     0,        0,         0, 1];
 
     RyPI_2  = [0  0  1  0;
                0  1  0  0;
