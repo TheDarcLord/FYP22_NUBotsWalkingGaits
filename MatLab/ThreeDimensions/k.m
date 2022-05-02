@@ -22,6 +22,23 @@ function [xe, TAE, HTs] = k(q, params)
                      0, sin(phi),  cos(phi), 0;
                      0,        0,         0, 1];
 
+    RyPI_2  = [0  0  1  0;
+               0  1  0  0;
+              -1  0  0  0;
+               0  0  0  1];
+    RyPI_N2 = [0  0 -1  0;
+               0  1  0  0;
+               1  0  0  0;
+               0  0  0  1];
+    RxPI_2  = [1  0  0  0;
+               0  0 -1  0;
+               0  1  0  0;
+               0  0  0  1];
+    RxPI_N2 = [1  0  0  0;
+               0  0  1  0;
+               0 -1  0  0;
+               0  0  0  1];
+
     %% LINK VARIABLES
     Ll     = params.fibula;     % Lower Leg
     Lu     = params.femur;      % Upper Leg
@@ -60,17 +77,17 @@ function [xe, TAE, HTs] = k(q, params)
 
     %% HOMOGENOUS TRANSFORM
     if params.mode == -1        % LEFT FIXED
-        T1_12 = Rz( q1)*Ry( pi/2)*T(0,  S,  0)  ... A12
-               *Rz( q2)*Ry(-pi/2)*T(0, Ll,  0)  ... A23
-               *Rz( q3)          *T(0, Lu,  0)  ... A34
-               *Rz( q4)*Ry( pi/2)*T(0,  S,  0)  ... A45
-               *Rz( q5)*Rx( pi/2)*T(0,  0, -S)  ... A56
-               *Rz( q6)          *T(H,  0,  0)  ... A67
-               *Rz( q7)*Rx(-pi/2)*T(0, -S,  0)  ... A78
-               *Rz( q8)*Ry(-pi/2)*T(0, -S,  0)  ... A89
-               *Rz( q9)          *T(0,-Lu,  0)  ... A9_10
-               *Rz(q10)*Ry( pi/2)*T(0,-Ll,  0)  ... A10_11
-               *Rz(q11)*Ry(-pi/2)*T(0, -S,  0)  ... A11_12
+        T1_12 = Rz( q1)*    RyPI_2  *T(0,  S,  0)  ... A12
+               *Rz( q2)*    RyPI_N2 *T(0, Ll,  0)  ... A23
+               *Rz( q3)             *T(0, Lu,  0)  ... A34
+               *Rz( q4)*    RyPI_2  *T(0,  S,  0)  ... A45
+               *Rz( q5)*    RxPI_2  *T(0,  0, -S)  ... A56
+               *Rz( q6)             *T(H,  0,  0)  ... A67
+               *Rz( q7)*    RxPI_N2 *T(0, -S,  0)  ... A78
+               *Rz( q8)*    RyPI_N2 *T(0, -S,  0)  ... A89
+               *Rz( q9)             *T(0,-Lu,  0)  ... A9_10
+               *Rz(q10)*    RyPI_2  *T(0,-Ll,  0)  ... A10_11
+               *Rz(q11)*    RyPI_N2 *T(0, -S,  0)  ... A11_12
                *Rz(q12);
         TAE = A0L*T1_12;
     elseif params.mode == 0     % BOTH FIXED
@@ -78,17 +95,17 @@ function [xe, TAE, HTs] = k(q, params)
         % Shift the waist instead...?
         
     elseif params.mode == 1     % RIGHT FIXED
-       T12_1 = Rz(-q12)*Ry( pi/2)*T(0,  S,  0)  ... A12_11
-              *Rz(-q11)*Ry(-pi/2)*T(0, Ll,  0)  ... A11_10
-              *Rz(-q10)          *T(0, Lu,  0)  ... A10_9
-              *Rz(-q9) *Ry( pi/2)*T(0,  S,  0)  ... A98
-              *Rz(-q8) *Rx( pi/2)*T(0,  0, -S)  ... A87
-              *Rz(-q7)           *T(-H,  0,  0)  ... A76
-              *Rz(-q6) *Rx(-pi/2)*T(0, -S,  0)  ... A65
-              *Rz(-q5) *Ry(-pi/2)*T(0, -S,  0)  ... A54
-              *Rz(-q4)           *T(0,-Lu,  0)  ... A43
-              *Rz(-q3) *Ry( pi/2)*T(0,-Ll,  0)  ... A32
-              *Rz(-q2) *Ry(-pi/2)*T(0, -S,  0)  ... A21
+       T12_1 = Rz(-q12)*    RyPI_2  *T(0,  S,  0)  ... A12_11
+              *Rz(-q11)*    RyPI_N2 *T(0, Ll,  0)  ... A11_10
+              *Rz(-q10)             *T(0, Lu,  0)  ... A10_9
+              *Rz(-q9) *    RyPI_2  *T(0,  S,  0)  ... A98
+              *Rz(-q8) *    RxPI_2  *T(0,  0, -S)  ... A87
+              *Rz(-q7)              *T(-H, 0,  0)  ... A76
+              *Rz(-q6) *    RxPI_N2 *T(0, -S,  0)  ... A65
+              *Rz(-q5) *    RyPI_N2 *T(0, -S,  0)  ... A54
+              *Rz(-q4)              *T(0,-Lu,  0)  ... A43
+              *Rz(-q3) *    RyPI_2  *T(0,-Ll,  0)  ... A32
+              *Rz(-q2) *    RyPI_N2 *T(0, -S,  0)  ... A21
               *Rz(-q1);
        TAE = A0R*T12_1;
     end
@@ -97,15 +114,15 @@ function [xe, TAE, HTs] = k(q, params)
     if params.mode == -1
         HTs.A01  = A0L;
         % A0A * A12 = A02
-        HTs.A02  = HTs.A01 *Rz( q1)*Ry( pi/2)*T(0,  S,  0);
+        HTs.A02  = HTs.A01 *Rz( q1)*RyPI_2*T(0,  S,  0);
         % A0A * A13 = A03
-        HTs.A03  = HTs.A02 *Rz( q2)*Ry(-pi/2)*T(0, Ll,  0);
+        HTs.A03  = HTs.A02 *Rz( q2)*RyPI_N2*T(0, Ll,  0);
         % A0A * A14 = A04
         HTs.A04  = HTs.A03 *Rz( q3)          *T(0, Lu,  0);
         % A0A * A15 = A05
-        HTs.A05  = HTs.A04 *Rz( q4)*Ry( pi/2)*T(0,  S,  0);
+        HTs.A05  = HTs.A04 *Rz( q4)*RyPI_2*T(0,  S,  0);
         % A0A * T16 = A06
-        HTs.A06 =  HTs.A05 *Rz( q5)*Rx( pi/2)*T(0,  0, -S);
+        HTs.A06 =  HTs.A05 *Rz( q5)*RxPI_2*T(0,  0, -S);
 
         % A0A * T1H = A0H
         HTs.A0H =  HTs.A06                   *T(H/2, 0,  0);
@@ -113,15 +130,15 @@ function [xe, TAE, HTs] = k(q, params)
         % A0A * T17 = A07
         HTs.A07 =  HTs.A06 *Rz( q6)          *T(H,  0,  0);
         % A0A * T18 = A08
-        HTs.A08 =  HTs.A07 *Rz( q7)*Rx(-pi/2)*T(0, -S,  0);
+        HTs.A08 =  HTs.A07 *Rz( q7)*RxPI_N2*T(0, -S,  0);
         % A0A * T19 = A09
-        HTs.A09 =  HTs.A08 *Rz( q8)*Ry(-pi/2)*T(0, -S,  0);
+        HTs.A09 =  HTs.A08 *Rz( q8)*RyPI_N2*T(0, -S,  0);
         % A0A * T1_10 = A010
         HTs.A010 = HTs.A09 *Rz( q9)          *T(0,-Lu,  0);
         % A0A * T1_11 = A011
-        HTs.A011 = HTs.A010*Rz(q10)*Ry( pi/2)*T(0,-Ll,  0);
+        HTs.A011 = HTs.A010*Rz(q10)*RyPI_2*T(0,-Ll,  0);
         % A0A * T1_12 = A012
-        HTs.A012 = HTs.A011*Rz(q11)*Ry(-pi/2)*T(0, -S,  0);
+        HTs.A012 = HTs.A011*Rz(q11)*RyPI_N2*T(0, -S,  0);
     elseif params.mode == 0
         % Adjust TAE
         rCM = rCoM(HTs,params);
@@ -130,15 +147,15 @@ function [xe, TAE, HTs] = k(q, params)
     elseif params.mode == 1
         HTs.A012  = A0R;
         % A0A * A12 = A02
-        HTs.A011  = HTs.A012 *Rz(-q12)*Ry( pi/2)*T(0,  S,  0);
+        HTs.A011  = HTs.A012 *Rz(-q12)*RyPI_2*T(0,  S,  0);
         % A0A * A13 = A03
-        HTs.A010  = HTs.A011 *Rz(-q11)*Ry(-pi/2)*T(0, Ll,  0);
+        HTs.A010  = HTs.A011 *Rz(-q11)*RyPI_N2*T(0, Ll,  0);
         % A0A * A14 = A04
         HTs.A09  = HTs.A010 *Rz(-q10)          *T(0, Lu,  0);
         % A0A * A15 = A05
-        HTs.A08  = HTs.A09 *Rz(-q9)*Ry( pi/2)*T(0,  S,  0);
+        HTs.A08  = HTs.A09 *Rz(-q9)*RyPI_2*T(0,  S,  0);
         % A0A * T16 = A06
-        HTs.A07 =  HTs.A08 *Rz(-q8)*Rx( pi/2)*T(0,  0, -S);
+        HTs.A07 =  HTs.A08 *Rz(-q8)*RxPI_2*T(0,  0, -S);
 
         % A0A * T1H = A0H
         HTs.A0H =  HTs.A07                   *T(-H/2, 0,  0);
@@ -146,15 +163,15 @@ function [xe, TAE, HTs] = k(q, params)
         % A0A * T17 = A07
         HTs.A06 =  HTs.A07 *Rz(-q7)          *T(-H,  0,  0);
         % A0A * T18 = A08
-        HTs.A05 =  HTs.A06 *Rz(-q6)*Rx(-pi/2)*T(0, -S,  0);
+        HTs.A05 =  HTs.A06 *Rz(-q6)*RxPI_N2*T(0, -S,  0);
         % A0A * T19 = A09
-        HTs.A04 =  HTs.A05 *Rz(-q5)*Ry(-pi/2)*T(0, -S,  0);
+        HTs.A04 =  HTs.A05 *Rz(-q5)*RyPI_N2*T(0, -S,  0);
         % A0A * T1_10 = A010
         HTs.A03 = HTs.A04 *Rz(-q4)          *T(0,-Lu,  0);
         % A0A * T1_11 = A011
-        HTs.A02 = HTs.A03*Rz(-q3)*Ry( pi/2)*T(0,-Ll,  0);
+        HTs.A02 = HTs.A03*Rz(-q3)*RyPI_2*T(0,-Ll,  0);
         % A0A * T1_12 = A012
-        HTs.A01 = HTs.A02*Rz(-q2)*Ry(-pi/2)*T(0, -S,  0);
+        HTs.A01 = HTs.A02*Rz(-q2)*RyPI_N2*T(0, -S,  0);
     end
 
     %% End Effector Parameterisation
