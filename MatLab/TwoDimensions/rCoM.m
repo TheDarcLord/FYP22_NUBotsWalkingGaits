@@ -1,11 +1,11 @@
-function [r0CoM] = rCoM(q,params)
+function [r0CoM] = rCoM(HomogeneousTransforms,params)
 % rCOM  [2D Model] Centre of Mass - CoM
 %       Relies on the FKM, k(q), to locate the masses
 %       r0CoM - Position[x,y,z] of CoM in ZERO/World Coordinates
 %       Equation:
 %           M = Σ mᵢ
 %           Ṟ = M⁻¹ Σ ṟᵢmᵢ
-    [~, ~, HT] = k(q, params);
+    HT = HomogeneousTransforms;
     
     % Lengths
     lf = params.fibula;

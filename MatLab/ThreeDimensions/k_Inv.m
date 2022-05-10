@@ -5,20 +5,31 @@ function [qStar] = k_Inv(q0, xe, params)
 %              qStar:   necessary joint variables
 %
 % SOLUTION: qˣ = ARG MIN (q): qᵀ W q + (k(q) - xeˣ)ᵀ K (k(q) - xeˣ)
-    K = 1e8*eye(length(xe),length(xe));
-    W = 1*eye(length(q0),length(q0));
-
-    fun = @(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2;
-    A = [];
-    b = [];
-    Aeq = [];
-    beq = [];
-    lb = [];
-    ub = [];
+    K = 1e9*eye(length(xe),length(xe));
+    W = 5e6*eye(length(q0),length(q0));
+    
+    A       = [];
+    b       = [];
+    Aeq     = [];
+    beq     = [];
+    lb      = [];
+    ub      = [];
     nonlcon = [];
-    options = optimoptions('fmincon','Display','notify','MaxFunctionEvaluations',1e4,'MaxIterations',1e4);
-
-    argmin = @(q) (q0 - q)'*W*(q0 - q) + ( k(q,params) - xe)'*K*(k(q, params) - xe);
-    qStar = fmincon(argmin,q0,A,b,Aeq,beq,lb,ub,nonlcon,options);
-
+    options = optimoptions('fmincon', ...
+        'Display','notify',...
+        'MaxFunctionEvaluations',1e5,...
+        'MaxIterations',1e5);
+    
+    if params.mode ~= 0
+        argmin = @(q) (q0 - q)'*W*(q0 - q) + ...
+                      (k(q,params) - xe)'*K*(k(q,params) - xe);
+    
+        qStar = fmincon(argmin,q0,A,b,Aeq,beq,lb,ub,nonlcon,options);
+    else
+        argmin = @(q) (q0 - q)'*W*(q0 - q) + ...
+                      (k(q,params) - xe)'*K*(k(q,params) - xe) + ...
+                      0;
+    
+        qStar = fmincon(argmin,q0,A,b,Aeq,beq,lb,ub,nonlcon,options);
+    end
 end
