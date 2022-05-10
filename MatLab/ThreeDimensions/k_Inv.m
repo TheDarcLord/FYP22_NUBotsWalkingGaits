@@ -6,7 +6,7 @@ function [qStar] = k_Inv(q0, xe, params)
 %
 % SOLUTION: qˣ = ARG MIN (q): qᵀ W q + (k(q) - xeˣ)ᵀ K (k(q) - xeˣ)
     K = 1e9*eye(length(xe),length(xe));
-    W = 5e8*eye(length(q0),length(q0));
+    W = 5e6*eye(length(q0),length(q0));
     
     A       = [];
     b       = [];

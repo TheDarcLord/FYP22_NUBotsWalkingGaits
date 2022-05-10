@@ -9,7 +9,7 @@ params.framerate    = 10;
 model.tspan         = 0:(1 / params.framerate):24;
 
 model.q             = zeros(12,length(model.tspan)); % q    [θ₁θ₂θ₃ ...]ᵀ
-model.xe            = zeros(7,length(model.tspan)); % xe    [XYZϕθΨ]ᵀ
+model.xe            = zeros(6,length(model.tspan)); % xe    [XYZϕθΨ]ᵀ
 model.r01g          = zeros(3,length(model.tspan)); % A01   [XYZ]ᵀ
 model.r012g         = zeros(3,length(model.tspan)); % A0_12 [XYZ]ᵀ
 model.r0Hg          = zeros(3,length(model.tspan)); % A0H   [XYZ]ᵀ
@@ -35,18 +35,18 @@ params.mass.pelvis  = 1.5;  % Waist
 
 %% Initial Position & Orientation
 
-model.q0 = [-pi/12;     % θ₁    ->  2D θ₁ Ankle
-                 0;     % θ₂
-           2*pi/12;     % θ₃    ->  2D θ₂ Knee
-            -pi/12;     % θ₄    ->  2D θ₃ Hip
-                 0;     % θ₅
-                 0;     % θ₆
-                 0;     % θ₇
-                 0;     % θ₈
-             pi/12;     % θ₉    ->  2D θ₄ Hip
-          -2*pi/12;     % θ₁₀   ->  2D θ₅ Knee
-                 0;     % θ₁₁
-             pi/12];    % θ₁₂   ->  2D θ₆ Ankle
+model.q0 = [    0;     % θ₁    
+            -pi/6;     % θ₂    ->  2D θ₁ Ankle
+           2*pi/6;     % θ₃    ->  2D θ₂ Knee
+            -pi/6;     % θ₄    ->  2D θ₃ Hip
+                0;     % θ₅
+                0;     % θ₆
+                0;     % θ₇
+                0;     % θ₈
+             pi/6;     % θ₉    ->  2D θ₄ Hip
+          -2*pi/6;     % θ₁₀   ->  2D θ₅ Knee
+             pi/6;     % θ₁₁   ->  2D θ₆ Ankle
+                0];    % θ₁₂   
 
 % % BEGIN DEBUG 
 % params.mode         = -1; 
@@ -158,7 +158,7 @@ params.r0Hg                 = model.r0Hg(:,1);
 [Q1,~,~] = trajectoryGeneration(model, 1:61,params); % Trajectory Generation
 
 for i=2:61
-    model.xe(:,i)   = [Q1(:,i); zeros(3,1); params.waistHeight];
+    model.xe(:,i)   = [Q1(:,i); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
     [~, ~, HTs]     = k(model.q(:,i), params);
     model.r01g(:,i) = HTs.A01(1:3,4);
@@ -175,7 +175,7 @@ params.mode = 1;
 [Q2,~,~] = trajectoryGeneration(model, 62:121,params); % Trajectory Generation
 
 for i=62:121
-    model.xe(:,i)   = [Q2(:,i-61); zeros(3,1); params.waistHeight];
+    model.xe(:,i)   = [Q2(:,i-61); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
     [~, ~, HTs]     = k(model.q(:,i), params);
     model.r01g(:,i) = HTs.A01(1:3,4);
@@ -192,7 +192,7 @@ params.mode = -1;
 [Q3,~,~] = trajectoryGeneration(model, 122:181,params); % Trajectory Generation
 
 for i=122:181
-    model.xe(:,i)   = [Q3(:,i-121); zeros(3,1); params.waistHeight];
+    model.xe(:,i)   = [Q3(:,i-121); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
     [~, ~, HTs]     = k(model.q(:,i), params);
     model.r01g(:,i) = HTs.A01(1:3,4);
@@ -209,7 +209,7 @@ params.mode = 1;
 [Q4,~,~] = trajectoryGeneration(model, 182:241,params); % Trajectory Generation
 
 for i=182:241
-    model.xe(:,i)   = [Q4(:,i-181); zeros(3,1); params.waistHeight];
+    model.xe(:,i)   = [Q4(:,i-181); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
     [~, ~, HTs]     = k(model.q(:,i), params);
     model.r01g(:,i) = HTs.A01(1:3,4);
@@ -267,7 +267,7 @@ figure('Name','Foot,Waist,CoM Movement')
 %         'r-','LineWidth',1);
 
     legend('+Z','+X','+Y','Left','Right','Waist', 'CoM');
-    axis([-(params.HipWidth+0.2) 0.2 min(model.r0Hg(1,:))-0.1 max(model.r0Hg(1,:))+0.2 0 1]);
+    axis([-(params.HipWidth+0.2) 0.2 min(model.r0Hg(1,:))-0.1 max(model.r0Hg(1,:))+0.2 0 2]);
     view(135,35);
 
 figure('Name','Animation')
