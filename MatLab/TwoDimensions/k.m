@@ -58,12 +58,13 @@ function [xe, TAE, HTs] = k(q, params)
         T6Hx = Lu*sin(sigT56)+Ll*sin(q(6));
         T6Hy = Lu*cos(sigT56)+Ll*cos(q(6));
         T6Hz = H/2;
-        T6H  = [cos(sigT46), sin(sigT46), 0, T6Hx;
-               -sin(sigT46), cos(sigT46), 0, T6Hy;
-                          0,           0, 1, T6Hz;
-                          0,           0, 0,    1];
+        T6H  = [cos(sigT46), -sin(sigT46), 0, T6Hx;
+                sin(sigT46),  cos(sigT46), 0, T6Hy;
+                          0,           0,  1, T6Hz;
+                          0,           0,  0,    1];
         TAER = A0R*T6H;
 
+        TAE  = TAEL;
     elseif params.mode == 1     % RIGHT FIXED
         T61x = Lu*(sin(sigT56) - sin(sigT36)) + ...
                Ll*(sin( q(6) ) - sin(sigT26));
@@ -156,11 +157,6 @@ function [xe, TAE, HTs] = k(q, params)
                                   0,            0, 0,     1];
         % A0A * T16 = A06
         HTs.A06 = A0R;
-        
-        % Adjust TAE
-        rCM = rCoM(HTs,params);
-        TAE = [eye(3),    [rCM(1);0;rCM(3)];  % rCoM X & Z only
-               zeros(1,3),               1];  % Y vertical = 0
     elseif params.mode == 1
         % A06 * T61 = A01
         HTs.A01  = A0R*T61;
@@ -218,16 +214,15 @@ function [xe, TAE, HTs] = k(q, params)
               theta;      % θ
               psi];       % Ψ
     else
-%         Lphi   = atan2( TAEL(3,2), TAEL(3,3) );  
-%         Ltheta = atan2(-TAEL(3,1), sqrt( TAEL(3,2)^2 + TAEL(3,3)^2 ) );
-%         Lpsi   = atan2( TAEL(2,1), TAEL(1,1) );
-%         Rphi   = atan2( TAER(3,2), TAER(3,3) );  
-%         Rtheta = atan2(-TAER(3,1), sqrt( TAER(3,2)^2 + TAER(3,3)^2 ) );
-%         Rpsi   = atan2( TAER(2,1), TAER(1,1) );
+        Lphi   = 0;%atan2( TAEL(3,2), TAEL(3,3) );  
+        Ltheta = 0;%atan2(-TAEL(3,1), sqrt( TAEL(3,2)^2 + TAEL(3,3)^2 ) );
+        Lpsi   = 0;%atan2( TAEL(2,1), TAEL(1,1) );
+        Rphi   = 0;%atan2( TAER(3,2), TAER(3,3) );  
+        Rtheta = 0;%atan2(-TAER(3,1), sqrt( TAER(3,2)^2 + TAER(3,3)^2 ) );
+        Rpsi   = 0;%atan2( TAER(2,1), TAER(1,1) );
         
-        Lxe = TAEL(1:3,4);                              % X Y Z
-        Rxe = TAER(1:3,4);           % X Y Z
-        xe = [Lxe - Rxe; Rxe - Lxe]; % X Y Z
+        Lxe    = [TAEL(1:3,4);Lphi;Ltheta;Lpsi];
+        Rxe    = [TAER(1:3,4);Rphi;Rtheta;Rpsi];
+        xe     = Lxe - Rxe;
     end
-    %xe = [xe; HTs.A0H(2,4)];
 end
