@@ -43,18 +43,28 @@ function [xe, TAE, HTs] = k(q, params)
         TAE = A0L*T16;
     elseif params.mode == 0     % BOTH FIXED
         % Need to locate the CoM !
-        % Shift the waist instead...?
-        T16x = Lu*(sin(sigT14) - sin(sigT12)) + ...
-               Ll*(sin(sigT15) - sin( q(1) ));
-        T16y = Lu*(cos(sigT12) - cos(sigT14)) + ...
-               Ll*(cos( q(1) ) - cos(sigT15));
-        T16z = -H;
-       
-        T16 = [cos(sigT), -sin(sigT), 0, T16x;
-               sin(sigT),  cos(sigT), 0, T16y;
-                       0,          0, 1, T16z;
-                       0,          0, 0,    1];
-        TAE = A0L*T16;
+        % Shift the waist instead...!
+        % T1H
+        T1Hx = -Lu*sin(sigT12)-Ll*sin(q(1));
+        T1Hy =  Lu*cos(sigT12)+Ll*cos(q(1));
+        T1Hz = -H/2;
+        T1H  = [cos(sigT12), -sin(sigT12), 0, T1Hx;
+                sin(sigT12),  cos(sigT12), 0, T1Hy;
+                          0,            0, 1, T1Hz;
+                          0,            0, 0,    1];
+        TAEL = A0L*T1H;
+        
+        % T6H
+        T6Hx = Lu*sin(sigT56)+Ll*sin(q(6));
+        T6Hy = Lu*cos(sigT56)+Ll*cos(q(6));
+        T6Hz = H/2;
+        T6H  = [cos(sigT46), -sin(sigT46), 0, T6Hx;
+                sin(sigT46),  cos(sigT46), 0, T6Hy;
+                          0,           0,  1, T6Hz;
+                          0,           0,  0,    1];
+        TAER = A0R*T6H;
+
+        TAE  = TAEL;
     elseif params.mode == 1     % RIGHT FIXED
         T61x = Lu*(sin(sigT56) - sin(sigT36)) + ...
                Ll*(sin( q(6) ) - sin(sigT26));
@@ -146,12 +156,7 @@ function [xe, TAE, HTs] = k(q, params)
                                   0,            0, 1,    -H;
                                   0,            0, 0,     1];
         % A0A * T16 = A06
-        HTs.A06 = A0L*T16;
-        
-        % Adjust TAE
-        rCM = rCoM(HTs,params);
-        TAE = [eye(3),    [rCM(1);0;rCM(3)];  % rCoM X & Z only
-               zeros(1,3),               1];  % Y vertical = 0
+        HTs.A06 = A0R;
     elseif params.mode == 1
         % A06 * T61 = A01
         HTs.A01  = A0R*T61;
@@ -170,10 +175,10 @@ function [xe, TAE, HTs] = k(q, params)
                                   0,           0, 1,    H;
                                   0,           0, 0,    1];
         % A06 * A6H = A0H
-            A63x = Lu*sin(sigT56)+Ll*sin(q(6));
-            A63y = Lu*cos(sigT56)+Ll*cos(q(6));
-        HTs.A0H  = A0R*[cos(sigT46), sin(sigT46), 0, A63x;
-                       -sin(sigT46), cos(sigT46), 0, A63y;
+            A6Hx = Lu*sin(sigT56)+Ll*sin(q(6));
+            A6Hy = Lu*cos(sigT56)+Ll*cos(q(6));
+        HTs.A0H  = A0R*[cos(sigT46), sin(sigT46), 0, A6Hx;
+                       -sin(sigT46), cos(sigT46), 0, A6Hy;
                                   0,           0, 1,   H/2;
                                   0,           0, 0,    1];
         % A06 * A64 = A04
@@ -198,15 +203,26 @@ function [xe, TAE, HTs] = k(q, params)
     % R₃₁: -sθ₂         ϕ = atan2( R₂₁, R₁₁)
     % R₃₂:  0
     % R₃₃:  cθ₂
-
-    phi =   atan2( TAE(3,2), TAE(3,3) );  
-    theta = atan2(-TAE(3,1), sqrt( TAE(3,2)^2 + TAE(3,3)^2 ) );
-    psi =   atan2( TAE(2,1), TAE(1,1) );
     
-    xe = [TAE(1:3,4); % X Y Z
-          phi;        % ϕ
-          theta;      % θ
-          psi];       % Ψ
-    
-    %xe = [xe; HTs.A0H(2,4)];
+    if params.mode ~= 0
+        phi =   atan2( TAE(3,2), TAE(3,3) );  
+        theta = atan2(-TAE(3,1), sqrt( TAE(3,2)^2 + TAE(3,3)^2 ) );
+        psi =   atan2( TAE(2,1), TAE(1,1) );
+        
+        xe = [TAE(1:3,4); % X Y Z
+              phi;        % ϕ
+              theta;      % θ
+              psi];       % Ψ
+    else
+        Lphi   = 0;%atan2( TAEL(3,2), TAEL(3,3) );  
+        Ltheta = 0;%atan2(-TAEL(3,1), sqrt( TAEL(3,2)^2 + TAEL(3,3)^2 ) );
+        Lpsi   = 0;%atan2( TAEL(2,1), TAEL(1,1) );
+        Rphi   = 0;%atan2( TAER(3,2), TAER(3,3) );  
+        Rtheta = 0;%atan2(-TAER(3,1), sqrt( TAER(3,2)^2 + TAER(3,3)^2 ) );
+        Rpsi   = 0;%atan2( TAER(2,1), TAER(1,1) );
+        
+        Lxe    = [TAEL(1:3,4);Lphi;Ltheta;Lpsi];
+        Rxe    = [TAER(1:3,4);Rphi;Rtheta;Rpsi];
+        xe     = Lxe - Rxe;
+    end
 end
