@@ -19,10 +19,10 @@ model.rCoM          = zeros(3,length(model.tspan)); % rCoM [XYZ]ᵀ
 params.fibula       = 0.5;
 params.femur        = 0.5;
 params.HipWidth     = 0.25;
-params.StepSize     = 0.4;
-params.r0Lg         = zeros(3,1);  % Right Position from 0rigin in Global
+params.StepSize     = 0.2;
+params.r0Lg         = zeros(3,1);  % Left  Position from 0rigin in Global
 params.r0Hg         = zeros(3,1);  % Waist Position from 0rigin in Global
-params.r0Rg         = zeros(3,1);  % Left  Position from 0rigin in Global
+params.r0Rg         = zeros(3,1);  % Right Position from 0rigin in Global
 params.r0CoMg       = zeros(3,1);  % CoM   Position from 0rigin in Global
 params.mode         = -1;          % LEFT  FIXED - FKM T16
 %                      0;          % BOTH  FIXED - FKM T1H T6H
@@ -31,16 +31,16 @@ params.mode         = -1;          % LEFT  FIXED - FKM T16
 params.mass.femur   = 1;    % Thigh Bone
 params.mass.fibula  = 1;    % Paired with `tibia`
 params.mass.joint   = 0.5;  % Knee Bone / Joints / Ankles
-params.mass.pelvis  = 1.5;  % Waist
+params.mass.pelvis  = 0.7;  % Waist
 
 %% Initial Position & Orientation
 
-model.q0 = [-pi/12;      % θ₁
-           2*pi/12;      % θ₂
-            -pi/12;      % θ₃
-             pi/12;      % θ₄
-          -2*pi/12;      % θ₅
-             pi/12];     % θ₆
+model.q0 = [-pi/6;      % θ₁
+           2*pi/6;      % θ₂
+            -pi/6;      % θ₃
+             pi/6;      % θ₄
+          -2*pi/6;      % θ₅
+             pi/6];     % θ₆
 
 %% LOOP
 % Initial Conditions
@@ -72,6 +72,7 @@ for i=2:61
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
      params.r0Hg    = model.r0Hg(:,i);
     model.rCoM(:,i) = rCoM(model.q(:,i),params);
+     params.r0CoMg  = model.rCoM(:,i);
 end
 
 params.mode = 0;
@@ -89,6 +90,7 @@ for i=62:121
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
      params.r0Hg    = model.r0Hg(:,i);
     model.rCoM(:,i) = rCoM(model.q(:,i),params);
+     params.r0CoMg  = model.rCoM(:,i);
 end
 
 params.mode = 1;
@@ -106,6 +108,7 @@ for i=122:181
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
      params.r0Hg    = model.r0Hg(:,i);
     model.rCoM(:,i) = rCoM(model.q(:,i),params);
+     params.r0CoMg  = model.rCoM(:,i);
 end
 
 params.mode = 0;
@@ -123,6 +126,7 @@ for i=182:241
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
      params.r0Hg    = model.r0Hg(:,i);
     model.rCoM(:,i) = rCoM(model.q(:,i),params);
+     params.r0CoMg  = model.rCoM(:,i);
 end
 
 toc % FINISH TIMING
@@ -250,6 +254,7 @@ for i=1:length(model.tspan)
     % Plot the CoM
     r0CoM = model.rCoM(:,i);
     plot3(r0CoM(3),r0CoM(1),r0CoM(2), 'ro', 'LineWidth',1.5);
+    plot3(r0CoM(3),r0CoM(1),0, 'rx', 'LineWidth',2);
 
     %    [         MIN,          MAX, ...
     axis([          -1,            1, ...

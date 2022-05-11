@@ -33,33 +33,33 @@ function [r0CoM] = rCoM(q,params)
     A12y =  Ll*cos(q(1));
     A12z =  0;
     A0Kl = A0Al*[cos( q(1) ), -sin( q(1) ), 0, A12x;
-                sin( q(1) ),  cos( q(1) ), 0, A12y;
-                          0,            0, 1, A12z;
-                          0,            0, 0,    1];
+                 sin( q(1) ),  cos( q(1) ), 0, A12y;
+                           0,            0, 1, A12z;
+                           0,            0, 0,    1];
     % LEFT HIP = A0L * A13
     A13x = -Lu*sin(sigT12)-Ll*sin(q(1));
     A13y =  Lu*cos(sigT12)+Ll*cos(q(1));
     A13z =  0;
     A0Hl = A0Al*[cos(sigT12), -sin(sigT12), 0, A13x;
-                sin(sigT12),  cos(sigT12), 0, A13y;
-                          0,            0, 1, A13z;
-                          0,            0, 0,    1];
+                 sin(sigT12),  cos(sigT12), 0, A13y;
+                           0,            0, 1, A13z;
+                           0,            0, 0,    1];
     % RIGHT HIP = A0R * A64
     A64x = Lu*sin(sigT56)+Ll*sin(q(6));
     A64y = Lu*cos(sigT56)+Ll*cos(q(6));
     A64z = 0;
     A0Hr = A0Ar*[cos(sigT56), sin(sigT56), 0, A64x;
-               -sin(sigT56), cos(sigT56), 0, A64y;
-                          0,           0, 1, A64z;
-                          0,           0, 0,    1];
+                -sin(sigT56), cos(sigT56), 0, A64y;
+                           0,           0, 1, A64z;
+                           0,           0, 0,    1];
     % RIGHT KNEE = A0R * A65
     A65x = Ll*sin(q(6));
     A65y = Ll*cos(q(6));
     A65z = 0;
     A0Kr = A0Ar*[cos( q(6) ), sin( q(6) ), 0, A65x;
-               -sin( q(6) ), cos( q(6) ), 0, A65y;
-                          0,           0, 1, A65z;
-                          0,           0, 0,    1];
+                -sin( q(6) ), cos( q(6) ), 0, A65y;
+                           0,           0, 1, A65z;
+                           0,           0, 0,    1];
 
     %% LINK POSITIONS
     A0Ul = (A0Hl(1:3,4) + A0Kl(1:3,4)) * 0.5; % Estimate of rCoM of UL L

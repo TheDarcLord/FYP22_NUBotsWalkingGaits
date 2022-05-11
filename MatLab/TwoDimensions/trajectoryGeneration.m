@@ -21,7 +21,7 @@ function [Q, V, A] = trajectoryGeneration(model, span, params)
     rLZ = params.r0Lg(2);
 
     rCX = params.r0CoMg(1);
-    rCY = 0;
+    rCY = params.r0CoMg(2);
     rCZ = params.r0CoMg(3);
 
     %% SPECIAL MATRICES
