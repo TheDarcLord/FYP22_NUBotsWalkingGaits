@@ -20,9 +20,9 @@ function [Q, V, A] = trajectoryGeneration(model, span, params)
     rLY = params.r0Lg(2);
     rLZ = params.r0Lg(3);
 
-%     rCX = params.r0CoMg(1);
-%     rCY = 0;
-%     rCZ = params.r0CoMg(3);
+    rCX = params.r0CoMg(1);
+    rCY = params.r0CoMg(2);
+    rCZ = params.r0CoMg(3);
 
     %% SPECIAL MATRICES
     D  = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!
@@ -53,8 +53,10 @@ function [Q, V, A] = trajectoryGeneration(model, span, params)
     elseif params.mode == 0                 % BOTH FIXED
         if rLX > rRX
             rAX = rLX;
+            rAZ = rLZ;
         else
             rAX = rRX;
+            rAZ = rRZ;
         end
         %---------------------------------------------
         q0 = [rCX               0       0;  %  X  Ẋ  Ẍ 
@@ -66,14 +68,14 @@ function [Q, V, A] = trajectoryGeneration(model, span, params)
         %---------------------------------------------
         q1 = [0.5*(rAX+rCX)     0.1     0;  %  X  Ẋ  Ẍ 
               rCY               0       0;  % qY vY aY
-              rCZ               0       0]; % qZ vZ aZ
+              0.5*(rAZ+rCZ)     0       0]; % qZ vZ aZ
         t1 = t0 + 3;
         tt1 = t1.^(0:5).';
         T1 = [tt1, D*tt1, D^2*tt1];
         %---------------------------------------------
         q2 = [rAX               0       0;  %  X  Ẋ  Ẍ 
               rCY               0       0;  % qY vY aY
-              rCZ               0       0]; % qZ vZ aZ
+              rAZ               0       0]; % qZ vZ aZ
         t2 = model.tspan(span(end));
         tt2 = t2.^(0:5).';
         T2 = [tt2, D*tt2, D^2*tt2];

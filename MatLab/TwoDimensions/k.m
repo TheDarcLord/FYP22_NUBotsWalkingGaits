@@ -141,20 +141,22 @@ function [xe, TAE, HTs] = k(q, params)
                         sin(sigT12),  cos(sigT12), 0, A1Hy;
                                   0,            0, 1,  -H/2;
                                   0,            0, 0,    1];
-        % A0A * A14 = A04
-            A14x = -Lu*sin(sigT12)-Ll*sin(q(1));
-            A14y =  Lu*cos(sigT12)+Ll*cos(q(1));
-        HTs.A04  = A0L*[cos(sigT13), -sin(sigT13), 0, A14x;
-                        sin(sigT13),  cos(sigT13), 0, A14y;
-                                  0,            0, 1,   -H;
-                                  0,            0, 0,    1];
-        % A0A * A15 = A05
-            A15x =  Lu*(sin(sigT14)-sin(sigT12))-Ll*sin(q(1));
-            A15y =  Lu*(cos(sigT12)-cos(sigT14))+Ll*cos(q(1));
-        HTs.A05  = A0L*[cos(sigT14), -sin(sigT14), 0,  A15x;
-                        sin(sigT14),  cos(sigT14), 0,  A15y;
-                                  0,            0, 1,    -H;
-                                  0,            0, 0,     1];
+
+        % A06 * A64 = A04
+            A64x = Lu*sin(sigT56)+Ll*sin(q(6));
+            A64y = Lu*cos(sigT56)+Ll*cos(q(6));
+        HTs.A04  = A0R*[cos(sigT56), sin(sigT56), 0, A64x;
+                       -sin(sigT56), cos(sigT56), 0, A64y;
+                                  0,           0, 1,    0;
+                                  0,           0, 0,    1];
+        % A06 * A65 = A05
+            A65x = Ll*sin(q(6));
+            A65y = Ll*cos(q(6));
+        HTs.A05  = A0R*[cos( q(6) ), sin( q(6) ), 0, A65x;
+                       -sin( q(6) ), cos( q(6) ), 0, A65y;
+                                  0,           0, 1,    0;
+                                  0,           0, 0,    1];
+        
         % A0A * T16 = A06
         HTs.A06 = A0R;
     elseif params.mode == 1
