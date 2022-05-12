@@ -13,17 +13,19 @@ model.xe            = zeros(6,length(model.tspan));  % xe    [XYZϕθΨ]ᵀ
 model.r0Lg          = zeros(3,length(model.tspan));  % A0EL  [XYZ]ᵀ
 model.r0Rg          = zeros(3,length(model.tspan));  % A0ER  [XYZ]ᵀ
 model.r0Hg          = zeros(3,length(model.tspan));  % A0H   [XYZ]ᵀ
-%model.rCoM          = zeros(3,length(model.tspan)); % rCoM    [XYZ]ᵀ
+model.r0CoMg        = zeros(3,length(model.tspan));  % r0CoMg  [XYZ]ᵀ
 
 % Physical Parameters
 params.fibula       = 0.5;
 params.femur        = 0.5;
 params.HipWidth     = 0.25;
+params.ServoSize    = 0.1;
+
 params.StepSize     = 0.4;
 params.r0Lg         = zeros(3,1);  % Right Position from 0rigin in Global
 params.r0Hg         = zeros(3,1);  % Waist Position from 0rigin in Global
 params.r0Rg         = zeros(3,1);  % Left  Position from 0rigin in Global
-%params.r0CoMg       = zeros(3,1);  % CoM   Position from 0rigin in Global
+params.r0CoMg       = zeros(3,1);  % CoM   Position from 0rigin in Global
 params.mode         = -1;          % LEFT  FIXED - FKM T16
 %                      0;          % BOTH  FIXED - FKM T1H T6H
 %                      1;          % RIGHT FIXED - FKM T61
@@ -49,8 +51,12 @@ model.q0 = [    0;     % θ₁
                 0];    % θ₁₂   
 
 % % BEGIN DEBUG 
-% params.mode         =  1;
-%     [xe, HTs]       =  k(model.q0, params);
+%     params.mode     = -1;
+%     [xe, HTs]       = k(model.q0, params);
+%     params.r0Lg     = HTs.A0EL(1:3,4);
+%     params.r0Hg     = HTs.A0H(1:3,4);
+%     params.r0Rg     = HTs.A0ER(1:3,4);
+%     params.r0CoMg   = rCoM(model.q0, params);
 % % MAIN COMPONENTS
 %     figure(1)
 %         hold on
@@ -138,6 +144,10 @@ model.q0 = [    0;     % θ₁
 %         % END EFFECTOR LEFT!
 %         r0EL = HTs.A0EL(1:3,4);
 %         plot3(r0EL(3), r0EL(1), r0EL(2), 'co', 'LineWidth',3);      % J ONE
+% 
+%         % Plot the CoM
+%         r0CoM = params.r0CoMg;
+%         plot3(r0CoM(3),r0CoM(1),r0CoM(2), 'ro', 'LineWidth',1.5);
 %         
 %         axis([          -1,            1, ...
 %               (r0H(1))-1.1, (r0H(1)+1.1), ...
@@ -151,14 +161,13 @@ model.q(:,1)            = model.q0;
 [model.xe(:,1), HTs]    = k(model.q0, params);
 
 model.r0Rg(:,1)         = HTs.A0ER(1:3,4);
+    params.r0Rg         = model.r0Rg(:,1);
 model.r0Lg(:,1)         = HTs.A0EL(1:3,4);
+    params.r0Lg         = model.r0Lg(:,1);
 model.r0Hg(:,1)         = HTs.A0H(1:3,4);
-
-params.r0Lg             = model.r0Lg(:,1);
-params.r0Rg             = model.r0Rg(:,1);
-params.r0Hg             = model.r0Hg(:,1);
-%model.rCoM(:,1)         = rCoM(HTs,params);
-%params.r0CoMg           = model.rCoM(:,1);
+    params.r0Hg         = model.r0Hg(:,1);
+model.r0CoMg(:,1)       = rCoM(model.q(:,1),params);
+    params.r0CoMg       = model.r0CoMg(:,1);
 
 % Trajectory Generation
 [Q1,~,~] = trajectoryGeneration(model, 1:61,params);
@@ -173,8 +182,8 @@ for i=2:61
      params.r0Rg    = model.r0Rg(:,i);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
      params.r0Hg    = model.r0Hg(:,i);
-%     model.rCoM(:,i) = rCoM(model.q(:,i),params);
-%      params.r0CoMg  = model.rCoM(:,i);
+    model.r0CoMg(:,i) = rCoM(model.q(:,i),params);
+     params.r0CoMg  = model.r0CoMg(:,i);
 end
 
 
@@ -192,8 +201,8 @@ for i=62:121
      params.r0Rg    = model.r0Rg(:,i);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
      params.r0Hg    = model.r0Hg(:,i);
-%     model.rCoM(:,i) = rCoM(model.q(:,i),params);
-%      params.r0CoMg  = model.rCoM(:,i);
+    model.r0CoMg(:,i) = rCoM(model.q(:,i),params);
+     params.r0CoMg  = model.r0CoMg(:,i);
 end
 
 params.mode = -1;
@@ -210,8 +219,8 @@ for i=122:181
      params.r0Rg    = model.r0Rg(:,i);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
      params.r0Hg    = model.r0Hg(:,i);
-%     model.rCoM(:,i) = rCoM(model.q(:,i),params);
-%      params.r0CoMg  = model.rCoM(:,i);
+    model.r0CoMg(:,i) = rCoM(model.q(:,i),params);
+     params.r0CoMg  = model.r0CoMg(:,i);
 end
 
 params.mode = 1;
@@ -228,8 +237,8 @@ for i=182:241
      params.r0Rg    = model.r0Rg(:,i);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
      params.r0Hg    = model.r0Hg(:,i);
-%     model.rCoM(:,i) = rCoM(model.q(:,i),params);
-%      params.r0CoMg  = model.rCoM(:,i);
+    model.r0CoMg(:,i) = rCoM(model.q(:,i),params);
+     params.r0CoMg  = model.r0CoMg(:,i);
 end
 
 toc % FINISH TIMING
@@ -277,8 +286,8 @@ figure('Name','Foot,Waist,CoM Movement')
         'g-','LineWidth',2);
     plot3(model.r0Hg(3,:),model.r0Hg(1,:),model.r0Hg(2,:),...
         'm-','LineWidth',2);
-%     plot3(model.rCoM(3,:),model.rCoM(1,:),model.rCoM(2,:),...
-%         'r-','LineWidth',1);
+    plot3(model.r0CoMg(3,:),model.r0CoMg(1,:),model.r0CoMg(2,:),...
+        'r-','LineWidth',1);
 
     legend('+Z','+X','+Y','Left','Right','Waist', 'CoM');
     axis([-(params.HipWidth+0.2) 0.2 min(model.r0Hg(1,:))-0.1 max(model.r0Hg(1,:))+0.2 0 2]);
@@ -297,30 +306,20 @@ for i=1:length(model.tspan)
     txt = " Time: " + num2str(model.tspan(i)) + " sec";
     text(0,2,2,txt)
     if i > 181
-        params.r0Lg     = model.r0Lg(:,181);
-        params.r0Rg     = model.r0Rg(:,181);
-        params.r0Hg     = model.r0Hg(:,181);
-%        params.r0CoMg   = model.rCoM(:,181);
         params.mode     =  1;
     elseif i > 121
-        params.r0Lg     = model.r0Lg(:,121);
-        params.r0Rg     = model.r0Rg(:,121);
-        params.r0Hg     = model.r0Hg(:,121);
-%        params.r0CoMg   = model.rCoM(:,121);
         params.mode     = -1;
     elseif i > 61
-        params.r0Lg     = model.r0Lg(:,61);
-        params.r0Rg     = model.r0Rg(:,61);
-        params.r0Hg     = model.r0Hg(:,61);
-%        params.r0CoMg   = model.rCoM(:,61);
         params.mode     =  1;
     else 
-        params.r0Lg     = model.r0Lg(:,1);
-        params.r0Rg     = model.r0Rg(:,1);
-        params.r0Hg     = model.r0Hg(:,1);
-%        params.r0CoMg   = model.rCoM(:,1);
         params.mode     = -1;
     end
+    
+    params.r0Lg     = model.r0Lg(:,i);
+    params.r0Rg     = model.r0Rg(:,i);
+    params.r0Hg     = model.r0Hg(:,i);
+    params.r0CoMg   = model.r0CoMg(:,i);
+
     set(gca,'Color','#CCCCCC');
     [~, HTs]    = k(model.q(:,i), params);
 
@@ -408,9 +407,7 @@ for i=1:length(model.tspan)
     'k', 'LineWidth',2);
     plot3(r012(3), r012(1), r012(2), 'bx', 'LineWidth',2);            % J TWELEVE
 
-    % Plot the CoM
-%     r0CoM = model.rCoM(:,i);
-%     plot3(r0CoM(3),r0CoM(1),r0CoM(2), 'rx', 'LineWidth',1.5);
+    plot3(params.r0CoMg(3),params.r0CoMg(1),params.r0CoMg(2), 'ro', 'LineWidth',1.5);
 
     %    [         MIN,          MAX, ...
     axis([          -1,            1, ...

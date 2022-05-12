@@ -21,44 +21,12 @@ function [xe, HTs] = k(q, params)
     Ll     = params.fibula;     % Lower Leg
     Lu     = params.femur;      % Upper Leg
     H      = params.HipWidth;
-    S      = 0.1;              % SERVO DIST
+    S      = params.ServoSize;  % SERVO DIST
     
     A0EL    = [eye(3), params.r0Lg;  % LEFT Ankle Position from 
               zeros(1,3),       1]; %           0rigin in Global
     A0ER    = [eye(3), params.r0Rg;  % RIGHT Ankle Position from 
               zeros(1,3),       1]; %           0rigin in Global
-
-    T  = @(x,y,z)   [eye(3), [x;y;z];
-                      0,0,0,      1];
-    Rz = @(psi)     [cos(psi), -sin(psi), 0, 0;
-                     sin(psi),  cos(psi), 0, 0;
-                            0,         0, 1, 0;
-                            0,         0, 0, 1];
-    Ry = @(theta)   [cos(theta), 0, sin(theta), 0;
-                              0, 1,          0, 0;
-                    -sin(theta), 0, cos(theta), 0;
-                              0, 0,          0, 1];
-    Rx = @(phi)     [1,        0,         0, 0;
-                     0, cos(phi), -sin(phi), 0;
-                     0, sin(phi),  cos(phi), 0;
-                     0,        0,         0, 1];
-
-    RyPI_2  = [0  0  1  0;
-               0  1  0  0;
-              -1  0  0  0;
-               0  0  0  1];
-    RyPI_N2 = [0  0 -1  0;
-               0  1  0  0;
-               1  0  0  0;
-               0  0  0  1];
-    RxPI_2  = [1  0  0  0;
-               0  0 -1  0;
-               0  1  0  0;
-               0  0  0  1];
-    RxPI_N2 = [1  0  0  0;
-               0  0  1  0;
-               0 -1  0  0;
-               0  0  0  1];
     
     %% JOINT VARIABLES
     q1  = q(1);     % θ₁
@@ -73,17 +41,6 @@ function [xe, HTs] = k(q, params)
     q10 = q(10);    % θ₁₀
     q11 = q(11);    % θ₁₁
     q12 = q(12);    % θ₁₂
-
-%     sigT        = sum(q);        % Σθᵢ    i=1:6
-%     sigT15      = sum(q(1:5));   % Σθᵢ    i=1:5
-%     sigT14      = sum(q(1:4));   % Σθᵢ    i=1:4
-%     sigT13      = sum(q(1:3));   % Σθᵢ    i=1:3
-%     sigT12      = sum(q(1:2));   % Σθᵢ    i=1:2
-% 
-%     sigT26      = sum(q(2:6));   % Σθᵢ    i=2:6
-%     sigT36      = sum(q(3:6));   % Σθᵢ    i=3:6
-%     sigT46      = sum(q(4:6));   % Σθᵢ    i=4:6
-%     sigT56      = sum(q(5:6));   % Σθᵢ    i=5:6
 
     %% HOMOGENOUS TRANSFORM
     if params.mode == -1        % LEFT FIXED
