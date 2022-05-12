@@ -422,12 +422,12 @@ function [xe, HTs] = k(q, params)
               theta;      % θ
               psi];       % Ψ
     else
-        Lphi   = 0;%atan2( TAEL(3,2), TAEL(3,3) );  
-        Ltheta = 0;%atan2(-TAEL(3,1), sqrt( TAEL(3,2)^2 + TAEL(3,3)^2 ) );
-        Lpsi   = 0;%atan2( TAEL(2,1), TAEL(1,1) );
-        Rphi   = 0;%atan2( TAER(3,2), TAER(3,3) );  
-        Rtheta = 0;%atan2(-TAER(3,1), sqrt( TAER(3,2)^2 + TAER(3,3)^2 ) );
-        Rpsi   = 0;%atan2( TAER(2,1), TAER(1,1) );
+        Lphi   = atan2( TAEL(3,2), TAEL(3,3) );  
+        Ltheta = atan2(-TAEL(3,1), sqrt( TAEL(3,2)^2 + TAEL(3,3)^2 ) );
+        Lpsi   = atan2( TAEL(2,1), TAEL(1,1) );
+        Rphi   = atan2( TAER(3,2), TAER(3,3) );  
+        Rtheta = atan2(-TAER(3,1), sqrt( TAER(3,2)^2 + TAER(3,3)^2 ) );
+        Rpsi   = atan2( TAER(2,1), TAER(1,1) );
         
         Lxe    = [TAEL(1:3,4);Lphi;Ltheta;Lpsi];
         Rxe    = [TAER(1:3,4);Rphi;Rtheta;Rpsi];
