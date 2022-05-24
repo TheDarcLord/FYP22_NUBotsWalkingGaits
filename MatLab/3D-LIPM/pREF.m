@@ -1,8 +1,9 @@
-function pREF = pREF(t)
+function pREF = pREF(t, params)
 % pREF(t)   X
 %           Next Increment ...
-    stepSize = 0.075;
+    stepSize = params.stepSize;
     pREF = zeros(1,length(t));
+    
     for i=1:length(pREF)
         if     t(i) < 2
             pREF(i) = stepSize*0;

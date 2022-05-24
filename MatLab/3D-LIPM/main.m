@@ -2,14 +2,15 @@ clc
 clear
 
 %% Parameters
-params.timeHorizon  =  0.1;                                  % Seconds 
-params.timestep     =  0.01;                                 % Seconds
-params.Nl           =  params.timeHorizon / params.timestep; % INTEGER
+params.timeHorizon  =  1;                                       % Seconds 
+params.timestep     =  0.01;                                    % Seconds
+params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
+params.stepSize     =  1;
 params.kx           =  0;
 params.ky           =  0;
-params.zc           =  0.445;   % m     - Approximate Height of the CoM 
+params.zc           =  0.49;   % m     - Approximate Height of the CoM 
 params.g            = -9.81;    % ms⁻²  - Acceleration due to Gravity
-params.m            =  7.4248;  % kg    - Total Mass of a NuGus
+params.m            =  7;  % kg    - Total Mass of a NuGus
 
 %% Weights for controller `Performance Index`
 % Design of an optimal controller for a discrete-time system subject
@@ -26,7 +27,7 @@ params.weights.Qe   = 1;     % Increasing punishes ZMP Reference Error
 params.weights.Qx   = [0 0 0;   % (1,1) Increasing punishes displacement
                        0 0 0;   % (2,2) Increasing punishes velocity
                        0 0 0];  % (3,3) Increasing punishes acceleration
-params.weights.R    = 1e-4;     % Increasing Punish Control Action
+params.weights.R    = 1e-3;     % Increasing Punish Control Action
 
 %% Model
 model.t             = 1:params.timestep:10;
@@ -36,18 +37,14 @@ model.pREF          = zeros(1,length(model.t));
 model.u             = zeros(1,length(model.t));
 
 %% Initial Condidtions
-    model.X0     = [0;              % Position
-                    0;              % Velocity 
-                    0];             % Acceleration
-    model.pREF = pREF(model.t);     % Load ZMPₓ Reference
+    model.X0     = [0;                      % Position
+                    0;                      % Velocity 
+                    0];                     % Acceleration
+    model.pREF = pREF(model.t, params);     % Load ZMPₓ Reference
 
 %% Simulation Loop
-for k=1:length(model.t)
-        model.u(:,k)   =   uk(model,                   k, params);
-        model.y(:,k)   =    y(model.x(:,k),               params);
-    if model.t(k) < model.t(end)
-        model.x(:,k+1) = xKp1(model.x(:,k), model.u(:,k), params);
-    end
+for i=1:length(model.t)
+    [ZMPk, CoMk, model] = LIPM(model,i,params);
 end
 
 %% Figure
