@@ -1,4 +1,4 @@
-function [ZMPk, CoMk, model] = LIPM2D(model,index,params)
+function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
 % LIPM: Discretised Linear Inverted Pendulum
 %   Detailed explanation goes here
     % Params
