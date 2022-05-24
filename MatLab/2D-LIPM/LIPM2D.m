@@ -18,7 +18,7 @@ function [ZMPk, CoMk, model] = LIPM2D(model,index,params)
     % Discretised State Equations
         Ad      = [1,  T,  (T^2)/2;
                    0,  1,        T;
-                   0,  1,        1];
+                   0,  0,        1];
         Cd      = [1,  0,  -(zc/g)];
         Bd      = [(T^3)/6; (T^2)/2; T];
     
