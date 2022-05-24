@@ -16,11 +16,20 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
         Xk      = model.x(:,k);
 
     % Discretised State Equations
-        Ad      = [1,  T,  (T^2)/2;
-                   0,  1,        T;
-                   0,  1,        1];
-        Cd      = [1,  0,  -(zc/g)];
-        Bd      = [(T^3)/6; (T^2)/2; T];
+        Ad      = [1,  T,  (T^2)/2,  0,  0,        0;   % x
+                   0,  1,        T,  0,  0,        0;   % x'
+                   0,  1,        1,  0,  0,        0;   % x"
+                   0,  0,        0,  1,  T,  (T^2)/2;   % y
+                   0,  0,        0,  0,  1,        T;   % y'
+                   0,  0,        0,  0,  1,        1];  % y"
+        Cd      = [1,  0,  -(zc/g), 0,  0,        0;
+                   0,  0,        0, 1,  0,  -(zc/g)];
+        Bd      = [(T^3)/6,       0;
+                   (T^2)/2,       0;
+                         T,       0;
+                         0, (T^3)/6;
+                         0, (T^2)/2;
+                         0,       T];
     
     % Performace Index Weights
         Qe = params.weights.Qe;
@@ -53,22 +62,26 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
         % State Feedback
             Gx           = gainCore * K_hat * F_hat;
         % Feedforward / Preview Action
+            y_demand     = pREF(fwdT, params);
             Ac_hat       =  A_hat - B_hat * gainCore * K_hat* A_hat;
             X_hat        =  zeros(p+n,p,NL);
-            Gp           =  zeros(p,NL);
-            Gp(1)        = -Gi;
+            Gp           =  zeros(p,p,NL);
+            Gp(:,:,1)    = -Gi;
             X_hat(:,:,1) = -Ac_hat' * K_hat*I_hat;
+            Gp_gain      = gainCore * X_hat(:,:,1) * y_demand(:,1);
         for l=2:NL
-            Gp(l)        = gainCore * X_hat(:,:,( l - 1 ));
+            Gp(:,:,l)    = gainCore * X_hat(:,:,( l - 1 ));
             X_hat(:,:,l) = -Ac_hat' * X_hat(:,:,( l - 1 ));
+            Gp_gain      = Gp_gain + gainCore * X_hat(:,:,l) * y_demand(:,l);
         end
 
-            
     % Optimal Incremental Controller:
-        y_demand   = pREF(fwdT, params);
-        sigmaError = model.y(1:k) - model.pREF(1:k);
-    
-        Uk = -Gi*sum(sigmaError) -Gx*model.x(:,k) -sum( Gp .* y_demand );
+        
+        sigmaError = model.y(:,1:k) - model.pREF(:,1:k);
+        Uk = -Gi*[sum(sigmaError(1,:));
+                  sum(sigmaError(2,:))] ...
+             -Gx*model.x(:,k)           ...
+             -Gp_gain;
 
     % Simulation
         model.u(:,k)   = Uk;

@@ -2,7 +2,7 @@ clc
 clear
 
 %% Parameters
-params.timeHorizon  =  1.5;                                     % Seconds 
+params.timeHorizon  =  1;                                     % Seconds 
 params.timestep     =  0.01;                                    % Seconds
 params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
 params.stepSize     =  0.075;
@@ -23,40 +23,56 @@ params.m            =  7.4248;  % kg    - Total Mass of a NuGus
 %        e(i): ZMPₓ(i) - Yₓ     aka Tracking Error 
 %       Δx(i): x(i) - x(i-1)    aka Incremental State Vector
 %       Δu(i): u(i) - u(i-1)    aka Incremental Control Vector
-params.weights.Qe   = 1;     % Increasing punishes ZMP Reference Error
-params.weights.Qx   = [0 0 0;   % (1,1) Increasing punishes displacement
-                       0 0 0;   % (2,2) Increasing punishes velocity
-                       0 0 0];  % (3,3) Increasing punishes acceleration
-params.weights.R    = 1e-6;     % Increasing Punish Control Action
+params.weights.Qe   = 1e0  * eye(2,2);     
+params.weights.Qx   =      zeros(6,6);
+params.weights.R    = 1e-3 * eye(2,2);
 
 %% Model
 model.t             = 1:params.timestep:10;
-model.x             = zeros(3,length(model.t));
-model.y             = zeros(1,length(model.t));
-model.pREF          = zeros(1,length(model.t));
-model.u             = zeros(1,length(model.t));
+model.x             = zeros(6,length(model.t));
+model.y             = zeros(2,length(model.t));
+model.pREF          = zeros(2,length(model.t));
+model.u             = zeros(2,length(model.t));
 
 %% Initial Condidtions
     model.X0     = [0;                      % Position
+                    0;                      % Velocity 
+                    0;                     % Acceleration
+                    0;                      % Position
                     0;                      % Velocity 
                     0];                     % Acceleration
     model.pREF = pREF(model.t, params);     % Load ZMPₓ Reference
 
 %% Simulation Loop
 for i=1:length(model.t)
-    [ZMPk, CoMk, model] = LIPM2D(model,i,params);
+    [ZMPk, CoMk, model] = LIPM3D(model,i,params);
 end
 
 %% Figure
 TRAJECTORIES = figure(1);
     clf
+    subplot(1,2,1)
     hold on
     grid on
-    plot(model.t,model.pREF,"k--","LineWidth",2)
-    plot(model.t,model.y,"g-","LineWidth",2)
+    plot(model.t,model.pREF(1,:),"k--","LineWidth",2)
+    plot(model.t,model.y(1,:),"g-","LineWidth",2)
     plot(model.t,model.x(1,:), "r-","LineWidth",2)
     legend("ZMP Ref","ZMP","CoM")
     ylabel("{\bfDisplacement X} ({\itmetres})");
+    xlabel("{\bfTime} ({\itsecs}) \newline{\bfPeriod = "            + ...
+            num2str(params.timestep)                                + ...
+            "} ({\itsecs})");
+    title("Discretised Linear Inverted Pendulum \newline... with "  + ...
+           num2str(params.timeHorizon)                              + ...
+           " second Time Horizon");
+    subplot(1,2,2)
+    hold on
+    grid on
+    plot(model.t,model.pREF(2,:),"k--","LineWidth",2)
+    plot(model.t,model.y(2,:), "g-","LineWidth",2)
+    plot(model.t,model.x(4,:), "r-","LineWidth",2)
+    legend("ZMP Ref","ZMP","CoM")
+    ylabel("{\bfDisplacement Y} ({\itmetres})");
     xlabel("{\bfTime} ({\itsecs}) \newline{\bfPeriod = "            + ...
             num2str(params.timestep)                                + ...
             "} ({\itsecs})");
@@ -84,13 +100,21 @@ ANIMATION = figure(2);
         surf(X,Y,Z(X,Y), ...
              "FaceColor","r","LineStyle","none","FaceAlpha",0.1);
     % Animation -> Pendulum
-        plot3(              model.y(:,j),      0,            0,"kx",...
+        plot3( model.y(1,j), model.y(2,j), 0,           "kx",...
              "LineWidth",2,"MarkerSize",5);
-        plot3(              model.x(1,j),      0,    params.zc,"ko",...
+        plot3( model.y(1,1:j), model.y(2,1:j), ...
+               zeros(1,length(model.t(1:j))),           "k-", ... TRACE
+             "LineWidth",1);
+        plot3( model.x(1,j), model.x(4,j), params.zc,   "ko",...
              "LineWidth",2,"MarkerSize",10);
-        plot3(               model.x(1,j),     0,    params.zc,"rx",...
+        plot3( model.x(1,j), model.x(4,j), params.zc,   "rx",...
              "LineWidth",2,"MarkerSize",2);
-        plot3([model.y(:,j) model.x(1,j)], [0 0],[0 params.zc],"k-",...
+        plot3( model.x(1,1:j), model.x(4,1:j),...
+             params.zc*ones(1,length(model.t(1:j))),    "r-",... TRACE
+             "LineWidth",1);
+        plot3([model.y(1,j) model.x(1,j)], ...
+              [model.y(2,j) model.x(4,j)], ...
+              [0 params.zc],"k-",...
              "LineWidth",2)
     % Legend
         title("Discretised LIPM Animation: " + model.t(j) + " sec")
@@ -98,4 +122,5 @@ ANIMATION = figure(2);
                "Z_{c} Height","Z_{c} Plane", ... Zc Plane
                "ZMP_{x}","CoM_{x}",          ... ZMP + CoM
                "Location","east")
+        pause(0.001)
     end
