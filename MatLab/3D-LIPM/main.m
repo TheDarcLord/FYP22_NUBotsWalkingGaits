@@ -44,7 +44,7 @@ model.u             = zeros(1,length(model.t));
 
 %% Simulation Loop
 for i=1:length(model.t)
-    [ZMPk, CoMk, model] = LIPM(model,i,params);
+    [ZMPk, CoMk, model] = LIPM2D(model,i,params);
 end
 
 %% Figure
