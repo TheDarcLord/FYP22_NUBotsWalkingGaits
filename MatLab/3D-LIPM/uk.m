@@ -2,10 +2,13 @@ function uk = uk(model, k, params)
 % uk        X
 %           Next Increment ... 
     %% Params
-    T   = params.timestep;
-    zc  = params.zc;
-    g   = params.g;
-    Nl  = params.Nl;
+    T       = params.timestep;
+    T_hrzn  = params.timeHorizon;
+    Nl      = params.Nl;
+    zc      = params.zc;
+    g       = params.g;
+
+    fT  = model.t(k)+T :T: model.t(k) + T_hrzn;
 
     % Weights
     Qe = params.weights.Qe;
@@ -36,20 +39,28 @@ function uk = uk(model, k, params)
 
     K_hat = dare(A_hat,B_hat,Q_hat,R);
 
+    
     %% Optimal Incremental Controller - Gains:
-    common      = R + B_hat'*K_hat*B_hat;
-    commonINV   = common \ eye(size(common));
-    Gi          = commonINV * B_hat' * K_hat * I_hat;
-    Gx          = commonINV * B_hat' * K_hat * F_hat;
-    Ac          = A_hat - B_hat*common*B_hat'*K_hat*A_hat;
-    Gp          = @(l) -commonINV*B_hat'* (Ac')^(l - 1) * K_hat*I_hat;
+    common       = R + B_hat'*K_hat*B_hat;
+    commonINV    = common \ eye(size(common));
+    % Integral Action on Tracking Error
+    Gi           = commonINV * B_hat' * K_hat * I_hat;
+    % State Feedback
+    Gx           = commonINV * B_hat' * K_hat * F_hat;
+    % Feedforward / Preview Action
+    Ac_hat       = A_hat - B_hat*common*B_hat'*K_hat*A_hat;
+    X_hat        = zeros(p+n,p,Nl);
+    Gp           = zeros(p,Nl);
+    Gp(1)        = -Gi;
+    X_hat(:,:,1) = -Ac_hat'*K_hat*I_hat;
+    for l=2:Nl
+        Gp(l)           = commonINV * B_hat' * X_hat(:,:,( l - 1 ));
+        X_hat(:,:,l)    = -Ac_hat' * X_hat(:,:,( l - 1 ));
+    end
     
     %% Optimal Incremental Controller:
-    sigInput = zeros(1,length(Nl));
-    for j=1:Nl
-        sigInput(j) = Gp(j) * pREF(model.t(k) + T*j);
-    end
-    sigError = model.y(1:k) - model.pREF(1:k);
+    y_demand   = pREF(fT);
+    sigmaError = model.y(1:k) - model.pREF(1:k);
 
-    uk = -Gi*sum(sigError) -Gx*model.x(:,k) -sum(sigInput);
+    uk = -Gi*sum(sigmaError) -Gx*model.x(:,k) -sum( Gp .* y_demand );
 end
