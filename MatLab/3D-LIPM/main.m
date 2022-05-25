@@ -2,14 +2,14 @@ clc
 clear
 
 %% Parameters
-params.timeHorizon  =  1;                                     % Seconds 
+params.timeHorizon  =  1.5;                                     % Seconds 
 params.timestep     =  0.01;                                    % Seconds
 params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
-params.stepSize     =  0.075;
+params.stepSize     =  0.1;
 params.kx           =  0;
 params.ky           =  0;
-params.zc           =  0.49;    % m     - Approximate Height of the CoM 
-params.g            = -9.81;    % ms⁻²  - Acceleration due to Gravity
+params.zc           =  0.495;   % m     - Approximate Height of the CoM 
+params.g            =  9.81;    % ms⁻²  - Acceleration due to Gravity
 params.m            =  7.4248;  % kg    - Total Mass of a NuGus
 
 %% Weights for controller `Performance Index`
@@ -37,7 +37,7 @@ model.u             = zeros(2,length(model.t));
 %% Initial Condidtions
     model.X0     = [0;                      % Position
                     0;                      % Velocity 
-                    0;                     % Acceleration
+                    0;                      % Acceleration
                     0;                      % Position
                     0;                      % Velocity 
                     0];                     % Acceleration
@@ -48,16 +48,22 @@ for i=1:length(model.t)
     [ZMPk, CoMk, model] = LIPM3D(model,i,params);
 end
 
+%% Sanity Check
+Tzmp = @(px, x, ddx) params.m * (params.g *(x - px)  - ddx*params.zc);
+
 %% Figure
 TRAJECTORIES = figure(1);
     clf
     subplot(1,2,1)
     hold on
     grid on
+    plot(model.t,Tzmp(model.y(1,:),model.x(1,:),model.x(3,:)),...
+        'm-','LineWidth',2)
     plot(model.t,model.pREF(1,:),"k--","LineWidth",2)
     plot(model.t,model.y(1,:),"g-","LineWidth",2)
     plot(model.t,model.x(1,:), "r-","LineWidth",2)
-    legend("ZMP Ref","ZMP","CoM")
+    legend({'{\tau_{x}} about ZMP_{x}','ZMP Ref','ZMP_{x}','CoM_x'},...
+        "Location","east",'FontSize',11)
     ylabel("{\bfDisplacement X} ({\itmetres})");
     xlabel("{\bfTime} ({\itsecs}) \newline{\bfPeriod = "            + ...
             num2str(params.timestep)                                + ...
@@ -68,10 +74,13 @@ TRAJECTORIES = figure(1);
     subplot(1,2,2)
     hold on
     grid on
+    plot(model.t,Tzmp(model.y(2,:),model.x(4,:),model.x(6,:)),...
+        'm-','LineWidth',2)
     plot(model.t,model.pREF(2,:),"k--","LineWidth",2)
     plot(model.t,model.y(2,:), "g-","LineWidth",2)
     plot(model.t,model.x(4,:), "r-","LineWidth",2)
-    legend("ZMP Ref","ZMP","CoM")
+    legend({'{\tau_{y}} about ZMP_{y}','ZMP Ref','ZMP_{y}','CoM_y'},...
+        "Location","east",'FontSize',11)
     ylabel("{\bfDisplacement Y} ({\itmetres})");
     xlabel("{\bfTime} ({\itsecs}) \newline{\bfPeriod = "            + ...
             num2str(params.timestep)                                + ...

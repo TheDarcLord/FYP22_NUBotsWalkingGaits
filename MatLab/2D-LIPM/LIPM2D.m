@@ -67,17 +67,17 @@ function [ZMPk, CoMk, model] = LIPM2D(model,index,params)
             X_hat        =  zeros(p+n,NL);
             Gp           =  zeros(p,NL);
             Gp(1)        = -Gi;
-            X_hat(:,1) = -Ac_hat' * K_hat*I_hat;
+            X_hat(:,1)   = -Ac_hat' * K_hat*I_hat;
         for l=2:NL
             Gp(l)        = gainCore * X_hat(:,( l - 1 ));
-            X_hat(:,l) = -Ac_hat' * X_hat(:,( l - 1 ));
+            X_hat(:,l)   = Ac_hat' * X_hat(:,( l - 1 ));
         end
 
         % Alternative Feedforward / Preview Action
             Gd      = zeros(p,NL);
             f_Gd    = @(l) -gainCore * ((Ac_hat')^(l-1) * K_hat * I_hat);
         for l=1:NL
-            Gd(l)        = f_Gd(l);
+            Gd(l)   = f_Gd(l);
         end
 
         % Optimal Incremental Controller:

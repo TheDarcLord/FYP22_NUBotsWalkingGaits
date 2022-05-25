@@ -2,14 +2,14 @@ clc
 clear
 
 %% Parameters
-params.timeHorizon  =  1;                                     % Seconds 
+params.timeHorizon  =  1.5;                                     % Seconds 
 params.timestep     =  0.01;                                    % Seconds
 params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
 params.stepSize     =  0.125;
 params.kx           =  0;
 params.ky           =  0;
 params.zc           =  0.495;    % m     - Approximate Height of the CoM 
-params.g            = -9.81;    % ms⁻²  - Acceleration due to Gravity
+params.g            =  9.81;    % ms⁻²  - Acceleration due to Gravity
 params.m            =  7.4248;  % kg    - Total Mass of a NuGus
 
 %% Weights for controller `Performance Index`
@@ -27,7 +27,7 @@ params.weights.Qe   = 1;     % Increasing punishes ZMP Reference Error
 params.weights.Qx   = [0 0 0;   % (1,1) Increasing punishes displacement
                        0 0 0;   % (2,2) Increasing punishes velocity
                        0 0 0];  % (3,3) Increasing punishes acceleration
-params.weights.R    = 5e-4;     % Increasing Punish Control Action
+params.weights.R    = 1e-4;     % Increasing Punish Control Action
 
 %% Model
 model.t             = 1:params.timestep:10;

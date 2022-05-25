@@ -18,10 +18,10 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
     % Discretised State Equations
         Ad      = [1,  T,  (T^2)/2,  0,  0,        0;   % x
                    0,  1,        T,  0,  0,        0;   % x'
-                   0,  1,        1,  0,  0,        0;   % x"
+                   0,  0,        1,  0,  0,        0;   % x"
                    0,  0,        0,  1,  T,  (T^2)/2;   % y
                    0,  0,        0,  0,  1,        T;   % y'
-                   0,  0,        0,  0,  1,        1];  % y"
+                   0,  0,        0,  0,  0,        1];  % y"
         Cd      = [1,  0,  -(zc/g), 0,  0,        0;
                    0,  0,        0, 1,  0,  -(zc/g)];
         Bd      = [(T^3)/6,       0;
@@ -62,17 +62,20 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
         % State Feedback
             Gx           = gainCore * K_hat * F_hat;
         % Feedforward / Preview Action
-            y_demand     = pREF(fwdT, params);
-            Ac_hat       =  A_hat - B_hat * gainCore * K_hat* A_hat;
-            X_hat        =  zeros(p+n,p,NL);
-            Gp           =  zeros(p,p,NL);
-            Gp(:,:,1)    = -Gi;
-            X_hat(:,:,1) = -Ac_hat' * K_hat*I_hat;
-            Gp_gain      = gainCore * X_hat(:,:,1) * y_demand(:,1);
-        for l=2:NL
-            Gp(:,:,l)    = gainCore * X_hat(:,:,( l - 1 ));
-            X_hat(:,:,l) = -Ac_hat' * X_hat(:,:,( l - 1 ));
-            Gp_gain      = Gp_gain + gainCore * X_hat(:,:,l) * y_demand(:,l);
+                y_demand     = pREF(fwdT, params);
+                Gp_Yd        =  zeros(size(y_demand));
+                Ac_hat       =  A_hat - B_hat * gainCore * K_hat* A_hat;
+        if NL > 0
+                X_hat        =  zeros(p+n,p,NL);
+                Gp           =  zeros(p,p,NL);
+                Gp(:,:,1)    = -Gi;
+                X_hat(:,:,1) = -Ac_hat' * K_hat*I_hat;
+                Gp_Yd(:,1)   = Gp(:,:,1) * y_demand(:,1);
+            for l=2:NL
+                Gp(:,:,l)    = gainCore * X_hat(:,:,( l - 1 ));
+                X_hat(:,:,l) = Ac_hat'  * X_hat(:,:,( l - 1 ));
+                Gp_Yd(:,l)   = Gp(:,:,l) * y_demand(:,l);
+            end
         end
 
     % Optimal Incremental Controller:
@@ -81,7 +84,8 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
         Uk = -Gi*[sum(sigmaError(1,:));
                   sum(sigmaError(2,:))] ...
              -Gx*model.x(:,k)           ...
-             -Gp_gain;
+             -[sum(Gp_Yd(1,:));
+               sum(Gp_Yd(2,:))];
 
     % Simulation
         model.u(:,k)   = Uk;
