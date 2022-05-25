@@ -2,7 +2,7 @@ clc
 clear
 
 %% Parameters
-params.timeHorizon  =  1.5;                                     % Seconds 
+params.timeHorizon  =  3;                                     % Seconds 
 params.timestep     =  0.01;                                    % Seconds
 params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
 params.stepSize     =  0.1;
@@ -23,8 +23,8 @@ params.m            =  7.4248;  % kg    - Total Mass of a NuGus
 %        e(i): ZMPₓ(i) - Yₓ     aka Tracking Error 
 %       Δx(i): x(i) - x(i-1)    aka Incremental State Vector
 %       Δu(i): u(i) - u(i-1)    aka Incremental Control Vector
-params.weights.Qe   = 1e0  * eye(2,2);     
-params.weights.Qx   =      zeros(6,6);
+params.weights.Qe   =        eye(2,2);     
+params.weights.Qx   = 0    * eye(6,6);
 params.weights.R    = 1e-3 * eye(2,2);
 
 %% Model
