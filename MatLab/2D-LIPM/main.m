@@ -2,13 +2,13 @@ clc
 clear
 
 %% Parameters
-params.timeHorizon  =  1.5;                                     % Seconds 
+params.timeHorizon  =  1;                                     % Seconds 
 params.timestep     =  0.01;                                    % Seconds
 params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
-params.stepSize     =  0.075;
+params.stepSize     =  0.125;
 params.kx           =  0;
 params.ky           =  0;
-params.zc           =  0.49;    % m     - Approximate Height of the CoM 
+params.zc           =  0.495;    % m     - Approximate Height of the CoM 
 params.g            = -9.81;    % ms⁻²  - Acceleration due to Gravity
 params.m            =  7.4248;  % kg    - Total Mass of a NuGus
 
@@ -27,7 +27,7 @@ params.weights.Qe   = 1;     % Increasing punishes ZMP Reference Error
 params.weights.Qx   = [0 0 0;   % (1,1) Increasing punishes displacement
                        0 0 0;   % (2,2) Increasing punishes velocity
                        0 0 0];  % (3,3) Increasing punishes acceleration
-params.weights.R    = 1e-6;     % Increasing Punish Control Action
+params.weights.R    = 5e-4;     % Increasing Punish Control Action
 
 %% Model
 model.t             = 1:params.timestep:10;
@@ -35,6 +35,9 @@ model.x             = zeros(3,length(model.t));
 model.y             = zeros(1,length(model.t));
 model.pREF          = zeros(1,length(model.t));
 model.u             = zeros(1,length(model.t));
+model.gains.Gi      = zeros(1,length(model.t));
+model.gains.Gx      = zeros(1,length(model.t));
+model.gains.Gd      = zeros(1,length(model.t));
 
 %% Initial Condidtions
     model.X0     = [0;                      % Position
@@ -47,15 +50,21 @@ for i=1:length(model.t)
     [ZMPk, CoMk, model] = LIPM2D(model,i,params);
 end
 
+%% Sanity Checker
+Tzmp = @(px, x, ddx) params.m * (params.g *(x - px)  - ddx*params.zc);
+
 %% Figure
 TRAJECTORIES = figure(1);
     clf
     hold on
     grid on
+    plot(model.t,Tzmp(model.y,model.x(1,:),model.x(3,:)),...
+        'm-','LineWidth',2)
     plot(model.t,model.pREF,"k--","LineWidth",2)
     plot(model.t,model.y,"g-","LineWidth",2)
     plot(model.t,model.x(1,:), "r-","LineWidth",2)
-    legend("ZMP Ref","ZMP","CoM")
+    legend({'{\tau_{x}} about ZMP_{x}','ZMP Ref','ZMP_{x}','CoM_x'},...
+        "Location","east",'FontSize',11)
     ylabel("{\bfDisplacement X} ({\itmetres})");
     xlabel("{\bfTime} ({\itsecs}) \newline{\bfPeriod = "            + ...
             num2str(params.timestep)                                + ...
