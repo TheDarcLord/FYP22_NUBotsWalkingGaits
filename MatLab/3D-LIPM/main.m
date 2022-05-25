@@ -2,7 +2,7 @@ clc
 clear
 
 %% Parameters
-params.timeHorizon  =  3;                                     % Seconds 
+params.timeHorizon  =  1.5;                                     % Seconds 
 params.timestep     =  0.01;                                    % Seconds
 params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
 params.stepSize     =  0.1;
@@ -11,6 +11,8 @@ params.ky           =  0;
 params.zc           =  0.495;   % m     - Approximate Height of the CoM 
 params.g            =  9.81;    % ms⁻²  - Acceleration due to Gravity
 params.m            =  7.4248;  % kg    - Total Mass of a NuGus
+
+params.framerate    = 100;
 
 %% Weights for controller `Performance Index`
 % Design of an optimal controller for a discrete-time system subject
@@ -90,6 +92,8 @@ TRAJECTORIES = figure(1);
            " second Time Horizon");
 
 %% Animation
+% Preallocate IMAGE
+
 ANIMATION = figure(2);
     hold on
     grid on
@@ -110,11 +114,11 @@ ANIMATION = figure(2);
              "FaceColor","r","LineStyle","none","FaceAlpha",0.1);
     % Animation -> Pendulum
         plot3( model.y(1,j), model.y(2,j), 0,           "kx",...
-             "LineWidth",2,"MarkerSize",5);
+             "LineWidth",2,"MarkerSize",10);
         plot3( model.y(1,1:j), model.y(2,1:j), ...
                zeros(1,length(model.t(1:j))),           "k-", ... TRACE
              "LineWidth",1);
-        plot3( model.x(1,j), model.x(4,j), params.zc,   "ko",...
+        plot3( model.x(1,j), model.x(4,j), params.zc,   "ro",...
              "LineWidth",2,"MarkerSize",10);
         plot3( model.x(1,j), model.x(4,j), params.zc,   "rx",...
              "LineWidth",2,"MarkerSize",2);
@@ -129,7 +133,19 @@ ANIMATION = figure(2);
         title("Discretised LIPM Animation: " + model.t(j) + " sec")
         legend("X+","Y+","Z+",               ... Direction Vectors
                "Z_{c} Height","Z_{c} Plane", ... Zc Plane
-               "ZMP_{x}","CoM_{x}",          ... ZMP + CoM
+               "ZMP_{xy}","","CoM_{xy}","",  ... ZMP + CoM
                "Location","east")
-        pause(0.001)
+        
+        IMAGE(j) = getframe(gcf);
+        drawnow
     end
+
+%% VIDEO
+videoWriterObj           = VideoWriter('3D_LIPM.mp4','MPEG-4');
+videoWriterObj.FrameRate = params.framerate; % 15sec video
+open(videoWriterObj);                        
+for i=1:length(IMAGE)
+    frame = IMAGE(i);   % Convert from an Image to a Frame
+    writeVideo(videoWriterObj, frame);
+end
+close(videoWriterObj);
