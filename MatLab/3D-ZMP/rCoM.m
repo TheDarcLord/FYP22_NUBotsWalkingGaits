@@ -1,4 +1,4 @@
-function [r0CoM] = rCoM(q,params)
+function [r0CoM] = rCoM(q, index, model, params)
 % rCOM  [3D Model] Centre of Mass - CoM
 %       Relies on the FKM, k(q), to locate the masses
 %       r0CoM - Position[x,y,z] of CoM in ZERO/World Coordinates
@@ -40,11 +40,11 @@ function [r0CoM] = rCoM(q,params)
     mPe = params.mass.pelvis;   % Waist Mass
     
     %% JOINT POSITIONS
-    A0Sl   = [eye(3), params.r0Lg;  % LEFT  Sole Position from 
+    A0Sl   = [eye(3), model.r0Lg(:,index);  % LEFT  Sole Position from 
               zeros(1,3),       1]; %       0rigin in Global
-    A0Sr   = [eye(3), params.r0Rg;  % RIGHT Sole Position from 
+    A0Sr   = [eye(3), model.r0Rg(:,index);  % RIGHT Sole Position from 
               zeros(1,3),       1]; %       0rigin in Global
-    A0H    = [eye(3), params.r0Hg;  % PELVIS Mid  Position from 
+    A0H    = [eye(3), model.r0Hg(:,index);  % PELVIS Mid  Position from 
               zeros(1,3),       1]; %       0rigin in Global
     
 %% LEFT

@@ -1,4 +1,4 @@
-function [xe, HTs] = k(q, params)
+function [xe, HTs] = k(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -23,10 +23,10 @@ function [xe, HTs] = k(q, params)
     H      = params.HipWidth;
     S      = params.ServoSize;  % SERVO DIST
     
-    A0EL    = [eye(3), params.r0Lg;  % LEFT Ankle Position from 
-              zeros(1,3),       1]; %           0rigin in Global
-    A0ER    = [eye(3), params.r0Rg;  % RIGHT Ankle Position from 
-              zeros(1,3),       1]; %           0rigin in Global
+    A0EL    = [eye(3), model.r0Lg(:,index);  % LEFT Ankle Position from 
+              zeros(1,3),           1]; %           0rigin in Global
+    A0ER    = [eye(3), model.r0Rg(:,index);  % RIGHT Ankle Position from 
+              zeros(1,3),           1]; %           0rigin in Global
     
     %% JOINT VARIABLES
     q1  = q(1);     % θ₁

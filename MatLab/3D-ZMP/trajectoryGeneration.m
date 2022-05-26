@@ -1,4 +1,4 @@
-function [Q, V, A] = trajectoryGeneration(model, span, params)
+function [Q, V, A] = trajectoryGeneration(span, index, model, params)
 %   [2D Model] Trajectory Generation
 %       
 %       Returns:    [Q, V, A]
@@ -10,19 +10,19 @@ function [Q, V, A] = trajectoryGeneration(model, span, params)
     %% PARAMS
     StepSize = params.StepSize;
 
-    rRX = params.r0Rg(1);
-    rRY = params.r0Rg(2);
-    rRZ = params.r0Rg(3);
+    rRX = model.r0Rg(1,index);
+    rRY = model.r0Rg(2,index);
+    rRZ = model.r0Rg(3,index);
 
-    rHx = params.r0Hg(1);
+    rHx = model.r0Hg(1,index);
 
-    rLX = params.r0Lg(1);
-    rLY = params.r0Lg(2);
-    rLZ = params.r0Lg(3);
+    rLX = model.r0Lg(1,index);
+    rLY = model.r0Lg(2,index);
+    rLZ = model.r0Lg(3,index);
 
-    rCX = params.r0CoMg(1);
-    rCY = params.r0CoMg(2);
-    rCZ = params.r0CoMg(3);
+    rCX = model.r0CoMg(1,index);
+    rCY = model.r0CoMg(2,index);
+    rCZ = model.r0CoMg(3);
 
     %% SPECIAL MATRICES
     D  = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!
@@ -37,10 +37,10 @@ function [Q, V, A] = trajectoryGeneration(model, span, params)
         tt0 = t0.^(0:5).';
         T0 = [tt0, D*tt0, D^2*tt0];
         %---------------------------------------------
-        q1 = [rHx               0.1    0;  %  X  Ẋ  Ẍ 
+        q1 = [rHx               0.1     0;  %  X  Ẋ  Ẍ 
               0.1               0       0;  % qY vY aY
               rRZ               0       0]; % qZ vZ aZ
-        t1 = t0 + 3;
+        t1 =  t0 + 3;
         tt1 = t1.^(0:5).';
         T1 = [tt1, D*tt1, D^2*tt1];
         %---------------------------------------------

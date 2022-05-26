@@ -5,35 +5,43 @@ clc
 tic % START TIMING
 
 %% Setup
-params.framerate    = 10;
-model.tspan         = 0:(1 / params.framerate):30;
+    % Video/Time Parameters
+    params.framerate    = 10;                                   % FPS
+    params.timestep     = params.framerate^(-1);                % Seconds
+    params.timeHorizon  = 1.5;                                  % Seconds
+    params.Nl           = params.timeHorizon / params.timestep; % INTEGER
+        model.tspan     = 0 : params.timestep : 6;
+    % Physical Parameters - Affect CoM or FKM
+    params.kx           = 0;        % These affect the plane to which    |
+    params.ky           = 0;        % ... the CoM is constrained         |
+    params.zc           = 0.495;    % m    - Height of the CoM           |
+    % -------------------------------------------------------------------|
+    params.g            = 9.81;     % ms⁻² - Acceleration due to Gravity
+    params.m            = 7.4248;   % kg   - Total Mass of a NuGus
+    params.fibula       = 0.225;    % m    - Lower leg
+    params.femur        = 0.225;    % m    - Upper Leg
+    params.HipWidth     = 0.200;    % m    - Pelvis
+    params.ServoSize    = 0.05;     % m    - Approximation/Spacing
+    params.StepSize     = 0.1;      % m    - 10 cm Step forward
+    % Masses
+    params.mass.fibula  = 1.5;    % Paired with `tibia`
+    params.mass.femur   = 1.5;    % Thigh Bone
+    params.mass.joint   = 0.5;    % Knee Bone / Joints
+    params.mass.pelvis  = 1.5;    % Waist
 
-model.q             = zeros(12,length(model.tspan)); % q     [θ₁θ₂θ₃ ...]ᵀ
-model.xe            = zeros(6,length(model.tspan));  % xe    [XYZϕθΨ]ᵀ
-model.r0Lg          = zeros(3,length(model.tspan));  % A0EL  [XYZ]ᵀ
-model.r0Rg          = zeros(3,length(model.tspan));  % A0ER  [XYZ]ᵀ
-model.r0Hg          = zeros(3,length(model.tspan));  % A0H   [XYZ]ᵀ
-model.r0CoMg        = zeros(3,length(model.tspan));  % r0CoMg  [XYZ]ᵀ
+    % Model setup
+    model.q         = zeros(12,length(model.tspan)); % q     [θ₁θ₂θ₃ ...]ᵀ
+    model.xe        = zeros(6,length(model.tspan));  % xe    [XYZϕθΨ]ᵀ
+    model.r0Lg      = zeros(3,length(model.tspan));  % A0EL  [XYZ]ᵀ
+    model.r0Rg      = zeros(3,length(model.tspan));  % A0ER  [XYZ]ᵀ
+    model.r0Hg      = zeros(3,length(model.tspan));  % A0H   [XYZ]ᵀ
+    model.r0CoMg    = zeros(3,length(model.tspan));  % r0CoMg  [XYZ]ᵀ
 
-% Physical Parameters
-params.fibula       = 0.5;
-params.femur        = 0.5;
-params.HipWidth     = 0.25;
-params.ServoSize    = 0.1;
+    % Stepping mode... Array!
+    params.mode         = -1;          % LEFT  FIXED - FKM T16
+    %                      0;          % BOTH  FIXED - FKM T1H T6H
+    %                      1;          % RIGHT FIXED - FKM T61
 
-params.StepSize     = 0.4;
-params.r0Lg         = zeros(3,1);  % Right Position from 0rigin in Global
-params.r0Hg         = zeros(3,1);  % Waist Position from 0rigin in Global
-params.r0Rg         = zeros(3,1);  % Left  Position from 0rigin in Global
-params.r0CoMg       = zeros(3,1);  % CoM   Position from 0rigin in Global
-params.mode         = -1;          % LEFT  FIXED - FKM T16
-%                      0;          % BOTH  FIXED - FKM T1H T6H
-%                      1;          % RIGHT FIXED - FKM T61
-% Masses
-params.mass.femur   = 1;    % Thigh Bone
-params.mass.fibula  = 1;    % Paired with `tibia`
-params.mass.joint   = 0.5;  % Knee Bone / Joints
-params.mass.pelvis  = 1.5;  % Waist
 
 %% Initial Position & Orientation
 
@@ -53,106 +61,25 @@ model.q0 = [    0;     % θ₁
 %% LOOP
 % Initial Conditions
 model.q(:,1)            = model.q0;
-[model.xe(:,1), HTs]    = k(model.q0, params);
+[model.xe(:,1), HTs]    = k(model.q0, 1, model, params);
 
 model.r0Rg(:,1)         = HTs.A0ER(1:3,4);
-    params.r0Rg         = model.r0Rg(:,1);
 model.r0Lg(:,1)         = HTs.A0EL(1:3,4);
-    params.r0Lg         = model.r0Lg(:,1);
 model.r0Hg(:,1)         = HTs.A0H(1:3,4);
-    params.r0Hg         = model.r0Hg(:,1);
-model.r0CoMg(:,1)       = rCoM(model.q(:,1),params);
-    params.r0CoMg       = model.r0CoMg(:,1);
+model.r0CoMg(:,1)       = rCoM(model.q0,1,model,params);
 
 params.mode = -1;
 % Trajectory Generation
-[Q1,~,~] = trajectoryGeneration(model, 1:61,params);
+[Q1,~,~] = trajectoryGeneration(1:length(model.tspan), 1, model, params);
 
-for i=2:61
-    model.xe(:,i)   = [Q1(:,i); zeros(3,1)];
-    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
-    [~, HTs]        = k(model.q(:,i), params);
-    model.r0Lg(:,i) = HTs.A0EL(1:3,4);
-     params.r0Lg    = model.r0Lg(:,i);
-    model.r0Rg(:,i) = HTs.A0ER(1:3,4);
-     params.r0Rg    = model.r0Rg(:,i);
-    model.r0Hg(:,i) = HTs.A0H(1:3,4);
-     params.r0Hg    = model.r0Hg(:,i);
-    model.r0CoMg(:,i) = rCoM(model.q(:,i),params);
-     params.r0CoMg  = model.r0CoMg(:,i);
-end
-
-
-params.mode = 0;
-% Trajectory Generation
-[Q2,~,~] = trajectoryGeneration(model, 62:121,params);
-
-for i=62:121
-    model.xe(:,i)   = [Q2(:,i-61); zeros(3,1)];
-    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
-    [~, HTs]        = k(model.q(:,i), params);
-    model.r0Lg(:,i) = HTs.A0EL(1:3,4);
-     params.r0Lg    = model.r0Lg(:,i);
-    model.r0Rg(:,i) = HTs.A0ER(1:3,4);
-     params.r0Rg    = model.r0Rg(:,i);
-    model.r0Hg(:,i) = HTs.A0H(1:3,4);
-     params.r0Hg    = model.r0Hg(:,i);
-    model.r0CoMg(:,i) = rCoM(model.q(:,i),params);
-     params.r0CoMg  = model.r0CoMg(:,i);
-end
-
-params.mode = 1;
-% Trajectory Generation
-[Q3,~,~] = trajectoryGeneration(model, 122:181,params); 
-
-for i=122:181
-    model.xe(:,i)   = [Q3(:,i-121); zeros(3,1)];
-    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
-    [~, HTs]        = k(model.q(:,i), params);
-    model.r0Lg(:,i) = HTs.A0EL(1:3,4);
-     params.r0Lg    = model.r0Lg(:,i);
-    model.r0Rg(:,i) = HTs.A0ER(1:3,4);
-     params.r0Rg    = model.r0Rg(:,i);
-    model.r0Hg(:,i) = HTs.A0H(1:3,4);
-     params.r0Hg    = model.r0Hg(:,i);
-    model.r0CoMg(:,i) = rCoM(model.q(:,i),params);
-     params.r0CoMg  = model.r0CoMg(:,i);
-end
-
-params.mode = 0;
-% Trajectory Generation
-[Q4,~,~] = trajectoryGeneration(model, 182:241,params);
-
-for i=182:241
-    model.xe(:,i)   = [Q4(:,i-181); zeros(3,1)];
-    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
-    [~, HTs]        = k(model.q(:,i), params);
-    model.r0Lg(:,i) = HTs.A0EL(1:3,4);
-     params.r0Lg    = model.r0Lg(:,i);
-    model.r0Rg(:,i) = HTs.A0ER(1:3,4);
-     params.r0Rg    = model.r0Rg(:,i);
-    model.r0Hg(:,i) = HTs.A0H(1:3,4);
-     params.r0Hg    = model.r0Hg(:,i);
-    model.r0CoMg(:,i) = rCoM(model.q(:,i),params);
-     params.r0CoMg  = model.r0CoMg(:,i);
-end
-
-params.mode = -1;
-% Trajectory Generation
-[Q5,~,~] = trajectoryGeneration(model, 1:61,params);
-
-for i=242:301
-    model.xe(:,i)   = [Q5(:,i-241); zeros(3,1)];
-    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
-    [~, HTs]        = k(model.q(:,i), params);
-    model.r0Lg(:,i) = HTs.A0EL(1:3,4);
-     params.r0Lg    = model.r0Lg(:,i);
-    model.r0Rg(:,i) = HTs.A0ER(1:3,4);
-     params.r0Rg    = model.r0Rg(:,i);
-    model.r0Hg(:,i) = HTs.A0H(1:3,4);
-     params.r0Hg    = model.r0Hg(:,i);
-    model.r0CoMg(:,i) = rCoM(model.q(:,i),params);
-     params.r0CoMg  = model.r0CoMg(:,i);
+for index=2:length(model.tspan)
+    model.xe(:,index)   = [Q1(:,index); zeros(3,1)];
+    model.q(:,index)    = k_Inv(model.q(:,index-1), model.xe(:,index), index-1, model, params);
+    [~, HTs]            = k(model.q(:,index), index, model, params);
+    model.r0Lg(:,index) = HTs.A0EL(1:3,4);
+    model.r0Rg(:,index) = HTs.A0ER(1:3,4);
+    model.r0Hg(:,index) = HTs.A0H(1:3,4);
+    model.r0CoMg(:,index) = rCoM(model.q(:,index),index, model,params);
 end
 
 toc % FINISH TIMING
@@ -207,41 +134,35 @@ figure('Name','Foot,Waist,CoM Movement')
     axis([-(params.HipWidth+0.2) 0.2 min(model.r0Hg(1,:))-0.1 max(model.r0Hg(1,:))+0.2 0 2]);
     view(135,35);
 
+
 figure('Name','Animation')
 % Preallocate IMAGE
-[IMAGE(1:length(model.tspan)).cdata]    = deal([]); 
-[IMAGE(1:length(model.tspan)).colormap] = deal([]); 
-for i=1:length(model.tspan)
+for index=1:length(model.tspan)
 
     cla    % Clears Data but not Titles/Labels  
     hold on
     grid on
     
-    txt = " Time: " + num2str(model.tspan(i)) + " sec";
+    txt = " Time: " + num2str(model.tspan(index)) + " sec";
     text(0,2,2,txt)
-    if i > 181
+    if index > 181
         params.mode     =  1;
-    elseif i > 121
+    elseif index > 121
         params.mode     = -1;
-    elseif i > 61
+    elseif index > 61
         params.mode     =  1;
     else 
         params.mode     = -1;
     end
-    
-    params.r0Lg     = model.r0Lg(:,i);
-    params.r0Rg     = model.r0Rg(:,i);
-    params.r0Hg     = model.r0Hg(:,i);
-    params.r0CoMg   = model.r0CoMg(:,i);
 
     set(gca,'Color','#CCCCCC');
-    [~, HTs]    = k(model.q(:,i), params);
+    [~, HTs]    = k( model.q(:,index),index,model,params);
 
     % ZERO:  Z      X      Y
     plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
     plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
     plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
-    if i < 2
+    if index < 2
         legend('+Z','+X','+Y', 'Trajectory','Autoupdate','off');
         title("Stand | Initial Step | Multiple Steps")
         xlabel('Z','FontWeight','bold');
@@ -321,24 +242,24 @@ for i=1:length(model.tspan)
     'k', 'LineWidth',2);
     plot3(r012(3), r012(1), r012(2), 'bx', 'LineWidth',2);            % J TWELEVE
 
-    plot3(params.r0CoMg(3),params.r0CoMg(1),params.r0CoMg(2), 'ro', 'LineWidth',1.5);
+    plot3(model.r0CoMg(3,index),model.r0CoMg(1,index),model.r0CoMg(2,index),'ro', 'LineWidth',1.5);
 
     %    [         MIN,          MAX, ...
-    axis([          -1,            1, ...
-          (r0H(1))-1.1, (r0H(1)+1.1), ...
-                     0,            2]);
+    axis([          -0.5,        0.5, ...
+          (r0H(1))-0.5, (r0H(1)+0.5), ...
+                     0,          1]);
     view(135,35);
     % view(90,0); % -> 2D
-    IMAGE(i) = getframe(gcf);
+    IMAGE(index) = getframe(gcf);
     drawnow
 end
 
 %% VIDEO
 videoWriterObj           = VideoWriter('3D_Step.mp4','MPEG-4');
-videoWriterObj.FrameRate = params.framerate*2; % 15sec video
+videoWriterObj.FrameRate = params.framerate; % 15sec video
 open(videoWriterObj);                        
-for i=1:length(IMAGE)
-    frame = IMAGE(i);   % Convert from an Image to a Frame
+for index=1:length(IMAGE)
+    frame = IMAGE(index);   % Convert from an Image to a Frame
     writeVideo(videoWriterObj, frame);
 end
 close(videoWriterObj);
