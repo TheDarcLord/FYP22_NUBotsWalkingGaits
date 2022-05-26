@@ -4,48 +4,51 @@ clc
 
 tic % START TIMING
 
-%% Setup
-    % Video/Time Parameters
-    params.framerate    = 10;                                   % FPS
-    model.timestep      = params.framerate^(-1);                % Seconds
-    model.timeHorizon   = 1.5;                                  % Seconds
-    model.Nl            = model.timeHorizon / model.timestep; % INTEGER
-    model.tspan         = 0 : model.timestep : 6;
-    % Physical Parameters - Affect CoM or FKM
-    params.kx           = 0;        % These affect the plane to which    |
-    params.ky           = 0;        % ... the CoM is constrained         |
-    params.zc           = 0.495;    % m    - Height of the CoM           |
-    % -------------------------------------------------------------------|
-    params.g            = 9.81;     % ms⁻² - Acceleration due to Gravity
-    params.m            = 7.4248;   % kg   - Total Mass of a NuGus
-    params.fibula       = 0.225;    % m    - Lower leg
-    params.femur        = 0.225;    % m    - Upper Leg
-    params.HipWidth     = 0.200;    % m    - Pelvis
-    params.ServoSize    = 0.05;     % m    - Approximation/Spacing
-    params.StepSize     = 0.1;      % m    - 10 cm Step forward
-    % Masses
-    params.mass.fibula  = 1.5;    % Paired with `tibia`
-    params.mass.femur   = 1.5;    % Thigh Bone
-    params.mass.joint   = 0.5;    % Knee Bone / Joints
-    params.mass.pelvis  = 1.5;    % Waist
+%% Video/Time Parameters
+    params.framerate = 10;                                   % FPS
+    model.timestp    = params.framerate^(-1);                % Seconds
+    model.timeHrzn   = 1.5;                                  % Seconds
+    model.Nl         = model.timeHrzn / model.timestp;       % INTEGER
+    model.tspan      = 0 : model.timestp : 6;                % [ time ]
+ % Physical Parameters - Affect CoM or FKM
+    params.kx        = 0;        % These affect the plane to which    |
+    params.ky        = 0;        % ... the CoM is constrained         |
+    params.zc        = 0.495;    % m    - Height of the CoM ^         |
+    params.g         = 9.81;     % ms⁻² - Acceleration due to Gravity |
+    params.m         = 7.4248;   % kg   - Total Mass of a NuGus       |
+ % -------------------------------------------------------------------|
+    params.fibula    = 0.22;     % m    - Lower leg
+    params.femur     = 0.22;     % m    - Upper Leg
+    params.HipWidth  = 0.15;     % m    - Pelvis
+    params.ServoSize = 0.05;     % m    - Approximation/Spacing
+    params.StepSize  = 0.1;      % m    - 10 cm Step forward
+ % Masses
+    params.mass.fibula = 1.5;    % Paired with `tibia`
+    params.mass.femur  = 1.5;    % Thigh Bone
+    params.mass.joint  = 0.5;    % Knee Bone / Joints
+    params.mass.pelvis = 1.5;    % Waist
 
-    % Model setup
-    model.r.q       = zeros(12,length(model.tspan)); % q     [θ₁θ₂θ₃ ...]ᵀ
-    model.r.xe      = zeros(6,length(model.tspan));  % xe    [XYZϕθΨ]ᵀ
-    model.r.r0Lg    = zeros(3,length(model.tspan));  % A0EL     [XYZ]ᵀ
-    model.r.r0Rg    = model.r.r0Lg;                  % A0ER     [XYZ]ᵀ
-    model.r.r0Hg    = model.r.r0Lg;                  % A0H      [XYZ]ᵀ
-    model.r.r0CoMg  = model.r.r0Lg;                  % r0CoMg   [XYZ]ᵀ
-
-
-    % Stepping mode... Array!
+ % Stepping mode... Array!?
     params.mode         = -1;          % LEFT  FIXED - FKM T16
     %                      0;          % BOTH  FIXED - FKM T1H T6H
     %                      1;          % RIGHT FIXED - FKM T61
 
 
-%% Initial Position & Orientation
+%% Model setup
+ % Robot
+    model.r.q      = zeros(12,length(model.tspan)); % q     [θ₁θ₂θ₃ ...]ᵀ
+    model.r.xe     = zeros(6,length(model.tspan));  % xe    [XYZϕθΨ]ᵀ
+    model.r.r0Lg   = zeros(3,length(model.tspan));  % A0EL     [XYZ]ᵀ
+    model.r.r0Rg   = model.r.r0Lg;                  % A0ER     [XYZ]ᵀ
+    model.r.r0Hg   = model.r.r0Lg;                  % A0H      [XYZ]ᵀ
+    model.r.r0CoMg = model.r.r0Lg;                  % r0CoMg   [XYZ]ᵀ
+ % Pendulum
+    model.p.x      = zeros(6,length(model.tspan));  % Xcom      [x x' x"]ᵀ
+    model.p.y      = zeros(2,length(model.tspan));  % pₓᵧ     [ZMPx ZMPy]ᵀ
+    model.p.pREF   = model.p.y;                     % pₓᵧREF  [REFx REFy]ᵀ
+    model.p.u      = model.p.y;                     % Uₓᵧ         [Ux Uy]        
 
+%% Initial Position & Orientation
 model.r.q0 = [      0;     % θ₁    
                 -pi/6;     % θ₂    ->  2D θ₁ Ankle
                2*pi/6;     % θ₃    ->  2D θ₂ Knee
@@ -57,9 +60,8 @@ model.r.q0 = [      0;     % θ₁
                  pi/6;     % θ₉    ->  2D θ₄ Hip
               -2*pi/6;     % θ₁₀   ->  2D θ₅ Knee
                  pi/6;     % θ₁₁   ->  2D θ₆ Ankle
-                    0];    % θ₁₂ 
+                    0];    % θ₁₂
 
-%% LOOP
 % Initial Conditions
 model.r.q(:,1)            = model.r.q0;
 [model.r.xe(:,1), HTs]    = k(model.r.q0, 1, model, params);
@@ -69,14 +71,23 @@ model.r.r0Lg(:,1)         = HTs.A0EL(1:3,4);
 model.r.r0Hg(:,1)         = HTs.A0H(1:3,4);
 model.r.r0CoMg(:,1)       = rCoM(model.r.q0,1,model,params);
 
-params.mode = -1;
+model.p.X0 = [0;           % ZMPx Position
+              0;           % ZMPx Velocity 
+              0;           % ZMPx Acceleration
+              0;           % ZMPz Position          -1 into Z Translate.... 
+              0;           % ZMPz Velocity 
+              0];          % ZMPz Acceleration
+
+%% LOOP
+
+
 % Trajectory Generation
 [Q1,~,~] = trajectoryGeneration(1:length(model.tspan), 1, model, params);
 
 for index=2:length(model.tspan)
     model.r.xe(:,index)   = [Q1(:,index); zeros(3,1)];
     model.r.q(:,index)    = k_Inv(model.r.q(:,index-1), model.r.xe(:,index), index-1, model, params);
-    [~, HTs]            = k(model.r.q(:,index), index, model, params);
+    [~, HTs]              = k(model.r.q(:,index), index, model, params);
     model.r.r0Lg(:,index) = HTs.A0EL(1:3,4);
     model.r.r0Rg(:,index) = HTs.A0ER(1:3,4);
     model.r.r0Hg(:,index) = HTs.A0H(1:3,4);
@@ -114,35 +125,15 @@ figure('Name','Joint Variables, q(t)')
         title('Joint Variables: {\itθ}_{7-12}({\itt})','FontSize',12);
         legend('θ₇','θ₈','θ₉','θ₁₀','θ₁₁','θ₁₂');
 
-figure('Name','Foot,Waist,CoM Movement')
-    hold on
-    grid on
-    title('Foot & Waist & CoM Trajectories','FontSize',12);
-    set(gca,'Color','#CCCCCC');
-    plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
-    plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
-    plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
-    plot3(model.r.r0Lg(3,:),model.r.r0Lg(1,:),model.r.r0Lg(2,:),...
-        'c-','LineWidth',2);
-    plot3(model.r.r0Rg(3,:),model.r.r0Rg(1,:),model.r.r0Rg(2,:),...
-        'g-','LineWidth',2);
-    plot3(model.r.r0Hg(3,:),model.r.r0Hg(1,:),model.r.r0Hg(2,:),...
-        'm-','LineWidth',2);
-    plot3(model.r.r0CoMg(3,:),model.r.r0CoMg(1,:),model.r.r0CoMg(2,:),...
-        'r-','LineWidth',1);
-
-    legend('+Z','+X','+Y','Left','Right','Waist', 'CoM');
-    axis([-(params.HipWidth+0.2) 0.2 min(model.r.r0Hg(1,:))-0.1 max(model.r.r0Hg(1,:))+0.2 0 2]);
-    view(135,35);
-
-
 figure('Name','Animation')
 % Preallocate IMAGE
 for index=1:length(model.tspan)
+    
 
     cla    % Clears Data but not Titles/Labels  
     hold on
     grid on
+
     
     txt = " Time: " + num2str(model.tspan(index)) + " sec";
     text(0,2,2,txt)
@@ -171,6 +162,7 @@ for index=1:length(model.tspan)
         zlabel('Y','FontWeight','bold');
     end
     % MAIN COMPONENTS
+    % Z X Y
 
     % END EFFECTOR RIGHT!
     r0ER = HTs.A0ER(1:3,4);
