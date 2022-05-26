@@ -1,4 +1,4 @@
-function [Q, V, A] = trajectoryGeneration(span, index, model, params)
+function [Q, V, A, STEP] = trajectoryGeneration(span, index, model, params)
 %   [2D Model] Trajectory Generation
 %       
 %       Returns:    [Q, V, A]
@@ -15,6 +15,7 @@ function [Q, V, A] = trajectoryGeneration(span, index, model, params)
     rRZ = model.r.r0Rg(3,index);
 
     rHx = model.r.r0Hg(1,index);
+    rHz = model.r.r0Hg(3,index);
 
     rLX = model.r.r0Lg(1,index);
     rLY = model.r.r0Lg(2,index);
@@ -25,11 +26,12 @@ function [Q, V, A] = trajectoryGeneration(span, index, model, params)
     rCZ = model.r.r0CoMg(3);
 
     %% SPECIAL MATRICES
-    D  = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!
-    TT = model.tspan(span).^((0:5).'); % [1;t;t²;t³;t⁴;t⁵] (t) Quintic!
+        D  = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!
+        TT = model.tspan(span).^((0:5).'); % [1;t;t²;t³;t⁴;t⁵] (t) Quintic!
     
     %% TRAJECTORY OPTIONS
     if params.mode == -1                    % RIGHT FREE
+        qFIXED = [rLX; 0; rLZ];
         q0 = [rRX               0       0;  %  X  Ẋ  Ẍ 
               0                 0       0;  % qY vY aY
               rRZ               0       0]; % qZ vZ aZ
@@ -51,6 +53,7 @@ function [Q, V, A] = trajectoryGeneration(span, index, model, params)
         tt2 = t2.^(0:5).';
         T2 = [tt2, D*tt2, D^2*tt2];
     elseif params.mode == 0                 % BOTH FIXED
+        qFIXED = [rHx; 0; rHz];
         if rLX > rRX
             rAX = rLX;
             rAZ = rLZ;
@@ -80,6 +83,7 @@ function [Q, V, A] = trajectoryGeneration(span, index, model, params)
         tt2 = t2.^(0:5).';
         T2 = [tt2, D*tt2, D^2*tt2];
     elseif params.mode == 1                 % LEFT FREE
+        qFIXED = [rRX; 0; rRZ];
         q0 = [rLX               0       0;  %  X  Ẋ  Ẍ 
               0                 0       0;  % qY vY aY
               rLZ               0       0]; % qZ vZ aZ
@@ -107,4 +111,6 @@ function [Q, V, A] = trajectoryGeneration(span, index, model, params)
     Q = C*TT;
     V = C*D*TT;
     A = C*D^2*TT;
+
+    STEP = [qFIXED([1 3],1) q2([1 3],1)];
 end

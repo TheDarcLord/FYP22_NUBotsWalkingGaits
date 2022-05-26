@@ -8,6 +8,9 @@ function [qStar] = k_Inv(q0, xe, index, model, params)
     Kxe = 1e9*eye(length(xe),length(xe));
     Kq  = 1e6*eye(length(q0),length(q0));
     Km  = 1e9*eye(length(xe(1:3)),length(xe(1:3)));
+
+    kN  = index - 1;
+    kP  = index;
     
     A       = [];
     b       = [];
@@ -23,25 +26,15 @@ function [qStar] = k_Inv(q0, xe, index, model, params)
     
 
     if params.mode ~= 0
-        R0A = zeros(3,1);
-
-        if params.mode > 0
-            R0A = model.r.r0Rg(:,index);
-        elseif params.mode < 0
-            R0A = model.r.r0Lg(:,index);
-        end
-
-        R0A(2) = model.r.r0CoMg(2,index);
-
         argmin = @(q) (q0 - q)'*Kq *(q0 - q) + ...
-            (k(q,index,model,params) - xe)'*Kxe*(k(q,index,model,params) - xe) + ...
-         (rCoM(q,index,model,params) - R0A)'*Km*(rCoM(q,index,model,params) - R0A);
+            (k(q,kN,model,params) - xe)'*Kxe*(k(q,kN,model,params) - xe) + ...
+         (rCoM(q,kN,model,params) - model.r.r0CoMg(:,kP))'*Km*(rCoM(q,kN,model,params) - model.r.r0CoMg(:,kP));
     
         qStar = fmincon(argmin,q0,A,b,Aeq,beq,lb,ub,nonlcon,options);
     else
         argmin = @(q) (q0 - q)'*Kq *(q0 - q) + ...
-                 (k(q,index,model,params))'*Kxe*(k(q,index,model,params)) + ...
-    (rCoM(q,index,model,params) - xe(1:3))'*Km *(rCoM(q,index,model,params) - xe(1:3));
+                 (k(q,kN,model,params))'*Kxe*(k(q,kN,model,params)) + ...
+    (rCoM(q,kN,model,params) - model.r.r0CoMg(:,kP))'*Km*(rCoM(q,kN,model,params) - model.r.r0CoMg(:,kP));
     
         qStar = fmincon(argmin,q0,A,b,Aeq,beq,lb,ub,nonlcon,options);
     end
