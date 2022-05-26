@@ -40,11 +40,11 @@ function [r0CoM] = rCoM(q, index, model, params)
     mPe = params.mass.pelvis;   % Waist Mass
     
     %% JOINT POSITIONS
-    A0Sl   = [eye(3), model.r0Lg(:,index);  % LEFT  Sole Position from 
+    A0Sl   = [eye(3), model.r.r0Lg(:,index);  % LEFT  Sole Position from 
               zeros(1,3),       1]; %       0rigin in Global
-    A0Sr   = [eye(3), model.r0Rg(:,index);  % RIGHT Sole Position from 
+    A0Sr   = [eye(3), model.r.r0Rg(:,index);  % RIGHT Sole Position from 
               zeros(1,3),       1]; %       0rigin in Global
-    A0H    = [eye(3), model.r0Hg(:,index);  % PELVIS Mid  Position from 
+    A0H    = [eye(3), model.r.r0Hg(:,index);  % PELVIS Mid  Position from 
               zeros(1,3),       1]; %       0rigin in Global
     
 %% LEFT

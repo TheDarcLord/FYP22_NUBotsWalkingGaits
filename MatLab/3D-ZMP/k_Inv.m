@@ -26,12 +26,12 @@ function [qStar] = k_Inv(q0, xe, index, model, params)
         R0A = zeros(3,1);
 
         if params.mode > 0
-            R0A = model.r0Rg(:,index);
+            R0A = model.r.r0Rg(:,index);
         elseif params.mode < 0
-            R0A = model.r0Lg(:,index);
+            R0A = model.r.r0Lg(:,index);
         end
 
-        R0A(2) = model.r0CoMg(2,index);
+        R0A(2) = model.r.r0CoMg(2,index);
 
         argmin = @(q) (q0 - q)'*Kq *(q0 - q) + ...
             (k(q,index,model,params) - xe)'*Kxe*(k(q,index,model,params) - xe) + ...

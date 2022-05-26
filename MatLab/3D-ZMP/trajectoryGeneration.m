@@ -10,19 +10,19 @@ function [Q, V, A] = trajectoryGeneration(span, index, model, params)
     %% PARAMS
     StepSize = params.StepSize;
 
-    rRX = model.r0Rg(1,index);
-    rRY = model.r0Rg(2,index);
-    rRZ = model.r0Rg(3,index);
+    rRX = model.r.r0Rg(1,index);
+    rRY = model.r.r0Rg(2,index);
+    rRZ = model.r.r0Rg(3,index);
 
-    rHx = model.r0Hg(1,index);
+    rHx = model.r.r0Hg(1,index);
 
-    rLX = model.r0Lg(1,index);
-    rLY = model.r0Lg(2,index);
-    rLZ = model.r0Lg(3,index);
+    rLX = model.r.r0Lg(1,index);
+    rLY = model.r.r0Lg(2,index);
+    rLZ = model.r.r0Lg(3,index);
 
-    rCX = model.r0CoMg(1,index);
-    rCY = model.r0CoMg(2,index);
-    rCZ = model.r0CoMg(3);
+    rCX = model.r.r0CoMg(1,index);
+    rCY = model.r.r0CoMg(2,index);
+    rCZ = model.r.r0CoMg(3);
 
     %% SPECIAL MATRICES
     D  = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!

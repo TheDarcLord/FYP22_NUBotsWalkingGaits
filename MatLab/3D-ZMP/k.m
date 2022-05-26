@@ -23,9 +23,9 @@ function [xe, HTs] = k(q, index, model, params)
     H      = params.HipWidth;
     S      = params.ServoSize;  % SERVO DIST
     
-    A0EL    = [eye(3), model.r0Lg(:,index);  % LEFT Ankle Position from 
+    A0EL    = [eye(3), model.r.r0Lg(:,index);  % LEFT Ankle Position from 
               zeros(1,3),           1]; %           0rigin in Global
-    A0ER    = [eye(3), model.r0Rg(:,index);  % RIGHT Ankle Position from 
+    A0ER    = [eye(3), model.r.r0Rg(:,index);  % RIGHT Ankle Position from 
               zeros(1,3),           1]; %           0rigin in Global
     
     %% JOINT VARIABLES
