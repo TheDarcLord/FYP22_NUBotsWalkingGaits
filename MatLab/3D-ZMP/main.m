@@ -33,7 +33,6 @@ tic % START TIMING
     %                      0;          % BOTH  FIXED - FKM T1H T6H
     %                      1;          % RIGHT FIXED - FKM T61
 
-
 %% Model setup
  % Robot
     model.r.q      = zeros(12,length(model.tspan)); % q     [θ₁θ₂θ₃ ...]ᵀ
@@ -80,18 +79,18 @@ model.p.X0 = [0;           % ZMPx Position
 
 %% LOOP
 
-
 % Trajectory Generation
+params.mode         = 1;
 [Q1,~,~] = trajectoryGeneration(1:length(model.tspan), 1, model, params);
 
-for index=2:length(model.tspan)
-    model.r.xe(:,index)   = [Q1(:,index); zeros(3,1)];
-    model.r.q(:,index)    = k_Inv(model.r.q(:,index-1), model.r.xe(:,index), index-1, model, params);
-    [~, HTs]              = k(model.r.q(:,index), index, model, params);
-    model.r.r0Lg(:,index) = HTs.A0EL(1:3,4);
-    model.r.r0Rg(:,index) = HTs.A0ER(1:3,4);
-    model.r.r0Hg(:,index) = HTs.A0H(1:3,4);
-    model.r.r0CoMg(:,index) = rCoM(model.r.q(:,index),index, model,params);
+for i=2:length(model.tspan)
+    model.r.xe(:,i)   = [Q1(:,i); zeros(3,1)];
+    model.r.q(:,i)    = k_Inv(model.r.q(:,i-1), model.r.xe(:,i), i-1, model, params);
+    [~, HTs]          = k(model.r.q(:,i), i-1, model, params);
+    model.r.r0Lg(:,i) = HTs.A0EL(1:3,4);
+    model.r.r0Rg(:,i) = HTs.A0ER(1:3,4);
+    model.r.r0Hg(:,i) = HTs.A0H(1:3,4);
+    model.r.r0CoMg(:,i) = rCoM(model.r.q(:,i),i, model,params);
 end
 
 toc % FINISH TIMING
@@ -127,34 +126,32 @@ figure('Name','Joint Variables, q(t)')
 
 figure('Name','Animation')
 % Preallocate IMAGE
-for index=1:length(model.tspan)
-    
+for i=1:length(model.tspan)
 
     cla    % Clears Data but not Titles/Labels  
     hold on
     grid on
 
-    
-    txt = " Time: " + num2str(model.tspan(index)) + " sec";
-    text(0,2,2,txt)
-    if index > 181
+    txt = " Time: " + num2str(model.tspan(i)) + " sec";
+    text(0,0.5,0.5,txt)
+    if i > 181
         params.mode     =  1;
-    elseif index > 121
+    elseif i > 121
         params.mode     = -1;
-    elseif index > 61
+    elseif i > 61
         params.mode     =  1;
     else 
         params.mode     = -1;
     end
 
     set(gca,'Color','#CCCCCC');
-    [~, HTs]    = k( model.r.q(:,index),index,model,params);
+    [~, HTs]    = k( model.r.q(:,i),i,model,params);
 
     % ZERO:  Z      X      Y
     plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
     plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
     plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
-    if index < 2
+    if i < 2
         legend('+Z','+X','+Y', 'Trajectory','Autoupdate','off');
         title("Stand | Initial Step | Multiple Steps")
         xlabel('Z','FontWeight','bold');
@@ -235,7 +232,7 @@ for index=1:length(model.tspan)
     'k', 'LineWidth',2);
     plot3(r012(3), r012(1), r012(2), 'bx', 'LineWidth',2);            % J TWELEVE
 
-    plot3(model.r.r0CoMg(3,index),model.r.r0CoMg(1,index),model.r.r0CoMg(2,index),'ro', 'LineWidth',1.5);
+    plot3(model.r.r0CoMg(3,i),model.r.r0CoMg(1,i),model.r.r0CoMg(2,i),'ro', 'LineWidth',1.5);
 
     %    [         MIN,          MAX, ...
     axis([          -0.5,        0.5, ...
@@ -243,7 +240,7 @@ for index=1:length(model.tspan)
                      0,          1]);
     view(135,35);
     % view(90,0); % -> 2D
-    IMAGE(index) = getframe(gcf);
+    IMAGE(i) = getframe(gcf);
     drawnow
 end
 
@@ -251,8 +248,8 @@ end
 videoWriterObj           = VideoWriter('3D_Step.mp4','MPEG-4');
 videoWriterObj.FrameRate = params.framerate; % 15sec video
 open(videoWriterObj);                        
-for index=1:length(IMAGE)
-    frame = IMAGE(index);   % Convert from an Image to a Frame
+for i=1:length(IMAGE)
+    frame = IMAGE(i);   % Convert from an Image to a Frame
     writeVideo(videoWriterObj, frame);
 end
 close(videoWriterObj);
