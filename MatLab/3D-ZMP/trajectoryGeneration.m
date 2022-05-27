@@ -1,4 +1,4 @@
-function [Q, V, A, STEP] = trajectoryGeneration(span, index, model, params)
+function [Q, V, A, STEP] = trajectoryGeneration(indexspan, index, model, params)
 %   [2D Model] Trajectory Generation
 %       
 %       Returns:    [Q, V, A]
@@ -11,14 +11,11 @@ function [Q, V, A, STEP] = trajectoryGeneration(span, index, model, params)
     StepSize = params.StepSize;
 
     rRX = model.r.r0Rg(1,index);
-    rRY = model.r.r0Rg(2,index);
+    %rRY = model.r.r0Rg(2,index);
     rRZ = model.r.r0Rg(3,index);
 
-    rHx = model.r.r0Hg(1,index);
-    rHz = model.r.r0Hg(3,index);
-
     rLX = model.r.r0Lg(1,index);
-    rLY = model.r.r0Lg(2,index);
+    %rLY = model.r.r0Lg(2,index);
     rLZ = model.r.r0Lg(3,index);
 
     rCX = model.r.r0CoMg(1,index);
@@ -27,81 +24,89 @@ function [Q, V, A, STEP] = trajectoryGeneration(span, index, model, params)
 
     %% SPECIAL MATRICES
         D  = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!
-        TT = model.tspan(span).^((0:5).'); % [1;t;t²;t³;t⁴;t⁵] (t) Quintic!
-    
+        TT = model.tspan(indexspan).^((0:5).'); % [1;t;t²;t³;t⁴;t⁵] (t) Quintic!
+    %% TIME
+        t0_i = indexspan(1);
+        t1_i = indexspan(ceil(length(indexspan)/2));
+        t2_i = indexspan(end);
     %% TRAJECTORY OPTIONS
-    if params.mode == -1                    % RIGHT FREE
-        qFIXED = [rLX; 0; rLZ];
+    if params.mode == -1                    
+        qFIXED = [rLX; 0; rLZ];             % RIGHT FREE    
         q0 = [rRX               0       0;  %  X  Ẋ  Ẍ 
               0                 0       0;  % qY vY aY
               rRZ               0       0]; % qZ vZ aZ
-        t0 = model.tspan(span(1));
+        t0 = model.tspan(t0_i);
         tt0 = t0.^(0:5).';
         T0 = [tt0, D*tt0, D^2*tt0];
         %---------------------------------------------
-        q1 = [rHx               0.1     0;  %  X  Ẋ  Ẍ 
+        q1 = [(rLX+StepSize)/2  0.15    0;  %  X  Ẋ  Ẍ 
               0.1               0       0;  % qY vY aY
               rRZ               0       0]; % qZ vZ aZ
-        t1 =  t0 + 3;
+        t1 =  model.tspan(t1_i);
         tt1 = t1.^(0:5).';
         T1 = [tt1, D*tt1, D^2*tt1];
         %---------------------------------------------
         q2 = [rLX+StepSize      0       0;  %  X  Ẋ  Ẍ 
               0                 0       0;  % qY vY aY
               rRZ               0       0]; % qZ vZ aZ
-        t2 = model.tspan(span(end));
+        t2 = model.tspan(t2_i);
         tt2 = t2.^(0:5).';
         T2 = [tt2, D*tt2, D^2*tt2];
-    elseif params.mode == 0                 % BOTH FIXED
-        qFIXED = [rHx; 0; rHz];
+    elseif params.mode == 0                 
+        % This is now return to standing.
+        % Previously, it was shifting the CoM
         if rLX > rRX
-            rAX = rLX;
-            rAZ = rLZ;
-        else
+            % Means right foot is behind
             rAX = rRX;
             rAZ = rRZ;
+            qFIXED = [rLx; 0; rLz];             % BOTH FIXED
+        else
+            % Means left foot is behind
+            rAX = rLX;
+            rAZ = rLZ;
+            qFIXED = [rRx; 0; rRz];             % Fixed
         end
         %---------------------------------------------
-        q0 = [rCX               0       0;  %  X  Ẋ  Ẍ 
-              rCY               0       0;  % qY vY aY
-              rCZ               0       0]; % qZ vZ aZ
-        t0 = model.tspan(span(1));
+        q0 = [rAX               0       0;  %  X  Ẋ  Ẍ 
+              rAY               0       0;  % qY vY aY
+              rAZ               0       0]; % qZ vZ aZ
+        t0 = model.tspan(t0_i);
         tt0 = t0.^(0:5).';
         T0 = [tt0, D*tt0, D^2*tt0];
         %---------------------------------------------
-        q1 = [0.5*(rAX+rCX)     0.1     0;  %  X  Ẋ  Ẍ 
+        q1 = [0.5*(rAX+rCX)     0.15    0;  %  X  Ẋ  Ẍ 
               rCY               0       0;  % qY vY aY
               0.5*(rAZ+rCZ)     0       0]; % qZ vZ aZ
-        t1 = t0 + 3;
+        t1 = model.tspan(t1_i);
         tt1 = t1.^(0:5).';
         T1 = [tt1, D*tt1, D^2*tt1];
         %---------------------------------------------
         q2 = [rAX               0       0;  %  X  Ẋ  Ẍ 
               rCY               0       0;  % qY vY aY
               rAZ               0       0]; % qZ vZ aZ
-        t2 = model.tspan(span(end));
+        t2 = model.tspan(t2_i);
         tt2 = t2.^(0:5).';
         T2 = [tt2, D*tt2, D^2*tt2];
-    elseif params.mode == 1                 % LEFT FREE
-        qFIXED = [rRX; 0; rRZ];
+    elseif params.mode == 1                 
+        qFIXED = [rRX; 0; rRZ];             % LEFT FREE
         q0 = [rLX               0       0;  %  X  Ẋ  Ẍ 
               0                 0       0;  % qY vY aY
               rLZ               0       0]; % qZ vZ aZ
-        t0 = model.tspan(span(1));
+        t0 = model.tspan(t0_i);
         tt0 = t0.^(0:5).';
         T0 = [tt0, D*tt0, D^2*tt0];
         %---------------------------------------------
-        q1 = [rHx               0.1     0;  %  X  Ẋ  Ẍ 
+        q1 = [(rRX+StepSize)/2  0.15    0;  %  X  Ẋ  Ẍ 
               0.1               0       0;  % qY vY aY
               rLZ               0       0]; % qZ vZ aZ
-        t1 = t0 + 3;
+        t1 = model.tspan(t1_i);
         tt1 = t1.^(0:5).';
         T1 = [tt1, D*tt1, D^2*tt1];
         %---------------------------------------------
         q2 = [rRX+StepSize      0       0;  %  X  Ẋ  Ẍ 
               0                 0       0;  % qY vY aY
               rLZ               0       0]; % qZ vZ aZ
-        t2 = model.tspan(span(end));
+        t2 = model.tspan(t2_i);
         tt2 = t2.^(0:5).';
         T2 = [tt2, D*tt2, D^2*tt2];
     end

@@ -7,7 +7,7 @@ tic % START TIMING
 %% Video/Time Parameters
     params.framerate = 100;                                   % FPS
     model.timestp    = params.framerate^(-1);                % Seconds
-    model.tspan      = 0 : model.timestp : 12;               % [ time ]
+    model.tspan      = 0 : model.timestp : 6;               % [ time ]
     model.timeHrzn   = 1.5;                                  % Seconds
     model.Nl         = model.timeHrzn / model.timestp;      % INTEGER
  % Weights for controller `Performance Index`
@@ -83,60 +83,93 @@ model.r.q0 = [      0;     % θ₁
     model.r.r0Hg(:,1)         = HTs.A0H(1:3,4);
     model.r.r0CoMg(:,1)       = rCoM(model.r.q0,1,model,params);
 
-%% LOOP
-% Robot    - Foot Trajectory Generation
-    params.mode  = -1;
-    [Q,~,~,STEP] = trajectoryGeneration(1:601, 1, model, params);
-
-% Pendulum - CoM Trajectory
-    % Initial Condidtions
-    ZMP0 = STEP(:,1);
-    ZMP1 = STEP(:,2);
-    model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
-                      model.r.r0CoMg(3,1); 0; 0]; % Position Z
-    ZMPtim = model.tspan(301);
-    % Load ZMPₓ Reference
-    model.p.pREF(:,1:601) = pREF(model.tspan(1:601), ZMP0, ZMP1, ZMPtim);
-    % Simulation Loop
-    for i=1:601
-        [ZMPk, CoMk, model] = LIPM3D(model,i,ZMP0,ZMP1,ZMPtim,params);
-        model.r.r0CoMg(:,i) = [CoMk(1); params.zc; CoMk(2)];
+%% LOOPS
+%% STEP 1  
+    % Robot    - Foot Trajectory Generation
+        params.mode  = -1;
+        stpIndxs     = 1:201;
+        [Q,~,~,STEP] = trajectoryGeneration(stpIndxs, 1, model, params);
+    
+    % Pendulum - CoM Trajectory
+        % Initial Condidtions
+        ZMP0 = STEP(:,1);
+        ZMP1 = STEP(:,2);
+        model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
+                          model.r.r0CoMg(3,1); 0; 0]; % Position Z
+        ZMPtim = model.tspan(stpIndxs(end));
+        % Load ZMPₓ Reference
+        model.p.pREF(:,stpIndxs) = pREF(model.tspan(stpIndxs), ZMP0, ZMP1, ZMPtim);
+        % Simulation Loop
+        for i=stpIndxs
+            [ZMPk, CoMk, model] = LIPM3D(model,i,ZMP0,ZMP1,ZMPtim,params);
+            model.r.r0CoMg(:,i) = [CoMk(1); params.zc; CoMk(2)];
+        end
+    
+    for i=stpIndxs(2):stpIndxs(end)
+        model.r.xe(:,i)   = [Q(:,i); zeros(3,1)];
+        model.r.q(:,i)    = k_Inv(model.r.q(:,i-1), model.r.xe(:,i), i, model, params);
+        [~, HTs]          = k(model.r.q(:,i), i-1, model, params);
+        model.r.r0Lg(:,i) = HTs.A0EL(1:3,4);
+        model.r.r0Rg(:,i) = HTs.A0ER(1:3,4);
+        model.r.r0Hg(:,i) = HTs.A0H(1:3,4);
     end
 
-for i=2:601
-    model.r.xe(:,i)   = [Q(:,i); zeros(3,1)];
-    model.r.q(:,i)    = k_Inv(model.r.q(:,i-1), model.r.xe(:,i), i, model, params);
-    [~, HTs]          = k(model.r.q(:,i), i-1, model, params);
-    model.r.r0Lg(:,i) = HTs.A0EL(1:3,4);
-    model.r.r0Rg(:,i) = HTs.A0ER(1:3,4);
-    model.r.r0Hg(:,i) = HTs.A0H(1:3,4);
-end
-
-% Robot    - Foot Trajectory Generation
-    params.mode = 1;
-    [Q1,~,~,STEP] = trajectoryGeneration(602:length(model.tspan), 601, model, params);
-    Q = [Q Q1];
-% Pendulum - CoM Trajectory
-    % Initial Condidtions
-    ZMP0 = STEP(:,1);
-    ZMP1 = STEP(:,2);
-    ZMPtim = model.tspan(901);
-    % Load ZMPₓ Reference
-    model.p.pREF(:,602:end) = pREF(model.tspan(602:end), ZMP0, ZMP1, ZMPtim);
-    % Simulation Loop
-    for i=601:length(model.tspan)
-        [ZMPk, CoMk, model] = LIPM3D(model,i,ZMP0,ZMP1,ZMPtim,params);
-        model.r.r0CoMg(:,i) = [CoMk(1); params.zc; CoMk(2)];
+%% STEP 2
+    % Robot    - Foot Trajectory Generation
+        params.mode = 1;
+        stpIndxs = 202:401;
+        [Q1,~,~,STEP] = trajectoryGeneration(stpIndxs, 201, model, params);
+        Q = [Q Q1];
+    % Pendulum - CoM Trajectory
+        % Initial Condidtions
+        ZMP0 = STEP(:,1);
+        ZMP1 = STEP(:,2);
+        ZMPtim = model.tspan(stpIndxs(end));
+        % Load ZMPₓ Reference
+        model.p.pREF(:,stpIndxs) = pREF(model.tspan(stpIndxs), ZMP0, ZMP1, ZMPtim);
+        % Simulation Loop
+        for i=stpIndxs
+            [ZMPk, CoMk, model] = LIPM3D(model,i,ZMP0,ZMP1,ZMPtim,params);
+            model.r.r0CoMg(:,i) = [CoMk(1); params.zc; CoMk(2)];
+        end
+    
+    for i=stpIndxs(1):stpIndxs(end)
+        model.r.xe(:,i)   = [Q(:,i); zeros(3,1)];
+        model.r.q(:,i)    = k_Inv(model.r.q(:,i-1), model.r.xe(:,i), i, model, params);
+        [~, HTs]          = k(model.r.q(:,i), i-1, model, params);
+        model.r.r0Lg(:,i) = HTs.A0EL(1:3,4);
+        model.r.r0Rg(:,i) = HTs.A0ER(1:3,4);
+        model.r.r0Hg(:,i) = HTs.A0H(1:3,4);
     end
 
-for i=602:length(model.tspan)
-    model.r.xe(:,i)   = [Q(:,i); zeros(3,1)];
-    model.r.q(:,i)    = k_Inv(model.r.q(:,i-1), model.r.xe(:,i), i, model, params);
-    [~, HTs]          = k(model.r.q(:,i), i-1, model, params);
-    model.r.r0Lg(:,i) = HTs.A0EL(1:3,4);
-    model.r.r0Rg(:,i) = HTs.A0ER(1:3,4);
-    model.r.r0Hg(:,i) = HTs.A0H(1:3,4);
-end
+%% STEP 3
+    % Robot    - Foot Trajectory Generation
+        params.mode = -1;
+        stpIndxs = 402:length(model.tspan);
+        [Q2,~,~,STEP] = trajectoryGeneration(stpIndxs, 401, model, params);
+        Q = [Q Q2];
+    % Pendulum - CoM Trajectory
+        % Initial Condidtions
+        ZMP0 = STEP(:,1);
+        ZMP1 = STEP(:,2);
+        ZMPtim = model.tspan(stpIndxs(end));
+        % Load ZMPₓ Reference
+        model.p.pREF(:,stpIndxs) = pREF(model.tspan(stpIndxs), ZMP0, ZMP1, ZMPtim);
+        % Simulation Loop
+        for i=stpIndxs
+            [ZMPk, CoMk, model] = LIPM3D(model,i,ZMP0,ZMP1,ZMPtim,params);
+            model.r.r0CoMg(:,i) = [CoMk(1); params.zc; CoMk(2)];
+        end
+    
+    for i=stpIndxs(1):stpIndxs(end)
+        model.r.xe(:,i)   = [Q(:,i); zeros(3,1)];
+        model.r.q(:,i)    = k_Inv(model.r.q(:,i-1), model.r.xe(:,i), i, model, params);
+        [~, HTs]          = k(model.r.q(:,i), i-1, model, params);
+        model.r.r0Lg(:,i) = HTs.A0EL(1:3,4);
+        model.r.r0Rg(:,i) = HTs.A0ER(1:3,4);
+        model.r.r0Hg(:,i) = HTs.A0H(1:3,4);
+    end
+
 
 toc % FINISH TIMING
 %%
@@ -214,11 +247,10 @@ for i=1:length(model.tspan)
 
     txt = " Time: " + num2str(model.tspan(i)) + " sec";
     text(0,0.5,0.5,txt)
-    if i > 181
-        params.mode     =  1;
-    elseif i > 121
+    
+    if i > 401
         params.mode     = -1;
-    elseif i > 61
+    elseif i > 201
         params.mode     =  1;
     else 
         params.mode     = -1;
@@ -313,11 +345,28 @@ for i=1:length(model.tspan)
     plot3(r012(3), r012(1), r012(2), 'bx', 'LineWidth',2);            % J TWELEVE
  
     
+    plot3(model.p.pREF(2,i),... % Y|Z
+              model.p.pREF(1,i),... % X
+              0,...
+              'kx','LineWidth',2,'MarkerSize',5)
+    plot3([model.p.pREF(2,i), model.p.x(4,i)],... % Y|Z
+          [model.p.pREF(1,i), model.p.x(1,i)],... % X
+          [0, params.zc],...
+          'r-','LineWidth',2)
+    plot3(model.p.x(4,i),...    % Y|Z
+          model.p.x(1,i),...    % X
+          params.zc,...
+          'rx','LineWidth',1,'MarkerSize',5)
+    plot3(model.p.x(4,1:i),...  % Y|Z
+          model.p.x(1,1:i),...  % X
+          params.zc*ones(1,length(model.tspan(1:i))),...
+          'r','LineWidth',1)
+
     plot3(model.r.r0CoMg(3,i),model.r.r0CoMg(1,i),model.r.r0CoMg(2,i),'ro', 'LineWidth',1.5);
 
     %    [         MIN,          MAX, ...
-    axis([          -0.5,        0.5, ...
-          (r0H(1))-0.5, (r0H(1)+0.5), ...
+    axis([          -0.45,        0.30, ...
+          model.r.r0CoMg(3,i)-0.5, model.r.r0CoMg(1,i)+0.5, ...
                      0,          1]);
     view(135,35);
     % view(90,0); % -> 2D
