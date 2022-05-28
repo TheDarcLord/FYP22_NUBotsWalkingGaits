@@ -13,26 +13,66 @@
 \input{_content/____setup.txt}
 
 \begin{document}
-	\input{_content/00_titlePage.txt}
+	\input{_content/00_preamble/00_titlePage.txt}
 
 	\vspace{-5mm}
 	\section*{Abstract}
 	\vspace{-3mm}
-		\input{_content/01_abstract.txt}
+		\input{_content/00_preamble/01_abstract.txt}
 
 	\vspace{-2mm}
 	\section*{Acknowledgements}
 	\vspace{-3mm}
-		\input{_content/02_acknowledgements.txt}
+		\input{_content/00_preamble/02_acknowledgements.txt}
 
 	\newpage\tableofcontents
 	
 	\newpage\section{Introduction}
-		\input{_content/10_introduction.txt}
+		\input{_content/00_preamble/10_introduction.txt}
 
-	\newpage\section{Core Section}\label{sec:Core Section}
-		\input{_content/20_coreSection.txt}
-
+	\newpage\section{Background}\label{sec:Background}
+		\subsection{Mathematical Notation}
+			\input{_content/10_background/10_mathematicalNotation.txt}
+		\subsection{Numerical Optimisation}
+			\input{_content/10_background/11_optimisation.txt}
+		\subsection{Kinematics}
+			\input{_content/10_background/12_kinematics.txt}
+		\subsection{Kinematic Chains}
+			\input{_content/10_background/13_kinematicChains.txt}
+		\subsection{Walking}
+			\input{_content/10_background/14_walking.txt}
+	
+	\newpage\section{Models}\label{sec:Models}
+		\subsection{2D Model}
+			\input{_content/20_modelling/20_2D.txt}
+		\subsection{3D Model}
+			\input{_content/20_modelling/21_3D.txt}
+	
+	\newpage\section{Quasi Static Locomotion}\label{sec:Quasi Static Locomotion}
+		\subsection{Quasi Static concept}
+			\input{_content/30_quasiStatic/30_concept.txt}
+		\subsection{2D model implementation}
+			\input{_content/30_quasiStatic/31_2D.txt}
+		\subsection{3D model implementation}
+			\input{_content/30_quasiStatic/32_3D.txt}
+	
+	\newpage\section{Zero Moment Point Locomotion}\label{sec:Zero Moment Point Locomotion}
+		\subsection{Zero Moment Point concept}
+			\input{_content/40_zmp/40_concept.txt}
+		\subsection{3D Linear Inverted Pendulum}
+			\input{_content/40_zmp/41_zmpLIPM.txt}
+		\subsection{Preview Control}
+			\input{_content/40_zmp/42_previewControl.txt}
+		\subsection{3D Model Implementation}
+			\input{_content/40_zmp/43_3D.txt}
+			
+	\newpage\section{Results}\label{sec:Results}
+		\subsection{2D Model}
+			\input{_content/50_results/50_2D.txt}
+		\subsection{3D Model}
+			\input{_content/50_results/51_3D.txt}
+	
+	
 	\newpage\section{Conclusion}\label{sec:Conclusion}
 		\input{_content/X0_conclusion.txt}
 
