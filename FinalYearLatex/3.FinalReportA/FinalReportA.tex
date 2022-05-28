@@ -8,6 +8,7 @@
 \usepackage{subfig}
 \usepackage{hyperref}
 \usepackage[parfill]{parskip}   % For replacing paragraph indenting with a newline instead
+\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf} % Fixes \bf isssues
 
 \input{_content/____setup.txt}
 
@@ -52,15 +53,13 @@ Variations on the \verb|cite| command are \verb|\citet{}| and \verb|\citep{}|---
 	\newpage\section{Conclusion}\label{sec:Conclusion}
 		\input{_content/X0_conclusion.txt}
 
+	\newpage\bibliographystyle{agsm} %% https://www.mybib.com/#/projects/XRL93q/citations
+		\bibliography{FinalReportA} % This is the .bib file where the bibliography database is stored
 
 
-\bibliography{FinalReportA.bib} % This is the .bib file where the bibliography database is stored
-\bibliographystyle{harvard} %% https://www.mybib.com/#/projects/XRL93q/citations
 
-
-\appendix
-\newpage
-\section{Example of a Table}\label{app:Table}
+	\appendix
+		\newpage\section{Example of a Table}\label{app:Table}
  %
 \begin{table}[h!]
     \begin{center}\label{tab:MCHAProg}
