@@ -15,4 +15,4 @@ Do not use more than 2 levels of sub-sectioning.
 \subsubsection{Subsubsection 2}
 Do not use more than 2 levels of sub-sectioning.
 
-The rest of the report is organised as follows. Section~\ref{sec:Core Section} describes items related to the core content. Section~\ref{sec:Conclusion} concludes the report. Appendix~\ref{app:Table} shows an example of how to make a Table.
+The rest of the report is organised as follows. Section~\ref{sec:Background} describes items related to the core content. Section~\ref{sec:Conclusion} concludes the report. Appendix~\ref{app:Table} shows an example of how to make a Table.

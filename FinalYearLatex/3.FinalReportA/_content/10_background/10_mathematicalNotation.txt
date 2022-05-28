@@ -1,6 +1,6 @@
 In this section, examples of equations, figures, lists and code are provided.
 
-\subsection{Mathematics}
+\subsubsection{Mathematics}
 \LaTeX \ is very good for writing equations. Equations can be included in-line by using the \$ symbols $y=m x + h$. Alternatively, equations can be written separately by using the \verb|equation| environment---see \eqref{eq:EquationLine} below.
 \begin{equation}\label{eq:EquationLine}
     y=m x + h.
@@ -51,22 +51,22 @@ Greek letters can be written within equations by using appropriate commands. A f
 You can also write Greek letters in bold using the \verb|boldsymbol| command: $\boldsymbol{\alpha}$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Figures}
+\subsubsection{Figures}
 Figures can be included in your document by using the \verb|figure| environment. Note that the position of the figure is decided by the latex compiler when creating the final document. Don't be surprised if it does not appear exactly where you expected it. Figure~\ref{fig:Sinc} below shows a plot of the function $\sin(x)/x$.
 \begin{figure}[ht]
     \begin{center}
-        %\includegraphics[width=.6\linewidth]{Figures/SincPlot}
-        %\caption{Here goes the caption.}
-        %\label{fig:Sinc}
+        \includegraphics[width=.6\linewidth]{_figures/fig_2D.png}
+        \caption{Here goes the caption.}
+        \label{fig:Sinc}
     \end{center}
 \end{figure}
 
 Figures can be created using your favourite graphics editor before being included in your LaTeX document. If I need to make a simple diagram, I use powerpoint and select the drawing and save it as a pdf. For example, look at Figure~\ref{fig:MechaSys}.
 \begin{figure}[ht]
     \begin{center}
-        %\includegraphics[width=.6\linewidth]{Figures/MechaSys}
-        %\caption{Here goes the caption.}
-        %\label{fig:MechaSys}
+        \includegraphics[width=.6\linewidth]{_figures/fig_2D.png}
+        \caption{Here goes the caption.}
+        \label{fig:MechaSys}
     \end{center}
 \end{figure}
 
@@ -80,7 +80,7 @@ To import the figures from Matlab, follow the following procedure:
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Lists}
+\subsubsection{Lists}
 To create lists use the environments \verb|itemize|, \verb|enumerate|, or \verb|description|
 
 The following is generated using \emph{itemize}
@@ -109,7 +109,7 @@ The following is generated using \emph{description}
     \item[bar)] This is item 2
 \end{description}
 
-\subsection{Code listings}
+\subsubsection{Code listings}
 
 To include a syntax-highlighted code listing, you can use the \emph{listings} package. The default options are specified by the \verb|\lstset| command. The default settings for this document have been configured for Matlab code. There are 3 main commands, all of which can include options to override the defaults:
 \begin{enumerate}
