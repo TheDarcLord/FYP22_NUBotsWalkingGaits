@@ -15,7 +15,7 @@
 \AtBeginDocument{\setcounter{page}{\@firstpage}}
 
 \newsavebox{\MIClogo}
-\sbox{\MIClogo}{\includegraphics[width=3cm]{UoN_Logo}}
+\sbox{\MIClogo}{\includegraphics[width=3cm]{UoN_Logo.jpg}}
 
 \pagestyle{fancy}
 %% Ordinary pages
