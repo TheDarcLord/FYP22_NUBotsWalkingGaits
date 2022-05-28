@@ -1,4 +1,3 @@
-%%
 %% LaTeX document style `UoNMCHA', for use with LaTeX2e
 
 \NeedsTeXFormat{LaTeX2e}
@@ -21,7 +20,7 @@
 \pagestyle{fancy}
 %% Ordinary pages
 \fancyhf{}
-\fancyhead[CE]{School of Engineering, Discipline of Mechanical Engineering and Mechatronics}
+\fancyhead[CE]{School of Engineering, Discipline of Aerospace Systems, Mechanical and Mechatronics Engineering}
 \fancyhead[CO]{\usebox{\shorttitlebox}}
 \fancyfoot[LE]{\thepage}
 \fancyfoot[RO]{\thepage}

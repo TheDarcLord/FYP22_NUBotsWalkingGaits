@@ -1,0 +1,18 @@
+To organise your introduction section you can use the following structure:
+\begin{itemize}
+    \item \textbf{Position}: Show there is a problem and that it is important to solve it.
+    \item \textbf{Problem}: Describe the specifics of the problem you are trying to address
+    \item \textbf{Proposal}: Discuss how you are going to address this problem. Use the literature to back-up your approach to the problem, or to highlight that what you are doing has not been done before
+\end{itemize}
+Here you need to sell why what you are doing is important, and what benefits will it bring if you are successful and solve the problem? 
+
+\subsection{Subsection title}
+You can use subsections within any section of the report. 
+\subsection{Subsection title}
+Recall that you need at least two subsections per section.
+\subsubsection{Subsubsection 1}
+Do not use more than 2 levels of sub-sectioning.
+\subsubsection{Subsubsection 2}
+Do not use more than 2 levels of sub-sectioning.
+
+The rest of the report is organised as follows. Section~\ref{sec:Core Section} describes items related to the core content. Section~\ref{sec:Conclusion} concludes the report. Appendix~\ref{app:Table} shows an example of how to make a Table.

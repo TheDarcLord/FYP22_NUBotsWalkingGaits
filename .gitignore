@@ -2,3 +2,8 @@
 *.avi
 *.mp4
 *.png
+*.aux
+*.log
+*.out
+*.toc
+*.gz
