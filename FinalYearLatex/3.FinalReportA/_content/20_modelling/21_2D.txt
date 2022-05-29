@@ -1,8 +1,15 @@
-Beginning with a sketch, seen in Figure \ref{fig:2D_1}, 
-
-
-
-
+Beginning with a sketch, seen in Figure \ref{fig:2D_1}, the following series of Homogenous
+Transforms forms a kinematic chain that describes the position of the right ankle, the end effector, with
+respect to the left ankle.
+\begin{equation}\label{eq:RightAnkle}
+    T^{1}_6 = 
+    A^{1}_2(\phi_1,+L_1)
+    A^{2}_3(\phi_2,+L_2)
+    A^{3}_4(\phi_3,-H)
+    A^{4}_5(\phi_4,-L_2)
+    A^{5}_6(\phi_5,-L_1)
+    A^{6}_{EndEffector}(\phi_6)
+\end{equation}
 
  ~\ref{fig:2D_2} below shows a plot of the function 2D Model.
 
@@ -16,41 +23,39 @@ Beginning with a sketch, seen in Figure \ref{fig:2D_1},
     \end{center}
 \end{figure}
 
-%% TABLE OF JOINT ANGLES AND LINK LENGTHS
-\begin{table}[h!]
-    \begin{minipage}[t]{.5\linewidth}
-        \begin{center}\label{tab:2D_Joint}
-            \caption{Joint Angles}\label{tab:notation}
-            {\footnotesize
-                \begin{tabular}{c l l}
-                \hline\hline \textbf{Joint Angles} & & \\
-                {Joint} & {Angle (\emph{rads})} \\\hline 
-                1 & \small{$-\frac{\pi}{6}$}  \\[1.1ex]
-                2 & \small{$+\frac{2\pi}{6}$} \\[1.1ex]
-                3 & \small{$-\frac{\pi}{6}$}  \\[1.1ex]
-                4 & \small{$+\frac{\pi}{6}$}  \\[1.1ex]
-                5 & \small{$-\frac{2\pi}{6}$} \\[1.1ex]
-                6 & \small{$+\frac{\pi}{6}$}  \\[1.1ex]
-                \end{tabular} \\
-            }
-        \end{center}
-    \end{minipage}
-    \begin{minipage}[t]{.5\linewidth}
-        \begin{center}\label{tab:2D_Disp}
-            \caption{Link Lengths}\label{tab:notation}
-            {\footnotesize
-                \begin{tabular}{c l l}
-                \hline\hline \textbf{Link Lengths} & & \\
-                {Link} & {Length (\emph{m}) } & {Joints} \\\hline
-                2 & $0.4$ & 1 to 2 \\
-                3 & $0.4$ & 2 to 3 \\
-                4 & $0.0$, however, $\approx 0.2 $ & 3 to 4 \\
-                5 & $0.4$ & 4 to 5 \\
-                6 & $0.4$ & 5 to 6 \\
-                \end{tabular}
-            }
-        \end{center}
-    \end{minipage}
+%% TABLES OF JOINT ANGLES AND LINK LENGTHS
+\begin{table}[h!]\centering
+    \begin{center}
+        \caption{Joint Angles}\label{tab:JointAngles}
+        {\footnotesize
+            \begin{tabular}{c l l}
+            \hline\hline\textbf{Joint Angles} & & \\
+            {Joint} & {Angle (\emph{rads})} & {Variable Name} \\\hline 
+            1 & \small{$-\frac{\pi}{6}$} & $\phi_1$ \\
+            2 & \small{$+\frac{2\pi}{6}$} & $\phi_2$ \\
+            3 & \small{$-\frac{\pi}{6}$} & $\phi_3$ \\
+            4 & \small{$+\frac{\pi}{6}$} & $\phi_4$ \\
+            5 & \small{$-\frac{2\pi}{6}$} & $\phi_5$ \\
+            6 & \small{$+\frac{\pi}{6}$} & $\phi_6$ \\
+            \end{tabular}
+        }
+    \end{center}
+\end{table}
+\begin{table}[h!]\centering
+    \begin{center}
+        \caption{Link Lengths}\label{tab:LinkLengths}
+        {\footnotesize
+            \begin{tabular}{c l l l}
+            \hline\hline\textbf{Link Lengths} & & &\\
+            {Link} & {Length (\emph{m})} & {Variable Name} & {Joints} \\\hline
+            2 & $0.4$ & $L_1$ & 1 to 2 \\
+            3 & $0.4$ & $L_2$ & 2 to 3 \\
+            4 & $0.0$, however, $\approx 0.2 $ & $H$ & 3 to 4 \\
+            5 & $0.4$ & $L_2$ & 4 to 5 \\
+            6 & $0.4$ & $L_1$ & 5 to 6 \\
+            \end{tabular}
+        }
+    \end{center}
 \end{table}
 
 %% MATLAB DRAWN 2D MODEL

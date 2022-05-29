@@ -1,4 +1,5 @@
 Each model is a simplistic representation of a bipedal robot. 
-As the focus is simulating different
-walking strategies, each model is comprised of the lower half of a humanoid, that being the legs, feet 
-and waist.
+As the focus is simulating different walking strategies, each model is comprised of the
+lower half of a humanoid, that being the legs, feet and waist. Both models were 
+constructed vai a series of homogenous transforms that describe the postion of each ankle in
+global coordinates.
