@@ -1,5 +1,5 @@
 %% HAND DRAWN 2D MODEL
-\begin{figure}[h!]
+\begin{figure}[!h]
     \begin{center}
         \includegraphics[width=.4\linewidth]{_figures/2D_1.png}
         \caption{Sketch defining coordinate systems \textbf{0} to \textbf{6}.}
@@ -50,10 +50,10 @@ global coordinates.
         \vdots     & \ddots & \dots  & \text{RightAnkle}_{y} \\
         \vdots     & \vdots & \ddots & \text{RightAnkle}_{z} \\
         0          & 0      & 0      & 1
-    \end{bmatrix}.
+    \end{bmatrix}
 \end{equation}
 \\
-Equations(\ref{eq:worldHT2D}) are the Foward kinematic Model (FKM) which where then
+Equations(\ref{eq:worldHT2D}) are the Foward kinematic Model (FKM) which were then
 written in Matlab, with the joint angles found in table \ref{tab:JointAngles} and 
 the parameters found in table \ref{tab:LinkLengths}.
 
@@ -96,10 +96,11 @@ arbitrary distance between the hip joints, $3$ and $4$, provided more context re
 location and orientation of the right side (blue crosses). Additonally, plotting the 2D model in 3D reduced the workload for developing the 3D model as 
 a vast proportion of the matlab script code be reused.
 %% MATLAB DRAWN 2D MODEL
-\begin{figure}[h!]
+\begin{figure}[!h]
     \begin{center}
         \includegraphics[width=.85\linewidth]{_figures/2D_2.png}
         \caption{2D Model plotted in 3D (left) and 2D (right).}
         \label{fig:2D_2}
     \end{center}
 \end{figure}
+\newpage

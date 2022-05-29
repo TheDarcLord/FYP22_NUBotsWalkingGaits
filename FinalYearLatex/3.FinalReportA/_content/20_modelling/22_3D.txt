@@ -61,7 +61,7 @@ global coordinates.
     \end{bmatrix}.
 \end{equation}
 \\
-Equations(\ref{eq:worldHT3D}) are the FKM which where then
+Equations(\ref{eq:worldHT3D}) are the FKM which were then
 written in Matlab, with the joint angles found in table \ref{tab:JointAngles3D} and 
 the parameters found in table \ref{tab:LinkLengths3D}.
 
@@ -73,17 +73,17 @@ the parameters found in table \ref{tab:LinkLengths3D}.
             \begin{tabular}{c r c}
             \hline\hline\textbf{Joint Angles} & & \\
             {Joint} & {Angle (\emph{rads})} & {Variable Name} \\\hline 
-            1 & \small{$0$} & $\phi_{1}$ \\[1.5ex]
-            2 & \small{$-\frac{\pi}{6}$} & $\phi_{2}$ \\[1.5ex]
-            3 & \small{$+\frac{2\pi}{6}$} & $\phi_{3}$ \\[1.5ex]
-            4 & \small{$-\frac{\pi}{6}$} & $\phi_{4}$ \\[1.5ex]
-            5 & \small{$0$} & $\phi_5$ \\[1.5ex]
-            6 & \small{$0$} & $\phi_6$ \\[1.5ex]
-            7 & \small{$0$} & $\phi_7$ \\[1.5ex]
-            8 & \small{$0$} & $\phi_8$ \\[1.5ex]
-            9 & \small{$+\frac{\pi}{6}$} & $\phi_{9}$ \\[1.5ex]
-            10 & \small{$-\frac{2\pi}{6}$} & $\phi_{10}$ \\[1.5ex]
-            11 & \small{$+\frac{\pi}{6}$} & $\phi_{11}$ \\[1.5ex]
+            1 & \small{$0$} & $\phi_{1}$ \\[1.2ex]
+            2 & \small{$-\frac{\pi}{6}$} & $\phi_{2}$ \\[1.2ex]
+            3 & \small{$+\frac{2\pi}{6}$} & $\phi_{3}$ \\[1.2ex]
+            4 & \small{$-\frac{\pi}{6}$} & $\phi_{4}$ \\[1.2ex]
+            5 & \small{$0$} & $\phi_5$ \\[1.2ex]
+            6 & \small{$0$} & $\phi_6$ \\[1.2ex]
+            7 & \small{$0$} & $\phi_7$ \\[1.2ex]
+            8 & \small{$0$} & $\phi_8$ \\[1.2ex]
+            9 & \small{$+\frac{\pi}{6}$} & $\phi_{9}$ \\[1.2ex]
+            10 & \small{$-\frac{2\pi}{6}$} & $\phi_{10}$ \\[1.2ex]
+            11 & \small{$+\frac{\pi}{6}$} & $\phi_{11}$ \\[1.2ex]
             12 & \small{$0$} & $\phi_{12}$
             \end{tabular}
         }
@@ -105,15 +105,14 @@ the parameters found in table \ref{tab:LinkLengths3D}.
         }
     \end{center}
 \end{table}
-The model was then plotted in both 2D and 3D (figure \ref{fig:3D_2}). Although 2D, plotting the model in 3D with an 
-arbitrary distance between the hip joints, $3$ and $4$, provided more context regarding the
-location and orientation of the right side (blue crosses). Additonally, plotting the 2D model in 3D reduced the workload for developing the 3D model as 
-a vast proportion of the matlab script code be reused.
+The model was then plotted in 3D (figure \ref{fig:3D_2}). Distances between joints at the ankle and hips
+represent physical displacements between axes found on most dual servo motors. Additionally, these distances
+provide context as to the movement of the sets of joints that make up the hip joint and the ankle joint.
 %% MATLAB DRAWN 2D MODEL
 \begin{figure}[h!]
     \begin{center}
-        \includegraphics[width=.85\linewidth]{_figures/2D_2.png}
-        \caption{2D Model plotted in 3D (left) and 2D (right).}
+        \includegraphics[width=.6\linewidth]{_figures/3D_2.png}
+        \caption{3D Model, plotted using FKM.}
         \label{fig:3D_2}
     \end{center}
 \end{figure}
