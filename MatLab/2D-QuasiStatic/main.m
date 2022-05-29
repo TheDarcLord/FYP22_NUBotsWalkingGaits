@@ -16,11 +16,11 @@ model.r0Hg          = zeros(3,length(model.tspan)); % A0H  [XYZ]ᵀ
 model.rCoM          = zeros(3,length(model.tspan)); % rCoM [XYZ]ᵀ
 
 % Physical Parameters
-params.fibula       = 0.5;
-params.femur        = 0.5;
-params.HipWidth     = 0.25;
+params.fibula       = 0.4;
+params.femur        = 0.4;
+params.HipWidth     = 0.2;
 params.StepSize     = 0.2;
-params.r0Lg         = zeros(3,1);  % Left  Position from 0rigin in Global
+params.r0Lg         = [0.2; 0; -0.1];  % Left  Position from 0rigin in Global
 params.r0Hg         = zeros(3,1);  % Waist Position from 0rigin in Global
 params.r0Rg         = zeros(3,1);  % Right Position from 0rigin in Global
 params.r0CoMg       = zeros(3,1);  % CoM   Position from 0rigin in Global
@@ -41,6 +41,109 @@ model.q0 = [-pi/6;      % θ₁
              pi/6;      % θ₄
           -2*pi/6;      % θ₅
              pi/6];     % θ₆
+
+%% Initial Figure
+    model.q( :,1)              = model.q0;
+   [model.xe(:,1), ~, HTs]     = k(model.q0, params);
+    % ... Thus, initial positons
+    model.r06g(:,1)            = HTs.A06(1:3,4);
+    model.r01g(:,1)            = HTs.A01(1:3,4);
+    model.r0Hg(:,1)            = HTs.A0H(1:3,4);
+    i = 1;
+InitialFigure = figure(1);
+    clf(InitialFigure)
+    subplot(1,2,1)
+        hold on
+        grid on
+        set(gca,'Color','#CCCCCC');
+        view(145,20);
+        [~, ~, HomegeneousTransforms] = k(model.q(:,i), params);
+        % ZERO:   Z      X      Y
+        plot3([0 1], [0 0], [0 0],'r', 'LineWidth',1); % Z
+        plot3([0 0], [0 1], [0 0],'g', 'LineWidth',1); % X
+        plot3([0 0], [0 0], [0 1],'b', 'LineWidth',1); % Y
+        quiver3(0,0,0,model.r01g(3,1),model.r01g(1,1),0,'LineWidth',2,'Color','k','ShowArrowHead','on')
+        title("2D Model - 3D View");
+        xlabel('{\bfZ} (metres)');
+        ylabel('{\bfX} (metres)');
+        zlabel('{\bfY} (metres)');
+        % MAIN COMPONENTS
+        r01 = HomegeneousTransforms.A01(1:3,4);
+        plot3(r01(3), r01(1), r01(2), 'rx', 'LineWidth',3,'MarkerSize',8);
+        r02 = HomegeneousTransforms.A02(1:3,4);
+        plot3([r01(3) r02(3)], [r01(1) r02(1)], [r01(2) r02(2)],...
+            'k', 'LineWidth',1.5);
+        plot3(r02(3), r02(1), r02(2) ,'rx', 'LineWidth',3,'MarkerSize',8);
+        r03 = HomegeneousTransforms.A03(1:3,4);
+        plot3([r02(3) r03(3)], [r02(1) r03(1)], [r02(2) r03(2)],...
+            'k', 'LineWidth',1.5);
+        plot3(r03(3), r03(1), r03(2), 'rx', 'LineWidth',3,'MarkerSize',8);
+        r0H = HomegeneousTransforms.A0H(1:3,4);
+        plot3(r0H(3), r0H(1), r0H(2), 'mx', 'LineWidth',3,'MarkerSize',8);
+        r04 = HomegeneousTransforms.A04(1:3,4);
+        plot3([r03(3) r04(3)], [r03(1) r04(1)], [r03(2) r04(2)],...
+            'k', 'LineWidth',1.5);
+        plot3(r04(3), r04(1), r04(2), 'bx', 'LineWidth',3,'MarkerSize',8);
+        r05 = HomegeneousTransforms.A05(1:3,4);
+        plot3([r04(3) r05(3)], [r04(1) r05(1)], [r04(2) r05(2)],...
+            'k', 'LineWidth',1.5);
+        plot3(r05(3), r05(1), r05(2), 'bx', 'LineWidth',3,'MarkerSize',8);
+        r06 = HomegeneousTransforms.A06(1:3,4);
+        plot3([r05(3) r06(3)], [r05(1) r06(1)], [r05(2) r06(2)],...
+            'k', 'LineWidth',1.5);
+        plot3(r06(3), r06(1), r06(2), 'bx', 'LineWidth',3,'MarkerSize',8);
+
+        legend({'+Z_0','+X_0','+Y_0','{r}^1_0 - \it{Link 1}',...
+                'Joints 1 - 3','','','','','Mid Waist','','Joints 4 - 6'},...
+                'FontSize',12,Location='west');
+        
+        axis([-0.4,0.2, -1,1, 0,1]);
+
+    subplot(1,2,2)
+        hold on
+        grid on
+        set(gca,'Color','#CCCCCC');
+        view(90,0);
+
+        % ZERO:   Z      X      Y
+        plot3([0 1], [0 0], [0 0],'r', 'LineWidth',1); % Z
+        plot3([0 0], [0 1], [0 0],'g', 'LineWidth',1); % X
+        plot3([0 0], [0 0], [0 1],'b', 'LineWidth',1); % Y
+        legend({'+Z_0','+X_0','+Y_0'},'Autoupdate','off','Location','west');
+        title("2D Model - 2D View");
+        xlabel('{\bfZ} (metres)');
+        ylabel('{\bfX} (metres)');
+        zlabel('{\bfY} (metres)');
+        r01 = HomegeneousTransforms.A01(1:3,4);
+        plot3(r01(3), r01(1), r01(2), 'rx', 'LineWidth',3,'MarkerSize',8);
+        r02 = HomegeneousTransforms.A02(1:3,4);
+        plot3([r01(3) r02(3)], [r01(1) r02(1)], [r01(2) r02(2)],...
+            'k', 'LineWidth',2);
+        plot3(r02(3), r02(1), r02(2) ,'rx', 'LineWidth',3,'MarkerSize',8);
+        r03 = HomegeneousTransforms.A03(1:3,4);
+        plot3([r02(3) r03(3)], [r02(1) r03(1)], [r02(2) r03(2)],...
+            'k', 'LineWidth',2);
+        plot3(r03(3), r03(1), r03(2), 'rx', 'LineWidth',3,'MarkerSize',8);
+        r0H = HomegeneousTransforms.A0H(1:3,4);
+        plot3(r0H(3), r0H(1), r0H(2), 'mx', 'LineWidth',3,'MarkerSize',8);
+        r04 = HomegeneousTransforms.A04(1:3,4);
+        plot3([r03(3) r04(3)], [r03(1) r04(1)], [r03(2) r04(2)],...
+            'k', 'LineWidth',2);
+        plot3(r04(3), r04(1), r04(2), 'bx', 'LineWidth',3,'MarkerSize',8);
+        r05 = HomegeneousTransforms.A05(1:3,4);
+        plot3([r04(3) r05(3)], [r04(1) r05(1)], [r04(2) r05(2)],...
+            'k', 'LineWidth',2);
+        plot3(r05(3), r05(1), r05(2), 'bx', 'LineWidth',3,'MarkerSize',8);
+        r06 = HomegeneousTransforms.A06(1:3,4);
+        plot3([r05(3) r06(3)], [r05(1) r06(1)], [r05(2) r06(2)],...
+            'k', 'LineWidth',2);
+        plot3(r06(3), r06(1), r06(2), 'bx', 'LineWidth',3,'MarkerSize',8);
+
+        legend({'+Z_0','+X_0','+Y_0',...
+                'Joints 1 - 3','','','','','Mid Waist','','Joints 4 - 6'},...
+                'FontSize',12,Location='west');
+
+        axis([-0.4,0.2, -1,1, 0,1]);
 
 %% LOOP
 % Initial Conditions
