@@ -1,0 +1,28 @@
+Equation(\ref{eq:2D_opt_step}) is optimised while one foot is fixed and the other moves forward to the 
+next step.
+%% ARG MIN
+\begin{equation}\label{eq:2D_opt_step}
+    \mathbf{q}^{*} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
+    \mathbf{K}_{q}     \lVert  {\mathbf{q_{0}} - \mathbf{q}}    \rVert \: + \:
+    \mathbf{K}_{e}     \lVert  {k(\mathbf{q}) - \mathbf{x}_{e}} \rVert \: + \:
+    \mathbf{K}_{CoM}   \lVert  {\mathbf{r}^{0}_{CoM} - \mathbf{r}^{0}_{\text{Fixed}} } \rVert
+\end{equation}
+\\ Equation(\ref{eq:2D_opt_shift}) is during the double support phase, moving the CoM from the
+trailing ankle/support polygon, to the forward ankle. Throughout this phase the CoM remains over the
+support polygon.
+%% ARG MIN
+\begin{equation}\label{eq:2D_opt_shift}
+        \mathbf{q}^{*} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
+        \mathbf{K}_{q}     \lVert  {\mathbf{q_{0}} - \mathbf{q}}   \rVert \: + \:
+        \mathbf{K}_{e}     \lVert  {k(\mathbf{q})}                 \rVert \: + \:
+        \mathbf{K}_{CoM}   \lVert  {\mathbf{r}^{0}_{CoM} - \mathbf{r}^{0}_{\text{Forward Ankle}} } \rVert
+\end{equation}
+%% MATLAB DRAWN QUASI MODEL
+\begin{figure}[!hb]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_figures/2D_Quasi.png}
+        \caption{2D Model plotted in 3D walk sequnce.}
+        \label{fig:2D_Quasi}
+    \end{center}
+\end{figure}
+\newpage

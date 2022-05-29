@@ -1,0 +1,3 @@
+The core idea of Quasi-Static locomotion is that the centre of mass (CoM) 
+remains over the support polygon (SP) for all time. This is achieve using
+the FKM, Inverse Kinematic Model (IKM), Trajectory Generation and Numerical Optimisation.
