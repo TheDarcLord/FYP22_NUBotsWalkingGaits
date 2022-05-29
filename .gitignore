@@ -1,7 +1,6 @@
 *.asv
 *.avi
 *.mp4
-*.png
 *.aux
 *.log
 *.out
@@ -12,4 +11,4 @@
 *.dvi
 *.ps
 *.xml
-FinalYearLatex/3.FinalReportA/FinalReportA.bbl
+*.bbl
