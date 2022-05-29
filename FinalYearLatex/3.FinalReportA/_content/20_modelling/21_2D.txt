@@ -62,7 +62,7 @@ the parameters found in table \ref{tab:LinkLengths}.
     \begin{center}
         \caption{Joint Angles}\label{tab:JointAngles}
         {\footnotesize
-            \begin{tabular}{c l l}
+            \begin{tabular}{c r l}
             \hline\hline\textbf{Joint Angles} & & \\
             {Joint} & {Angle (\emph{rads})} & {Variable Name} \\\hline 
             1 & \small{$-\frac{\pi}{6}$} & $\phi_1$ \\[1.5ex]

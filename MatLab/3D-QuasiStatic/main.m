@@ -16,10 +16,10 @@ model.r0Hg          = zeros(3,length(model.tspan));  % A0H   [XYZ]ᵀ
 model.r0CoMg        = zeros(3,length(model.tspan));  % r0CoMg  [XYZ]ᵀ
 
 % Physical Parameters
-params.fibula       = 0.5;
-params.femur        = 0.5;
-params.HipWidth     = 0.25;
-params.ServoSize    = 0.1;
+params.fibula       = 0.4;
+params.femur        = 0.4;
+params.HipWidth     = 0.2;
+params.ServoSize    = 0.01;
 
 params.StepSize     = 0.4;
 params.r0Lg         = zeros(3,1);  % Right Position from 0rigin in Global
@@ -219,12 +219,14 @@ for i=1:length(model.tspan)
     
     txt = " Time: " + num2str(model.tspan(i)) + " sec";
     text(0,2,2,txt)
-    if i > 181
-        params.mode     =  1;
-    elseif i > 121
+    if i > 241
         params.mode     = -1;
-    elseif i > 61
+    elseif i > 181    
+        params.mode     =  0;
+    elseif i > 121
         params.mode     =  1;
+    elseif i > 61
+        params.mode     =  0;
     else 
         params.mode     = -1;
     end
