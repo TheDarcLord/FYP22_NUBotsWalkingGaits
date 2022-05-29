@@ -1,4 +1,3 @@
-%%
 %% LaTeX document style `UoNMCHA', for use with LaTeX2e
 
 \NeedsTeXFormat{LaTeX2e}
@@ -16,12 +15,12 @@
 \AtBeginDocument{\setcounter{page}{\@firstpage}}
 
 \newsavebox{\MIClogo}
-\sbox{\MIClogo}{\includegraphics[width=3cm]{UoN_Logo}}
+\sbox{\MIClogo}{\includegraphics[width=3cm]{UoN_Logo.jpg}}
 
 \pagestyle{fancy}
 %% Ordinary pages
 \fancyhf{}
-\fancyhead[CE]{School of Engineering, Discipline of Mechanical Engineering and Mechatronics}
+\fancyhead[CE]{School of Engineering, Discipline of Aerospace Systems, Mechanical and Mechatronics Engineering}
 \fancyhead[CO]{\usebox{\shorttitlebox}}
 \fancyfoot[LE]{\thepage}
 \fancyfoot[RO]{\thepage}

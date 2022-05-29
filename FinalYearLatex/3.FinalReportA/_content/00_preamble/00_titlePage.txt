@@ -1,0 +1,9 @@
+\title{Final Year Project Part A \\
+{\small May 2022}}
+\author[UoNMCHA]{Darcy Byrne}
+\address[UoNMCHA]{
+	Student of Mechatronics Engineering,\\
+	The University of Newcastle, Callaghan, NSW 2308, AUSTRALIA \\
+	Student Number: 3256634 \\
+	E-mail: \href{mailto:D.Byrne@uon.edu.au}{\textsf{D.Byrne@uon.edu.au}}}
+\maketitle\onecolumn

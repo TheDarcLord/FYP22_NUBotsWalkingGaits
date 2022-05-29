@@ -1,0 +1,11 @@
+You may like to say thank you to someone that helped you with your project.
+\\\citep{kajita_2002_a}	- A realtime pattern generator for biped walking
+\\\citep{kajita_2003_biped} - ZMP
+\\\citep{katayama_1985_design} - Preview Control Discrete
+\\\citep{perez_2014_fundamentals} - Fundamentals of Mechanical Systems Vec Calc etc.
+\\\citep{renton_2021_lecture} 	- MCHA 4100
+\\\citep{grimble_2009_robotics} - Robotics: Modelling Planning Control
+\\\citep{raibert_1986_legged} - Legged Robots that balance
+\\\citep{kato_1973_the} - The WABOT-1 -> First known Quasi Static Biped ?
+\\\citep{vukobratovi_1983_is} - Is Dynamic Control Needed in Robotic Systems ?
+\\\citep{hirose_1984_a} - Design and Control of a Quadruped Walking Vehicle ?

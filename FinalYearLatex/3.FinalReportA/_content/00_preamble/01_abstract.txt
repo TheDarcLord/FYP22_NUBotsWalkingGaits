@@ -1,0 +1,10 @@
+Remember that your abstract may include the following information:
+\begin{itemize}
+    \item Defines the intention of the report.
+    \item Places the report in context so the reader knows why it is important to read it.
+    \item Why is it important?
+    \item What problem is addressed?
+    \item Briefly states the results
+    \item Briefly presents the implications and recommendations
+\end{itemize}
+Ensure that your abstract is less than 200 words.
