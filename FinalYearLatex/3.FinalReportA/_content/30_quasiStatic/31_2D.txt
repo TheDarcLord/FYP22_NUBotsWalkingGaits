@@ -21,7 +21,7 @@ support polygon.
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=.95\linewidth]{_figures/2D_Quasi.png}
-        \caption{2D Model plotted in 3D walk sequnce.}
+        \caption{2D model, in 3D, Quasi-Static walk sequnce.}
         \label{fig:2D_Quasi}
     \end{center}
 \end{figure}
