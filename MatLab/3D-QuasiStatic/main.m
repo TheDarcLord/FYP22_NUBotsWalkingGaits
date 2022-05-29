@@ -22,7 +22,7 @@ params.HipWidth     = 0.2;
 params.ServoSize    = 0.05;
 
 params.StepSize     = 0.4;
-params.r0Lg         = [0.2; 0; -0.1];  % Right Position from 0rigin in Global
+params.r0Lg         = zeros(3,1);  % Right Position from 0rigin in Global
 params.r0Hg         = zeros(3,1);  % Waist Position from 0rigin in Global
 params.r0Rg         = zeros(3,1);  % Left  Position from 0rigin in Global
 params.r0CoMg       = zeros(3,1);  % CoM   Position from 0rigin in Global
@@ -38,16 +38,16 @@ params.mass.pelvis  = 1.5;  % Waist
 %% Initial Position & Orientation
 
 model.q0 = [    0;     % θ₁    
-            -pi/6;     % θ₂    ->  2D θ₁ Ankle
-           2*pi/6;     % θ₃    ->  2D θ₂ Knee
-            -pi/6;     % θ₄    ->  2D θ₃ Hip
+            -pi/4;     % θ₂    ->  2D θ₁ Ankle
+           2*pi/4;     % θ₃    ->  2D θ₂ Knee
+            -pi/4;     % θ₄    ->  2D θ₃ Hip
                 0;     % θ₅
                 0;     % θ₆
                 0;     % θ₇
                 0;     % θ₈
-             pi/6;     % θ₉    ->  2D θ₄ Hip
-          -2*pi/6;     % θ₁₀   ->  2D θ₅ Knee
-             pi/6;     % θ₁₁   ->  2D θ₆ Ankle
+             pi/4;     % θ₉    ->  2D θ₄ Hip
+          -2*pi/4;     % θ₁₀   ->  2D θ₅ Knee
+             pi/4;     % θ₁₁   ->  2D θ₆ Ankle
                 0];    % θ₁₂ 
 
 model.q(:,1)            = model.q0;
