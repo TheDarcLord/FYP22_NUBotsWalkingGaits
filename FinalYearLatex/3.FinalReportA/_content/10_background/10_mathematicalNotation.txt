@@ -52,24 +52,9 @@ You can also write Greek letters in bold using the \verb|boldsymbol| command: $\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Figures}
-Figures can be included in your document by using the \verb|figure| environment. Note that the position of the figure is decided by the latex compiler when creating the final document. Don't be surprised if it does not appear exactly where you expected it. Figure~\ref{fig:Sinc} below shows a plot of the function $\sin(x)/x$.
-\begin{figure}[ht]
-    \begin{center}
-        \includegraphics[width=.6\linewidth]{_figures/fig_2D.png}
-        \caption{Here goes the caption.}
-        \label{fig:Sinc}
-    \end{center}
-\end{figure}
+Figures can be included in your document by using the \verb|figure| environment. Note that the position of the figure is decided by the latex compiler when creating the final document. Don't be surprised if it does not appear exactly where you expected it.  below shows a plot of the function $\sin(x)/x$.
 
-Figures can be created using your favourite graphics editor before being included in your LaTeX document. If I need to make a simple diagram, I use powerpoint and select the drawing and save it as a pdf. For example, look at Figure~\ref{fig:MechaSys}.
-\begin{figure}[ht]
-    \begin{center}
-        \includegraphics[width=.6\linewidth]{_figures/fig_2D.png}
-        \caption{Here goes the caption.}
-        \label{fig:MechaSys}
-    \end{center}
-\end{figure}
-
+Figures can be created using your favourite graphics editor before being included in your LaTeX document. If I need to make a simple diagram, I use powerpoint and select the drawing and save it as a pdf. For example, look at 
 To import the figures from Matlab, follow the following procedure:
 \begin{enumerate}
     \item Add labels and legends (don't forget to include units in the labels of each axis.)

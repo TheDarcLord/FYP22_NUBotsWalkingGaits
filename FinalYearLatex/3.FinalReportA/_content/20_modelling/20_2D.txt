@@ -1,0 +1,58 @@
+Figure ~\ref{fig:2D_1} ~\ref{fig:2D_2} below shows a plot of the function 2D Model.
+
+
+%% HAND DRAWN 2D MODEL
+\begin{figure}[ht]
+    \begin{center}
+        \includegraphics[width=.8\linewidth]{_figures/2D_1.png}
+        \caption{Here goes the caption.}
+        \label{fig:2D_1}
+    \end{center}
+\end{figure}
+
+
+%% TABLE OF JOINT ANGLES AND LINK LENGTHS
+\begin{table}[h!]
+    \begin{minipage}[t]{.5\linewidth}
+        \begin{center}\label{tab:2D_Joint}
+            \caption{Joint Angles}\label{tab:notation}
+            {\footnotesize
+                \begin{tabular}{c l l}
+                \hline\hline \textbf{Joint Angles} & & \\
+                {Joint} & {Angle (\emph{rads})} \\\hline 
+                1 & \small{$-\frac{\pi}{6}$}  \\[1.1ex]
+                2 & \small{$+\frac{2\pi}{6}$} \\[1.1ex]
+                3 & \small{$-\frac{\pi}{6}$}  \\[1.1ex]
+                4 & \small{$+\frac{\pi}{6}$}  \\[1.1ex]
+                5 & \small{$-\frac{2\pi}{6}$} \\[1.1ex]
+                6 & \small{$+\frac{\pi}{6}$}  \\[1.1ex]
+                \end{tabular} \\
+            }
+        \end{center}
+    \end{minipage}
+    \begin{minipage}[t]{.5\linewidth}
+        \begin{center}\label{tab:2D_Disp}
+            \caption{Link Lengths}\label{tab:notation}
+            {\footnotesize
+                \begin{tabular}{c l l}
+                \hline\hline \textbf{Link Lengths} & & \\
+                {Link} & {Length (\emph{m}) } & {Joints} \\\hline
+                2 & $0.4$ & 1 to 2 \\
+                3 & $0.4$ & 2 to 3 \\
+                4 & $0.0$, however, $\approx 0.2 $ & 3 to 4 \\
+                5 & $0.4$ & 4 to 5 \\
+                6 & $0.4$ & 5 to 6 \\
+                \end{tabular}
+            }
+        \end{center}
+    \end{minipage}
+\end{table}
+
+
+\begin{figure}[ht]
+    \begin{center}
+        \includegraphics[width=.6\linewidth]{_figures/2D_2.png}
+        \caption{Here goes the caption.}
+        \label{fig:2D_2}
+    \end{center}
+\end{figure}
