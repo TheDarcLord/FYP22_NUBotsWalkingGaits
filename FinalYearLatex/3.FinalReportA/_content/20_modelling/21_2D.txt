@@ -1,15 +1,20 @@
-Figure ~\ref{fig:2D_1} ~\ref{fig:2D_2} below shows a plot of the function 2D Model.
+Beginning with a sketch, seen in Figure \ref{fig:2D_1}, 
+
+
+
+
+
+ ~\ref{fig:2D_2} below shows a plot of the function 2D Model.
 
 
 %% HAND DRAWN 2D MODEL
 \begin{figure}[ht]
     \begin{center}
-        \includegraphics[width=.8\linewidth]{_figures/2D_1.png}
+        \includegraphics[width=.5\linewidth]{_figures/2D_1.png}
         \caption{Here goes the caption.}
         \label{fig:2D_1}
     \end{center}
 \end{figure}
-
 
 %% TABLE OF JOINT ANGLES AND LINK LENGTHS
 \begin{table}[h!]
@@ -48,10 +53,10 @@ Figure ~\ref{fig:2D_1} ~\ref{fig:2D_2} below shows a plot of the function 2D Mod
     \end{minipage}
 \end{table}
 
-
+%% MATLAB DRAWN 2D MODEL
 \begin{figure}[ht]
     \begin{center}
-        \includegraphics[width=.6\linewidth]{_figures/2D_2.png}
+        \includegraphics[width=.9\linewidth]{_figures/2D_2.png}
         \caption{Here goes the caption.}
         \label{fig:2D_2}
     \end{center}
