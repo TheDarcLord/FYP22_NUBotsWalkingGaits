@@ -4,3 +4,5 @@ You may like to say thank you to someone that helped you with your project.
 \\\citep{katayama_1985_design} - Preview Control Discrete
 \\\citep{perez_2014_fundamentals} - Fundamentals of Mechanical Systems Vec Calc etc.
 \\\citep{renton_2021_lecture} 	- MCHA 4100
+\\\citep{grimble_2009_robotics} - Robotics: Modelling Planning Control
+\\\citep{raibert_1986_legged} - Legged Robots that balance
