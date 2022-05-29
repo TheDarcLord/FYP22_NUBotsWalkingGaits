@@ -109,9 +109,9 @@ The model was then plotted in 3D (figure \ref{fig:3D_2}). Distances between join
 represent physical displacements between axes found on most dual servo motors. Additionally, these distances
 provide context as to the movement of the sets of joints that make up the hip joint and the ankle joint.
 %% MATLAB DRAWN 2D MODEL
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \begin{center}
-        \includegraphics[width=.6\linewidth]{_figures/3D_2.png}
+        \includegraphics[width=.9\linewidth]{_figures/3D_2.png}
         \caption{3D Model, plotted using FKM.}
         \label{fig:3D_2}
     \end{center}
