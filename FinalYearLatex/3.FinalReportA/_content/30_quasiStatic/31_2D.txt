@@ -24,5 +24,4 @@ support polygon.
         \caption{2D Model plotted in 3D walk sequnce.}
         \label{fig:2D_Quasi}
     \end{center}
-\end{figure}
-\newpage
+\end{figure}\

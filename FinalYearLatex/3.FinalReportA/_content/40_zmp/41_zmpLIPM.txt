@@ -15,4 +15,3 @@
         \label{fig:LIPM_sep}
     \end{center}
 \end{figure}
-\newpage

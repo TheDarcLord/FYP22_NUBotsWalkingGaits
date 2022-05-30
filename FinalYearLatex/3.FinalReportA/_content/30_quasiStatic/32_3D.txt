@@ -6,4 +6,3 @@
         \label{fig:3D_Quasi}
     \end{center}
 \end{figure}
-\newpage
