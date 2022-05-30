@@ -1,7 +1,0 @@
-This is one of the most important parts of the report. In the conclusion section, you  should 
-\begin{itemize}
-\item briefly summarise the results,
-\item reflect on the work presented, 
-\item make recommendations,
-\item suggest future work or improvements.
-\end{itemize}
