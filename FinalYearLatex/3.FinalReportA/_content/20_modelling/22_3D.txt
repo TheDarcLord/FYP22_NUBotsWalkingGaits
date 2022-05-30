@@ -112,7 +112,7 @@ provide context as to the movement of the sets of joints that make up the hip jo
 \begin{figure}[!ht]
     \begin{center}
         \includegraphics[width=.9\linewidth]{_figures/3D_2.png}
-        \caption{3D Model, plotted using FKM.}
+        \caption{3D model plotted using FKM.}
         \label{fig:3D_2}
     \end{center}
 \end{figure}
