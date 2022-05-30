@@ -35,7 +35,7 @@ tic % START TIMING
     params.femur     = 0.4;     % m    - Upper Leg
     params.HipWidth  = 0.2;     % m    - Pelvis
     params.ServoSize = 0.05;     % m    - Approximation/Spacing
-    params.StepSize  = 0.2;      % m    - 10 cm Step forward
+    params.StepSize  = 0.4;      % m    - 10 cm Step forward
  % Masses
     params.mass.fibula = 1.5;    % Paired with `tibia`
     params.mass.femur  = 1.5;    % Thigh Bone
@@ -83,13 +83,12 @@ model.r.q0 = [      0;     % θ₁
     model.r.r0Hg(:,1)         = HTs.A0H(1:3,4);
     model.r.r0CoMg(:,1)       = rCoM(model.r.q0,1,model,params);
 
-%% LOOPS
 %% STEP 1  
     % Robot    - Foot Trajectory Generation
         params.mode  = -1;
         stpIndxs     = 1:201;
         [Q,~,~,STEP] = trajectoryGeneration(stpIndxs, 1, model, params);
-    
+%%  
     % Pendulum - CoM Trajectory
         % Initial Condidtions
         ZMP0 = STEP(:,1);
@@ -210,38 +209,52 @@ ANIMATION_PEND = figure(42);
         grid on
         cla(Pend)    % Clears Data but not Titles/Labels  
         
-        title("Pendulum " + model.tspan(i))
+        title("3D LIPM - Preview Control",'FontSize',18);
         view(135,35);
         axis([-0.4,0.2, -1,1, 0,1]);
         % ZERO:  Z      X      Y
         plot3([0 1], [0 0], [0 0],'r', 'LineWidth',2); % Z
         plot3([0 0], [0 1], [0 0],'LineWidth',2,'Color','#379203'); % X
         plot3([0 0], [0 0], [0 1],'b', 'LineWidth',2); % Y
-        if i < 2
-            legend('+Z','+X','+Y', 'Trajectory','Autoupdate','off');
-            xlabel('Z','FontWeight','bold');
-            ylabel('X','FontWeight','bold');
-            zlabel('Y','FontWeight','bold');
-        end
-        plot3(model.p.pREF(2,i),... % Y|Z
-              model.p.pREF(1,i),... % X
+        
+        plot3(model.p.y(2,i),... % Y|Z
+              model.p.y(1,i),... % X
               0,...
               'kx','LineWidth',3,'MarkerSize',10)
         plot3(model.p.x(4,i),...    % Y|Z
               model.p.x(1,i),...    % X
               params.zc,...
-              'ro','LineWidth',3,'MarkerSize',10)
+              'mo','LineWidth',3,'MarkerSize',10)
+        plot3(model.p.y(2,1:i),...  % Y|Z
+              model.p.y(1,1:i),...  % X
+              zeros(1,length(model.tspan(1:i))),...
+              'k:','LineWidth',1)
         plot3(model.p.x(4,1:i),...  % Y|Z
               model.p.x(1,1:i),...  % X
               params.zc*ones(1,length(model.tspan(1:i))),...
-              'r','LineWidth',2)
+              'm:','LineWidth',1)
+        plot3([model.p.y(2,i) model.p.x(4,i)],...  % Y|Z
+              [model.p.y(1,i) model.p.x(1,i)],...  % X
+              [0 params.zc],...
+              'm-','LineWidth',1)
+
+        if i < 2
+            legend({'+Z','+X','+Y', ...
+                    'ZMP_{out}','CoM'},...
+                    'Autoupdate','off','fontsize',16,...
+                    'location','west');
+            xlabel('{\bfZ} (metres)');
+            ylabel('{\bfX} (metres)');
+            zlabel('{\bfY} (metres)');
+        end
+
         drawnow
-    %end
+    %   end
 
 % Animation Biped
 
 %for i=1:length(model.tspan)
-        Robot = subplot(1,2,2);
+        Robot = subplot(1,3,3);
         cla(Robot)    % Clears Data but not Titles/Labels  
         hold on
         grid on
@@ -264,12 +277,13 @@ ANIMATION_PEND = figure(42);
         plot3([0 1], [0 0], [0 0],'r', 'LineWidth',2); % Z
         plot3([0 0], [0 1], [0 0],'LineWidth',2,'Color','#379203'); % X
         plot3([0 0], [0 0], [0 1],'b', 'LineWidth',2); % Y
+        plot3(model.r.r0CoMg(3,i),model.r.r0CoMg(1,i),model.r.r0CoMg(2,i),'mo','LineWidth',2,'MarkerSize',10);
         if i < 2
-            legend('+Z','+X','+Y', 'Trajectory','Autoupdate','off');
-            title("Stand | Initial Step | Multiple Steps")
-            xlabel('Z','FontWeight','bold');
-            ylabel('X','FontWeight','bold');
-            zlabel('Y','FontWeight','bold');
+            legend({'+Z','+X','+Y', 'CoM'},'Autoupdate','off','FontSize',16,'location','east');
+            title("3D Model - ZMP Walking",'FontSize',18);
+            xlabel('{\bfZ} (metres)');
+            ylabel('{\bfX} (metres)');
+            zlabel('{\bfY} (metres)');
         end
         % MAIN COMPONENTS
         % Z X Y
@@ -283,63 +297,63 @@ ANIMATION_PEND = figure(42);
     
         % ONE
         r01 = HTs.A01(1:3,4);
-        plot3(r01(3), r01(1), r01(2), 'rx', 'LineWidth',2);         % J ONE
+        plot3(r01(3), r01(1), r01(2), 'rx', 'LineWidth',2,'markersize',10);         % J ONE
         % TWO
         r02 = HTs.A02(1:3,4);
         plot3([r01(3) r02(3)], [r01(1) r02(1)], [r01(2) r02(2)],... % L TWO
         'k', 'LineWidth',2);
-        plot3(r02(3), r02(1), r02(2) ,'rx', 'LineWidth',2);         % J TWO
+        plot3(r02(3), r02(1), r02(2) ,'rx', 'LineWidth',2,'markersize',10);         % J TWO
         % THREE
         r03 = HTs.A03(1:3,4);
         plot3([r02(3) r03(3)], [r02(1) r03(1)], [r02(2) r03(2)],... % L THREE
         'k', 'LineWidth',2);
-        plot3(r03(3), r03(1), r03(2), 'rx', 'LineWidth',2);         % J THREE
+        plot3(r03(3), r03(1), r03(2), 'rx', 'LineWidth',2,'markersize',10);         % J THREE
         % FOUR
         r04 = HTs.A04(1:3,4);
         plot3([r03(3) r04(3)], [r03(1) r04(1)], [r03(2) r04(2)],... % L FOUR
         'k', 'LineWidth',2);
-        plot3(r04(3), r04(1), r04(2), 'rx', 'LineWidth',2);         % J FOUR
+        plot3(r04(3), r04(1), r04(2), 'rx', 'LineWidth',2,'markersize',10);         % J FOUR
         % FIVE
         r05 = HTs.A05(1:3,4);
         plot3([r04(3) r05(3)], [r04(1) r05(1)], [r04(2) r05(2)],... % L FIVE
         'k', 'LineWidth',2);
-        plot3(r05(3), r05(1), r05(2), 'rx', 'LineWidth',2);         % J FIVE
+        plot3(r05(3), r05(1), r05(2), 'rx', 'LineWidth',2,'markersize',10);         % J FIVE
         % SIX 
         r06 = HTs.A06(1:3,4);
         plot3([r05(3) r06(3)], [r05(1) r06(1)], [r05(2) r06(2)],... % L SIX
         'k', 'LineWidth',2);
-        plot3(r06(3), r06(1), r06(2), 'rx', 'LineWidth',2);         % J SIX
+        plot3(r06(3), r06(1), r06(2), 'rx', 'LineWidth',2,'markersize',10);         % J SIX
 
         % SEVEN 
         r07 = HTs.A07(1:3,4);
         plot3([r06(3) r07(3)], [r06(1) r07(1)], [r06(2) r07(2)],... % L SEVEN
         'k', 'LineWidth',2);
-        plot3(r07(3), r07(1), r07(2), 'bx', 'LineWidth',2);         % J SEVEN
+        plot3(r07(3), r07(1), r07(2), 'bx', 'LineWidth',2,'markersize',10);         % J SEVEN
         % EIGHT
         r08 = HTs.A08(1:3,4);
         plot3([r07(3) r08(3)], [r07(1) r08(1)], [r07(2) r08(2)],... % L EIGHT
         'k', 'LineWidth',2);
-        plot3(r08(3), r08(1), r08(2), 'bx', 'LineWidth',2);         % J EIGHT
+        plot3(r08(3), r08(1), r08(2), 'bx', 'LineWidth',2,'markersize',10);         % J EIGHT
         % NINE
         r09 = HTs.A09(1:3,4);
         plot3([r08(3) r09(3)], [r08(1) r09(1)], [r08(2) r09(2)],... % L NINE
         'k', 'LineWidth',2);
-        plot3(r09(3), r09(1), r09(2), 'bx', 'LineWidth',2);         % J NINE
+        plot3(r09(3), r09(1), r09(2), 'bx', 'LineWidth',2,'markersize',10);         % J NINE
         % TEN
         r010= HTs.A010(1:3,4);
         plot3([r09(3) r010(3)], [r09(1) r010(1)], [r09(2) r010(2)],... % L TEN
         'k', 'LineWidth',2);
-        plot3(r010(3), r010(1), r010(2), 'bx', 'LineWidth',2);         % J TEN
+        plot3(r010(3), r010(1), r010(2), 'bx', 'LineWidth',2,'markersize',10);         % J TEN
         % ELEVEN
         r011 = HTs.A011(1:3,4);
         plot3([r010(3) r011(3)], [r010(1) r011(1)], [r010(2) r011(2)],... % L ELEVEN
         'k', 'LineWidth',2);
-        plot3(r011(3), r011(1), r011(2), 'bx', 'LineWidth',2);            % J ELEVEN
+        plot3(r011(3), r011(1), r011(2), 'bx', 'LineWidth',2,'markersize',10);            % J ELEVEN
         % TWELEVE
         r012 = HTs.A0ER(1:3,4);
         plot3([r011(3) r012(3)], [r011(1) r012(1)], [r011(2) r012(2)],... % L TWELEVE
         'k', 'LineWidth',2);
-        plot3(r012(3), r012(1), r012(2), 'bx', 'LineWidth',2);            % J TWELEVE
+        plot3(r012(3), r012(1), r012(2), 'bx', 'LineWidth',2,'markersize',10);            % J TWELEVE
      
         
         plot3(model.p.pREF(2,i),... % Y|Z
@@ -359,19 +373,18 @@ ANIMATION_PEND = figure(42);
               params.zc*ones(1,length(model.tspan(1:i))),...
               'm','LineWidth',1)
     
-        plot3(model.r.r0CoMg(3,i),model.r.r0CoMg(1,i),model.r.r0CoMg(2,i),'mo', 'LineWidth',1.5);
     
         %    [         MIN,          MAX, ...
         axis([          -0.5,        0.3, ...
               model.r.r0CoMg(3,i)-1, model.r.r0CoMg(1,i)+1, ...
                          0,          1]);
-        view(135,35);
+        view(150,20);
         % view(90,0); % -> 2D
         IMAGE(i) = getframe(gcf);
         drawnow
     end
 
-% VIDEO
+%% VIDEO
 videoWriterObj           = VideoWriter('3D_Step.mp4','MPEG-4');
 videoWriterObj.FrameRate = params.framerate; % 15sec video
 open(videoWriterObj);                        

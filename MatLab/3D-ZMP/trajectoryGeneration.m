@@ -23,7 +23,12 @@ function [Q, V, A, STEP] = trajectoryGeneration(indexspan, index, model, params)
     rCZ = model.r.r0CoMg(3);
 
     %% SPECIAL MATRICES
-        D  = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!
+        D  = [0 0 0 0 0 0;
+              1 0 0 0 0 0;
+              0 2 0 0 0 0;
+              0 0 3 0 0 0;
+              0 0 0 4 0 0;
+              0 0 0 0 5 0];                  % Special D - Diag Matrix   Qunitic!
         TT = model.tspan(indexspan).^((0:5).'); % [1;t;t²;t³;t⁴;t⁵] (t) Quintic!
     %% TIME
         t0_i = indexspan(1);
@@ -32,15 +37,15 @@ function [Q, V, A, STEP] = trajectoryGeneration(indexspan, index, model, params)
     %% TRAJECTORY OPTIONS
     if params.mode == -1                    
         qFIXED = [rLX; 0; rLZ];             % RIGHT FREE    
-        q0 = [rRX               0       0;  %  X  Ẋ  Ẍ 
-              0                 0       0;  % qY vY aY
+        q0 = [rRX               0.4     0.8;  %  X  Ẋ  Ẍ 
+              0                 0.3     0.1;  % qY vY aY
               rRZ               0       0]; % qZ vZ aZ
         t0 = model.tspan(t0_i);
         tt0 = t0.^(0:5).';
         T0 = [tt0, D*tt0, D^2*tt0];
         %---------------------------------------------
-        q1 = [(rLX+StepSize)/2  0.15    0;  %  X  Ẋ  Ẍ 
-              0.1               0       0;  % qY vY aY
+        q1 = [(rLX+StepSize)/2  0.15    0.5;  %  X  Ẋ  Ẍ 
+              0.1              -0.1    -0.3;  % qY vY aY
               rRZ               0       0]; % qZ vZ aZ
         t1 =  model.tspan(t1_i);
         tt1 = t1.^(0:5).';
@@ -89,15 +94,15 @@ function [Q, V, A, STEP] = trajectoryGeneration(indexspan, index, model, params)
         T2 = [tt2, D*tt2, D^2*tt2];
     elseif params.mode == 1                 
         qFIXED = [rRX; 0; rRZ];             % LEFT FREE
-        q0 = [rLX               0       0;  %  X  Ẋ  Ẍ 
-              0                 0       0;  % qY vY aY
+        q0 = [rLX               0.4     0.8;  %  X  Ẋ  Ẍ 
+              0                 0.3     0.1;  % qY vY aY
               rLZ               0       0]; % qZ vZ aZ
         t0 = model.tspan(t0_i);
         tt0 = t0.^(0:5).';
         T0 = [tt0, D*tt0, D^2*tt0];
         %---------------------------------------------
-        q1 = [(rRX+StepSize)/2  0.15    0;  %  X  Ẋ  Ẍ 
-              0.1               0       0;  % qY vY aY
+        q1 = [(rRX+StepSize)/2  0.15    0.5;  %  X  Ẋ  Ẍ 
+              0.1              -0.1    -0.3;  % qY vY aY
               rLZ               0       0]; % qZ vZ aZ
         t1 = model.tspan(t1_i);
         tt1 = t1.^(0:5).';
@@ -116,6 +121,12 @@ function [Q, V, A, STEP] = trajectoryGeneration(indexspan, index, model, params)
     Q = C*TT;
     V = C*D*TT;
     A = C*D^2*TT;
+
+    for qi=1:length(Q)
+        if Q(2,qi) < 0
+            Q(2,qi) = 0;
+        end
+    end
 
     STEP = [qFIXED([1 3],1) q2([1 3],1)];
 end
