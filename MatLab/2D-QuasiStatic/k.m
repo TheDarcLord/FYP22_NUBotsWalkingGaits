@@ -1,4 +1,4 @@
-function [xe, TAE, HTs] = k(q, params)
+function [xe, TAE, HTs] = k(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -11,10 +11,10 @@ function [xe, TAE, HTs] = k(q, params)
     Lu     = params.femur;      % Upper Leg
     H      = params.HipWidth;
     
-    A0L    = [eye(3), params.r0Lg;  % LEFT Ankle Position from 
-              zeros(1,3),       1]; %      0rigin in Global
-    A0R    = [eye(3), params.r0Rg;  % RIGHT Ankle Position from 
-              zeros(1,3),       1]; %       0rigin in Global
+    A0L    = [eye(3), model.r01g(:,index); % LEFT Ankle Position from 
+               0,0,0,                  1]; %      0rigin in Global
+    A0R    = [eye(3), model.r06g(:,index); % RIGHT Ankle Position from 
+               0,0,0,                  1]; %       0rigin in Global
 
     %% JOINT VARIABLES
     sigT        = sum(q);        % Σθᵢ    i=1:6
