@@ -14,6 +14,7 @@ model.r01g          = zeros(3,length(model.tspan)); % A01  [XYZ]ᵀ
 model.r06g          = zeros(3,length(model.tspan)); % A06  [XYZ]ᵀ
 model.r0Hg          = zeros(3,length(model.tspan)); % A0H  [XYZ]ᵀ
 model.rCoM          = zeros(3,length(model.tspan)); % rCoM [XYZ]ᵀ
+model.mode          = zeros(1,length(model.tspan)); % mode
 
 % Physical Parameters
 params.fibula       = 0.4;
@@ -62,7 +63,7 @@ InitialFigure = figure(1);
     quiver3(0,0,0, 0.5,0.0,0.0,'b','LineWidth',2); % Z
     quiver3(0,0,0, 0.0,0.5,0.0,'r','LineWidth',2); % X
     quiver3(0,0,0, 0.0,0.0,0.5,'g','LineWidth',2); % Y
-    quiver3(0,0,0, model.r01g(3,1),model.r01g(1,1),0,'k')
+    quiver3(0,0,0, model.r01g(3,1),model.r01g(1,1),0,'k');
     
     % MAIN COMPONENTS
     r01 = HTs.A01(1:3,4);
@@ -117,6 +118,7 @@ for i=2:61
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
     model.rCoM(:,i) = rCoM(model.q(:,i),i,model,params);
+    model.mode(:,i) = params.mode;
 end
 
 params.mode = 0;
@@ -132,6 +134,7 @@ for i=62:121
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
     model.rCoM(:,i) = rCoM(model.q(:,i),i,model,params);
+    model.mode(:,i) = params.mode;
 end
 
 params.mode = 1;
@@ -147,6 +150,7 @@ for i=122:181
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
     model.rCoM(:,i) = rCoM(model.q(:,i),i,model,params);
+    model.mode(:,i) = params.mode;
 end
 
 params.mode = 0;
@@ -162,6 +166,7 @@ for i=182:241
     model.r06g(:,i) = HTs.A06(1:3,4);
     model.r0Hg(:,i) = HTs.A0H(1:3,4);
     model.rCoM(:,i) = rCoM(model.q(:,i),i,model,params);
+    model.mode(:,i) = params.mode;
 end
 
 toc % FINISH TIMING
@@ -183,16 +188,7 @@ jointVariables = figure(2);
 
 ANIMATION = figure(3);
 for i=1:length(model.tspan)
-    if i > 181
-        params.mode     =  0;
-    elseif i > 121
-        params.mode     =  1;
-    elseif i > 61
-        params.mode     =  0;
-    else 
-        params.mode     = -1;
-    end
-
+    params.mode = model.mode(i);
     [~, ~, HTs]   = k(model.q(:,i), i, model, params);
 
     hold on
@@ -209,7 +205,7 @@ for i=1:length(model.tspan)
     quiver3(0,0,0, 0.5,0.0,0.0,'b','LineWidth',2); % Z
     quiver3(0,0,0, 0.0,0.5,0.0,'r','LineWidth',2); % X
     quiver3(0,0,0, 0.0,0.0,0.5,'g','LineWidth',2); % Y
-    quiver3(0,0,0, model.r01g(3,1),model.r01g(1,1),0,'k')
+    quiver3(0,0,0, model.r01g(3,i),model.r01g(1,i),model.r01g(2,i),'k');
     
     % MAIN COMPONENTS
     r01 = HTs.A01(1:3,4);
@@ -241,11 +237,11 @@ for i=1:length(model.tspan)
             'Joints 1 - 3','','','','','Mid Waist','','Joints 4 - 6'},...
             Location='west');
 
-    %    [         MIN,          MAX, ...
-    axis([          -0.4,            0.2, ...
-          (r0H(1))-1, (r0H(1)+1), ...
-                     0,            1]);
-    % view(90,0); % -> 2D
+    %    [      MIN,      MAX, ...
+    axis([     -0.4,      0.2, ... % Z
+           r0H(1)-1, r0H(1)+1, ... % X
+                  0,        1]);   % Y
+    
     IMAGE(i) = getframe(gcf);
     drawnow
 end
