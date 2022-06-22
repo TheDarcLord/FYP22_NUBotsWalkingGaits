@@ -43,7 +43,7 @@ params.mass.pelvis  = 0.7;  % Waist
     i = 1;
     model.q(:,1)            = model.q0;
     model.rBRb(:,1)         = [0;0;-0.2];
-   [model.xe(:,1), HTs]     = k_NEW(model.q0, i, model, params);
+   [model.xe(:,1), HTs]     = k(model.q0, i, model, params);
     model.rBLb(:,1)         = HTs.ABLb(1:3,4);
     model.rBRb(:,1)         = HTs.ABRb(1:3,4);
     model.rBHb(:,1)         = HTs.AbH(1:3,4);
@@ -112,7 +112,7 @@ InitialFigure = figure(1);
 %% LOOP
 % Initial Conditions
  model.q(:,1)              = model.q0;
-[model.xe(:,1), HTs]        = k_NEW(model.q0, 1, model, params);
+[model.xe(:,1), HTs]        = k(model.q0, 1, model, params);
 % ... Thus, initial positons
  model.rBHb(:,1)            = HTs.AbH(1:3,4);
 % ... Thus, initial CoM 
@@ -126,7 +126,7 @@ InitialFigure = figure(1);
 for i=2:61
     model.xe(:,i)   = [Q(:,i); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
-    [~, HTs]        = k_NEW(model.q(:,i),(i-1),model, params);
+    [~, HTs]        = k(model.q(:,i),(i-1),model, params);
     model.rBLb(:,i) = HTs.ABLb(1:3,4);
     model.rBRb(:,i) = HTs.ABRb(1:3,4);
     model.rBHb(:,i) = HTs.AbH(1:3,4);
@@ -142,7 +142,7 @@ params.mode = 0;
 for i=62:121
     model.xe(:,i)   = [Q(:,i); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
-    [~, HTs]        = k_NEW(model.q(:,i),(i-1),model, params);
+    [~, HTs]        = k(model.q(:,i),(i-1),model, params);
     model.rBLb(:,i) = HTs.ABLb(1:3,4);
     model.rBRb(:,i) = HTs.ABRb(1:3,4);
     model.rBHb(:,i) = HTs.AbH(1:3,4);
@@ -159,7 +159,7 @@ params.mode = 1;
 for i=122:181
     model.xe(:,i)   = [Q(:,i); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
-    [~, HTs]     = k_NEW(model.q(:,i),(i-1),model, params);
+    [~, HTs]     = k(model.q(:,i),(i-1),model, params);
     model.rBLb(:,i) = HTs.ABLb(1:3,4);
     model.rBRb(:,i) = HTs.ABRb(1:3,4);
     model.rBHb(:,i) = HTs.AbH(1:3,4);
@@ -175,7 +175,7 @@ params.mode = 0;
 for i=182:241
     model.xe(:,i)   = [Q(:,i); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
-    [~, HTs]     = k_NEW(model.q(:,i),(i-1),model, params);
+    [~, HTs]     = k(model.q(:,i),(i-1),model, params);
     model.rBLb(:,i) = HTs.ABLb(1:3,4);
     model.rBRb(:,i) = HTs.ABRb(1:3,4);
     model.rBHb(:,i) = HTs.AbH(1:3,4);
@@ -203,7 +203,7 @@ jointVariables = figure(2);
 ANIMATION = figure(3);
 for i=1:length(model.tspan)
     params.mode = model.mode(i);
-    [~, HTs] = k_NEW(model.q(:,i), i, model, params);
+    [~, HTs] = k(model.q(:,i), i, model, params);
 
     clf(ANIMATION)
     hold on

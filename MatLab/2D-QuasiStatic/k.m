@@ -1,4 +1,4 @@
-function [xe, HTs] = k_NEW(q, index, model, params)
+function [xe, HTs] = k(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -79,7 +79,7 @@ function [xe, HTs] = k_NEW(q, index, model, params)
         HTs.Ab0 = HTs.AbB * T(0,Sa,0);
         HTs.Ab1 = HTs.Ab0 * Rz(q(1)) *T(0, Ll, 0);
         HTs.Ab2 = HTs.Ab1 * Rz(q(2)) *T(0, Lu, 0);
-        HTs.Ab3 = HTs.Ab2 * Rz(q(3)) *T(0,  0,(-H/2));
+        HTs.Ab3 = HTs.Ab2 * Rz(q(3)) *T(0,  0,-H);
 
         HTs.AbE = T(rBRb(1),rBRb(2),rBRb(3));
         HTs.Ab6 = HTs.AbE * T(0,Sa,0);
