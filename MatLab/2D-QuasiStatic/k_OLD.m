@@ -1,4 +1,4 @@
-function [xe, TAE, HTs] = k(q, index, model, params)
+function [xe, TAE, HTs] = k_OLD(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
