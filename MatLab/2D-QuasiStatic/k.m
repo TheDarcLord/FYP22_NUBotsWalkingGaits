@@ -14,6 +14,7 @@ function [xe, HTs] = k(q, index, model, params)
     
     rBLb    = model.rBLb(:,index); % LEFT  Sole Position
     rBRb    = model.rBRb(:,index); % RIGHT Sole Position
+
     %% HOMOGENEOUS CONSTANTS
     TNE  = [1, 0, 0,   0; 
             0, 1, 0, -Sa;
@@ -24,19 +25,14 @@ function [xe, HTs] = k(q, index, model, params)
     Tb0L = [1, 0, 0, rBLb(1); 0, 1, 0, Sa+rBLb(2);
             0, 0, 1, rBLb(3); 0, 0, 0,         1];
 
-    %% q Variables
-    sig16 = sum(q);
-    sig15 = sum(q(1:5));
-    sig14 = sum(q(1:4));
-    sig13 = sum(q(1:3));
-    sig12 = sum(q(1:2));
-    sig46 = sum(q(4:6));
-    sig56 = sum(q(5:6));
-    sig36 = sum(q(3:6));
-    sig26 = sum(q(2:6));
-
     %% STEP LOGIC
     if params.mode == -1    % LEFT FIXED
+        sig16 = q(1)+q(2)+q(3)+q(4)+q(5)+q(6);
+        sig15 = q(1)+q(2)+q(3)+q(4)+q(5);
+        sig14 = q(1)+q(2)+q(3)+q(4);
+        sig13 = q(1)+q(2)+q(3);
+        sig12 = q(1)+q(2);
+
         r06 = [Lu*(sin(sig14)-sin(sig12))-Ll*(sin(q(1))-sin(sig15));
                Lu*(cos(sig12)-cos(sig14))+Ll*(cos(q(1))-cos(sig15));
               -H];
@@ -47,13 +43,19 @@ function [xe, HTs] = k(q, index, model, params)
         Tbe = Tb0L * T06 * TNE;
 
         HTs.ABRb = Tbe;
-        HTs.ABLb = [eye(3),rBRb; 0,0,0,1];
+        HTs.ABLb = [eye(3),rBLb; 0,0,0,1];
         HTs.AbH  = HTs.ABLb * ...
             [cos(sig13), -sin(sig13), 0, -Lu*sin(sig12)-Ll*sin(q(1));
              sin(sig13),  cos(sig13), 0,  Sa+Lu*cos(sig12)+Ll*cos(q(1));
                       0,           0, 1, -H/2;
                       0,           0, 0,  1];
+
     elseif params.mode == 0 % BOTH FIXED
+        sig13 = q(1)+q(2)+q(3);
+        sig12 = q(1)+q(2);
+        sig56 = q(5)+q(6);
+        sig46 = q(4)+q(5)+q(6);
+
         T02e = [cos(sig13), -sin(sig13), 0, -Lu*sin(sig12)-Ll*sin(q(1));
                 sin(sig13),  cos(sig13), 0,  Lu*cos(sig12)+Ll*cos(q(1));
                          0,           0, 1,                        -H/2;
@@ -66,9 +68,16 @@ function [xe, HTs] = k(q, index, model, params)
         TbeR = Tb0R*T63e;
 
         HTs.AbH  = TbeL;
-        HTs.ABLb = [eye(3),rBRb; 0,0,0,1];
+        HTs.ABLb = [eye(3),rBLb; 0,0,0,1];
         HTs.ABRb = [eye(3),rBRb; 0,0,0,1];
+
     elseif params.mode == 1 % RIGHT FIXED
+        sig16 = q(1)+q(2)+q(3)+q(4)+q(5)+q(6);
+        sig56 = q(5)+q(6);
+        sig46 = q(4)+q(5)+q(6);
+        sig36 = q(3)+q(4)+q(5)+q(6);
+        sig26 = q(2)+q(3)+q(4)+q(5)+q(6);
+
         R60 = [cos(sig16),  sin(sig16), 0;
               -sin(sig16),  cos(sig16), 0;
                         0,           0, 1];
@@ -85,6 +94,7 @@ function [xe, HTs] = k(q, index, model, params)
             -sin(sig46), cos(sig46), 0, Sa+Lu*cos(sig56)+Ll*cos(q(6));
                       0,          0, 1, H/2;
                       0,          0, 0, 1];
+
     end
 
     %% End Effector Parameterisation
@@ -95,8 +105,8 @@ function [xe, HTs] = k(q, index, model, params)
     % R₃₃:  cθ₂
     
     if params.mode ~= 0
-        phi    = atan2( Tbe(3,2), Tbe(3,3) );  
-        theta  = atan2(-Tbe(3,1), sqrt( Tbe(3,2)^2 + Tbe(3,3)^2 ) );
+        phi    = 0;%atan2( Tbe(3,2), Tbe(3,3) );  
+        theta  = 0;%atan2(-Tbe(3,1), sqrt( Tbe(3,2)^2 + Tbe(3,3)^2 ) );
         psi    = atan2( Tbe(2,1), Tbe(1,1) );
         
         xe = [Tbe(1:3,4); % X Y Z

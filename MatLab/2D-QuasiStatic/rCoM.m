@@ -1,82 +1,65 @@
-function [r0CoM] = rCoM(q,index,model,params)
+function [rCoMb] = rCoM(q,index,model,params)
 % rCOM  [2D Model] Centre of Mass - CoM
 %       Relies on the FKM, k(q), to locate the masses
 %       r0CoM - Position[x,y,z] of CoM in ZERO/World Coordinates
 %       Equation:
 %           M = Σ mᵢ
 %           Ṟ = M⁻¹ Σ ṟᵢmᵢ
-    %% JOINT VARIABLES
-    sigT12      = sum(q(1:2));   % Σθᵢ    i=1:2
-    sigT56      = sum(q(5:6));   % Σθᵢ    i=5:6
 
     %% Lengths
     Ll = params.fibula;     % Lower Leg
     Lu = params.femur;      % Upper Leg
-    h  = params.HipWidth;   % Pelvis Width
-   
+    H  = params.HipWidth;   % Pelvis Width
+    Sa = params.tarsal;     % Sole to Ankle
+    % RATIO
+    R  = 0.5;
     %% Masses
-    mLl = params.mass.femur;    % Thigh Bone
-    mLu = params.mass.fibula;   % Paired with `tibia`
-    mJo = params.mass.joint;    % Knee Bone / Joints
+    mLu = params.mass.femur;    % Thigh Bone Mass
+    mLl = params.mass.fibula;   % Paired with `tibia` Mass
+    mJo = params.mass.joint;    % Knee Bone / Joints Mass
     mPe = params.mass.pelvis;   % Waist Mass
-    
-    %% JOINT POSITIONS
-    A0Al   = [eye(3), model.rBLb(:,index);  % LEFT Ankle Position from 
-              0,0,0,                   1]; %         0rigin in Global
-    A0Ar   = [eye(3), model.rBRb(:,index);  % RIGHT Ankle Position from 
-              0,0,0,                   1]; %         0rigin in Global
-    A0H    = [eye(3), model.rBHb(:,index);  % PELVIS Mid  Position from 
-              0,0,0,                   1]; %         0rigin in Global
-    
-    % LEFT KNEE = A0L * A12
-    A12x = -Ll*sin(q(1));
-    A12y =  Ll*cos(q(1));
-    A12z =  0;
-    A0Kl = A0Al*[cos( q(1) ), -sin( q(1) ), 0, A12x;
-                 sin( q(1) ),  cos( q(1) ), 0, A12y;
-                           0,            0, 1, A12z;
-                           0,            0, 0,    1];
-    % LEFT HIP = A0L * A13
-    A13x = -Lu*sin(sigT12)-Ll*sin(q(1));
-    A13y =  Lu*cos(sigT12)+Ll*cos(q(1));
-    A13z =  0;
-    A0Hl = A0Al*[cos(sigT12), -sin(sigT12), 0, A13x;
-                 sin(sigT12),  cos(sigT12), 0, A13y;
-                           0,            0, 1, A13z;
-                           0,            0, 0,    1];
-    % RIGHT HIP = A0R * A64
-    A64x = Lu*sin(sigT56)+Ll*sin(q(6));
-    A64y = Lu*cos(sigT56)+Ll*cos(q(6));
-    A64z = 0;
-    A0Hr = A0Ar*[cos(sigT56), sin(sigT56), 0, A64x;
-                -sin(sigT56), cos(sigT56), 0, A64y;
-                           0,           0, 1, A64z;
-                           0,           0, 0,    1];
-    % RIGHT KNEE = A0R * A65
-    A65x = Ll*sin(q(6));
-    A65y = Ll*cos(q(6));
-    A65z = 0;
-    A0Kr = A0Ar*[cos( q(6) ), sin( q(6) ), 0, A65x;
-                -sin( q(6) ), cos( q(6) ), 0, A65y;
-                           0,           0, 1, A65z;
-                           0,           0, 0,    1];
+    mFe = params.mass.foot;     % Foot Mass
 
-    %% LINK POSITIONS
-    A0Ul = (A0Hl(1:3,4) + A0Kl(1:3,4)) * 0.5; % Estimate of rCoM of UL L
-    A0Ll = (A0Kl(1:3,4) + A0Al(1:3,4)) * 0.5; % Estimate of rCoM of LL L
-    A0Ur = (A0Hr(1:3,4) + A0Kr(1:3,4)) * 0.5; % Estimate of rCoM of UL R
-    A0Lr = (A0Kr(1:3,4) + A0Ar(1:3,4)) * 0.5; % Estimate of rCoM of LL R
+    %% JOINT & LINK Mass Position
+    rBLb = model.rBLb(:,index);                 % LEFT  Sole
+        rB0b  = [rBLb(1); Sa+rBLb(2); rBLb(3)]; %       Ankle
+        rFoLb = R*(rBLb+rB0b);                  %       Foot
+        rB1b  = [rBLb(1)-Ll*sin(q(1));          %       Knee
+                 rBLb(2)+Ll*cos(q(1))+Sa;
+                 rBLb(3)];
+        rLlLb = R*(rB0b+rB1b);                  %       Fibula
+        rB2b  = [rB1b(1)-Lu*sin(q(1)+q(2)); 
+                 rB1b(2)+Lu*cos(q(1)+q(2)); 
+                 rB1b(3)];                      %       Hip
+        rLuLb = R*(rB1b+rB2b);                  %       Femur 
+    rBRb = model.rBRb(:,index);                 % RIGHT Sole
+        rB5b  = [rBRb(1); Sa+rBRb(2); rBRb(3)]; %       Ankle
+        rFoRb = R*(rBRb+rB5b);                  %       Foot
+        rB4b  = [rBRb(1)+Ll*sin(q(6));          %       Knee
+                 rBRb(2)+Ll*cos(q(6))+Sa;
+                 rBRb(3)];
+        rLlRb = R*(rB5b+rB4b);                  %       Fibula
+        rB3b  = [rB4b(1)+Lu*sin(q(5)+q(6));
+                 rB4b(2)+Lu*cos(q(5)+q(6));
+                 rB4b(3)];                      %       Hip
+        rLuRb = R*(rB4b+rB3b);                  %       Femur
+    rBHb = [rB3b(1);
+            rB3b(2);
+            rB3b(3)+(H/2)];
 
-    %% Position of the CoM in Global Coordinates
-    sigmaMass = (mJo * 6) + ... Joints (Ankle, Knee, Hip)
-                (mLu * 2) + ... Upper Leg
-                (mLl * 2) + ... Lower Leg
-                 mPe;
-    r0CoM = ((A0Al(1:3,4) + A0Kl(1:3,4) + A0Hl(1:3,4)) * mJo + ...
-             (A0Ar(1:3,4) + A0Kr(1:3,4) + A0Hr(1:3,4)) * mJo + ...
-             (A0H(1:3,4))  * mPe + ...
-             (A0Ul + A0Ur) * mLu + ...
-             (A0Ll + A0Lr) * mLl ) ...
-             / sigmaMass;
+    %% Position of the CoM in Base Co-ordinates
+    sigmaMass = (mJo * 6) + ...% Joints (Ankle, Knee, Hip)
+                (mFe * 2) + ...% Feet
+                (mLl * 2) + ...% Upper Legs
+                (mLu * 2) + ...% Lower Legs
+                 mPe;          % Pelvis
+    rCoMb = ( ...
+        + (mPe*rBHb) ...
+        + (mJo*(rB5b+rB4b+rB3b+rB2b+rB1b+rB0b)) ...
+        + (mFe*(rFoLb+rFoRb)) ...
+        + (mLl*(rLlLb+rLlRb)) ...
+        + (mLu*(rLuLb+rLuRb)) ...
+    )/ sigmaMass;
+
 end
 

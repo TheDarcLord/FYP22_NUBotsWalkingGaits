@@ -2,8 +2,6 @@ clear all
 close all
 clc 
 
-tic % START TIMING
-
 %% Setup
 params.framerate    = 10;
 model.tspan         = 0:(1 / params.framerate):24;
@@ -30,6 +28,7 @@ params.mass.femur   = 1;    % Thigh Bone
 params.mass.fibula  = 1;    % Paired with `tibia`
 params.mass.joint   = 0.5;  % Knee Bone / Joints / Ankles
 params.mass.pelvis  = 0.7;  % Waist
+params.mass.foot    = 0.1;  % Foot
 
 %% Initial Position & Orientation
     model.q0 = [-pi/6;      % θ₁
@@ -38,15 +37,16 @@ params.mass.pelvis  = 0.7;  % Waist
                  pi/6;      % θ₄
               -2*pi/6;      % θ₅
                  pi/6];     % θ₆
-
+    
 %% Initial Figure
     i = 1;
     model.q(:,1)            = model.q0;
     model.rBRb(:,1)         = [0;0;-0.2];
-   [model.xe(:,1), HTs]     = k(model.q0, i, model, params);
+   [model.xe(:,1), HTs]     = kSLOW(model.q0, i, model, params);
     model.rBLb(:,1)         = HTs.ABLb(1:3,4);
     model.rBRb(:,1)         = HTs.ABRb(1:3,4);
     model.rBHb(:,1)         = HTs.AbH(1:3,4);
+    rCoMb(:,1)              = rCoM(model.q0,i,model,params);
 
 InitialFigure = figure(1);
     clf(InitialFigure)
@@ -104,20 +104,26 @@ InitialFigure = figure(1);
         'k', 'LineWidth',2);
     plot3(rBE(3), rBE(1), rBE(2), 'ko', 'LineWidth',2,'MarkerSize',10);
 
+    plot3(rCoMb(3), rCoMb(1), rCoMb(2), 'mo', 'LineWidth',2,'MarkerSize',10);
+
     legend({'+Z_0','+X_0','+Y_0','{r}^B_0 - \it{Link 0}',...
             'Joints (1 - 3)','','','','','Mid Waist','',...
-            'Joints (4 - 6)','','','','','','','','End Effector'},...
+            'Joints (4 - 6)','','','','','','','','End Effector','CoM'},...
             Location='west');
 
-%% LOOP
-% Initial Conditions
- model.q(:,1)              = model.q0;
-[model.xe(:,1), HTs]        = k(model.q0, 1, model, params);
-% ... Thus, initial positons
- model.rBHb(:,1)            = HTs.AbH(1:3,4);
-% ... Thus, initial CoM 
- model.rCoMb(:,1)            = rCoM(model.q(:,1),1,model,params);
+%% MAIN LOOPs
+    % Initial Conditions
+    model.q(:,1)        = model.q0;
+   [model.xe(:,1), HTs] = k(model.q0, 1, model, params);
+    % ... Thus, initial positons
+    model.rBLb(:,1)  = HTs.ABLb(1:3,4);
+    model.rBRb(:,1)  = HTs.ABRb(1:3,4);
+    model.rBHb(:,1)  = HTs.AbH(1:3,4);
+    % ... Thus, initial CoM 
+    model.rCoMb(:,1) = rCoM(model.q(:,1),1,model,params);
+    model.mode(1,1) = params.mode;
 
+tic % START TIMING
 
 % Trajectory Generation
 [Q1,~,~] = trajectoryGeneration(1, model, 1:61, params);
@@ -203,7 +209,7 @@ jointVariables = figure(2);
 ANIMATION = figure(3);
 for i=1:length(model.tspan)
     params.mode = model.mode(i);
-    [~, HTs] = k(model.q(:,i), i, model, params);
+    [~, HTs] = kSLOW(model.q(:,i), i, model, params);
 
     clf(ANIMATION)
     hold on
@@ -260,11 +266,16 @@ for i=1:length(model.tspan)
         'k', 'LineWidth',2);
     plot3(rBE(3), rBE(1), rBE(2), 'ko', 'LineWidth',2,'MarkerSize',10);
 
+    plot3(model.rCoMb(3,i)*[1 1], ...
+          model.rCoMb(1,i)*[1 1], ...
+          model.rCoMb(2,i)*[1 0],'m:','LineWidth',2)
+
     legend({'+Z_0','+X_0','+Y_0','{r}^B_0 - \it{Link 0}',...
             'Joints (1 - 3)','','','','','Mid Waist','',...
-            'Joints (4 - 6)','','','','','','','','End Effector'},...
+            'Joints (4 - 6)','','','','','','','', ...
+            'End Effector', 'CoM'},...
             Location='west');
-
+    
     %    [      MIN,      MAX, ...
     axis([     -0.4,      0.2, ... % Z
            rbH(1)-1, rbH(1)+1, ... % X
