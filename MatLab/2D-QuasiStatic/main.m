@@ -19,7 +19,7 @@ params.fibula       = 0.4;
 params.femur        = 0.4;
 params.tarsal       = 0.05;              
 params.HipWidth     = 0.2;
-params.StepSize     = 0.2;
+params.StepSize     = 0.25;
 params.mode         = -1;          % LEFT  FIXED - FKM T16
 %                      0;          % BOTH  FIXED - FKM T1H T6H
 %                      1;          % RIGHT FIXED - FKM T61
@@ -30,101 +30,29 @@ params.mass.joint   = 0.5;  % Knee Bone / Joints / Ankles
 params.mass.pelvis  = 0.7;  % Waist
 params.mass.foot    = 0.1;  % Foot
 
-%% Initial Position & Orientation
+%% Initial Position & Orientation & Conditions
     model.q0 = [-pi/6;      % θ₁
                2*pi/6;      % θ₂
                 -pi/6;      % θ₃
                  pi/6;      % θ₄
               -2*pi/6;      % θ₅
                  pi/6];     % θ₆
-    
-%% Initial Figure
-    i = 1;
-    model.q(:,1)            = model.q0;
-    model.rBRb(:,1)         = [0;0;-0.2];
-   [model.xe(:,1), HTs]     = kSLOW(model.q0, i, model, params);
-    model.rBLb(:,1)         = HTs.ABLb(1:3,4);
-    model.rBRb(:,1)         = HTs.ABRb(1:3,4);
-    model.rBHb(:,1)         = HTs.AbH(1:3,4);
-    rCoMb(:,1)              = rCoM(model.q0,i,model,params);
 
-InitialFigure = figure(1);
-    clf(InitialFigure)
-    hold on
-    grid on
-    view(145,20);
-    xlabel('{\bfZ} (metres)');
-    ylabel('{\bfX} (metres)');
-    zlabel('{\bfY} (metres)');
-    set(gca,'Color','#EEEEEE');
-    axis([-0.4,0.2, -1,1, 0,1]);
-    title("2D Model - 3D View");
- 
-    % ZERO: Z,X,Y,   Z,  X,  Y
-    quiver3(0,0,0, 0.5,0.0,0.0,'b','LineWidth',2); % Z
-    quiver3(0,0,0, 0.0,0.5,0.0,'r','LineWidth',2); % X
-    quiver3(0,0,0, 0.0,0.0,0.5,'g','LineWidth',2); % Y
-    
-    % MAIN COMPONENTS
-    rBB = HTs.AbB(1:3,4);
-    rB0 = HTs.Ab0(1:3,4);
-    plot3([rBB(3), rB0(3)], ... Z
-          [rBB(1), rB0(1)], ... X
-          [rBB(2), rB0(2)], ... Y
-        'k', 'LineWidth',2);
-    plot3(rB0(3), rB0(1), rB0(2), 'rx', 'LineWidth',2,'MarkerSize',10);
-    rB1 = HTs.Ab1(1:3,4);
-    plot3([rB0(3) rB1(3)],[rB0(1) rB1(1)],[rB0(2) rB1(2)],...
-        'k', 'LineWidth',2);
-    plot3(rB1(3), rB1(1), rB1(2) ,'rx', 'LineWidth',2,'MarkerSize',10);
-    rB2 = HTs.Ab2(1:3,4);
-    plot3([rB1(3) rB2(3)], [rB1(1) rB2(1)], [rB1(2) rB2(2)],...
-        'k', 'LineWidth',2);
-    plot3(rB2(3), rB2(1), rB2(2) ,'rx', 'LineWidth',2,'MarkerSize',10);
-    rbH = HTs.AbH(1:3,4);
-    plot3(rbH(3), rbH(1), rbH(2), 'mx', 'LineWidth',2,'MarkerSize',10);
-    rB3 = HTs.Ab3(1:3,4);
-    plot3([rB2(3) rB3(3)], [rB2(1) rB3(1)], [rB2(2) rB3(2)],...
-        'k', 'LineWidth',2);
-    plot3(rB3(3), rB3(1), rB3(2), 'bx', 'LineWidth',2,'MarkerSize',10);
-    rB4 = HTs.Ab4(1:3,4);
-    plot3([rB3(3) rB4(3)], [rB3(1) rB4(1)], [rB3(2) rB4(2)],...
-    'k', 'LineWidth',2);
-    plot3(rB4(3), rB4(1), rB4(2), 'bx', 'LineWidth',2,'MarkerSize',10);
-    rB5 = HTs.Ab5(1:3,4);
-    plot3([rB4(3) rB5(3)], [rB4(1) rB5(1)], [rB4(2) rB5(2)],...
-        'k', 'LineWidth',2);
-    plot3(rB5(3), rB5(1), rB5(2), 'bx', 'LineWidth',2,'MarkerSize',10);
-    rB6 = HTs.Ab6(1:3,4);
-    plot3([rB5(3) rB6(3)], [rB5(1) rB6(1)], [rB5(2) rB6(2)],...
-        'k', 'LineWidth',2);
-    plot3(rB6(3), rB6(1), rB6(2), 'bx', 'LineWidth',2,'MarkerSize',10);
-    rBE = HTs.AbE(1:3,4);
-    plot3([rB6(3) rBE(3)], [rB6(1) rBE(1)], [rB6(2) rBE(2)],...
-        'k', 'LineWidth',2);
-    plot3(rBE(3), rBE(1), rBE(2), 'ko', 'LineWidth',2,'MarkerSize',10);
-
-    plot3(rCoMb(3), rCoMb(1), rCoMb(2), 'mo', 'LineWidth',2,'MarkerSize',10);
-
-    legend({'+Z_0','+X_0','+Y_0','{r}^B_0 - \it{Link 0}',...
-            'Joints (1 - 3)','','','','','Mid Waist','',...
-            'Joints (4 - 6)','','','','','','','','End Effector','CoM'},...
-            Location='west');
-
-%% MAIN LOOPs
     % Initial Conditions
     model.q(:,1)        = model.q0;
    [model.xe(:,1), HTs] = k(model.q0, 1, model, params);
     % ... Thus, initial positons
-    model.rBLb(:,1)  = HTs.ABLb(1:3,4);
-    model.rBRb(:,1)  = HTs.ABRb(1:3,4);
-    model.rBHb(:,1)  = HTs.AbH(1:3,4);
+    model.rBLb(:,1)     = HTs.ABLb(1:3,4);
+    model.rBRb(:,1)     = HTs.ABRb(1:3,4);
+    model.rBHb(:,1)     = HTs.AbH(1:3,4);
     % ... Thus, initial CoM 
     model.rCoMb(:,1) = rCoM(model.q(:,1),1,model,params);
-    model.mode(1,1) = params.mode;
+    model.mode(1,1)  = params.mode;
 
+
+
+%% MAIN LOOPs
 tic % START TIMING
-
 % Trajectory Generation
 [Q1,~,~] = trajectoryGeneration(1, model, 1:61, params);
  Q = Q1;

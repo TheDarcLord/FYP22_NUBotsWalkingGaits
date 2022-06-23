@@ -94,7 +94,6 @@ function [xe, HTs] = k(q, index, model, params)
             -sin(sig46), cos(sig46), 0, Sa+Lu*cos(sig56)+Ll*cos(q(6));
                       0,          0, 1, H/2;
                       0,          0, 0, 1];
-
     end
 
     %% End Effector Parameterisation
