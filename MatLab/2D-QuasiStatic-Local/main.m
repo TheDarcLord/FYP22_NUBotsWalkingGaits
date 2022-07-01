@@ -8,10 +8,10 @@ model.tspan         = 0:(1 / params.framerate):24;
 
 model.q             = zeros(6,length(model.tspan)); % q     [θ₁θ₂θ₃θ₄θ₅θ₆]ᵀ
 model.xe            = zeros(6,length(model.tspan)); % xe    [XYZϕθΨ]ᵀ
+model.rGBg          = zeros(3,length(model.tspan)); %       [XYZ]ᵀ
 model.rBLb          = zeros(3,length(model.tspan)); %       [XYZ]ᵀ
 model.rBRb          = zeros(3,length(model.tspan)); %       [XYZ]ᵀ
-model.rBHb          = zeros(3,length(model.tspan)); %       [XYZ]ᵀ
-model.rCoMb         = zeros(3,length(model.tspan)); % rCoMb [XYZ]ᵀ
+model.rCoMg         = zeros(3,length(model.tspan)); % rCoMb [XYZ]ᵀ
 model.mode          = zeros(1,length(model.tspan)); % mode
 
 % Physical Parameters
@@ -20,9 +20,9 @@ params.femur        = 0.4;
 params.tarsal       = 0.05;              
 params.HipWidth     = 0.2;
 params.StepSize     = 0.25;
-params.mode         = -1;          % LEFT  FIXED - FKM T16
-%                      0;          % BOTH  FIXED - FKM T1H T6H
-%                      1;          % RIGHT FIXED - FKM T61
+params.mode         = 0;    % BOTH  FIXED
+%                    -1;    % LEFT  FIXED - FKM               
+%                     1;    % RIGHT FIXED - FKM
 % Masses
 params.mass.femur   = 1;    % Thigh Bone
 params.mass.fibula  = 1;    % Paired with `tibia`
@@ -30,26 +30,98 @@ params.mass.joint   = 0.5;  % Knee Bone / Joints / Ankles
 params.mass.pelvis  = 0.7;  % Waist
 params.mass.foot    = 0.1;  % Foot
 
-%% Initial Position & Orientation & Conditions
-    model.q0 = [-pi/6;      % θ₁
-               2*pi/6;      % θ₂
-                -pi/6;      % θ₃
-                 pi/6;      % θ₄
-              -2*pi/6;      % θ₅
-                 pi/6];     % θ₆
+%% PROBLEM:
+%  - Stepping with LEFT
+%   - FKM LEFT to RIGHT
+%   - Requires: LEFT in BODY co-ords
+%               CoM in BODY co-ords
+%  - Shifting MASS
+%   - FKM LEFT & RIGHT to BODY
+%   - Requires: LEFT & RIGHT in BODY co-ords
+%               CoM in BODY co-ords
 
-    % Initial Conditions
-    model.q(:,1)        = model.q0;
-   [model.xe(:,1), HTs] = k(model.q0, 1, model, params);
-    % ... Thus, initial positons
-    model.rBLb(:,1)     = HTs.ABLb(1:3,4);
-    model.rBRb(:,1)     = HTs.ABRb(1:3,4);
-    model.rBHb(:,1)     = HTs.AbH(1:3,4);
-    % ... Thus, initial CoM 
-    model.rCoMb(:,1) = rCoM(model.q(:,1),1,model,params);
-    model.mode(1,1)  = params.mode;
+%% Initial Position & Orientation & Conditions & Figure
+    model.q0 = [pi/6;      % θ₁
+             -2*pi/6;      % θ₂
+                pi/6;      % θ₃
+                pi/6;      % θ₄
+             -2*pi/6;      % θ₅
+                pi/6];     % θ₆
+    
+    model.rGBg(:,1) = [ 0; 0; 0];
+    model.q(:,1)    = model.q0;
+   [model.rBLb(:,1), ...
+    model.rBRb(:,1), ...
+    HTs]            = k_init(model.q0, params);
 
+INTITAL_FIGURE = figure(1);
+    clf(INTITAL_FIGURE)
+    hold on
+    grid on
+    view(55,35);
+    title("2D Model - LOCAL");
+    set(gca, 'zdir','reverse');
+    set(gca, 'ydir','reverse');
+    set(gca,'Color','#EEEEEE');
+    xlabel('{\bfX} (metres)');
+    ylabel('{\bfY} (metres)');
+    zlabel('{\bfZ} (metres)');
+    
+    % ZERO: X,Y,Z    X, Y, Z
+    quiver3(0,0,0, 0.5, 0, 0,'r','LineWidth',2); % X
+    quiver3(0,0,0, 0, 0.5, 0,'b','LineWidth',2); % Y
+    quiver3(0,0,0, 0, 0, 0.5,'g','LineWidth',2); % Z
 
+    % MAIN COMPONENTS
+    plot3(model.rGBg(1),model.rGBg(2),model.rGBg(3), ...    % BODY
+          'mx','LineWidth',2,'MarkerSize',10);
+    
+    plot3(model.xe(1,1),model.xe(2,1),model.xe(3,1), ...    % END EFFECTOR
+          'ko','LineWidth',2,'MarkerSize',10);
+    % LEFT
+    rG0_L = HTs.AG0_L(1:3,4);
+    plot3(rG0_L(1),rG0_L(2),rG0_L(3),'bx','LineWidth',2,'MarkerSize',5)
+    plot3([model.rGBg(1) rG0_L(1)], ...
+          [model.rGBg(2) rG0_L(2)], ...
+          [model.rGBg(3) rG0_L(3)],'k', 'LineWidth',2);
+    rG1_L = HTs.AG1_L(1:3,4);
+    plot3(rG1_L(1),rG1_L(2),rG1_L(3),'bx','LineWidth',2,'MarkerSize',10)
+    plot3([rG0_L(1) rG1_L(1)],[rG0_L(2) rG1_L(2)],[rG0_L(3) rG1_L(3)], ...
+           'k', 'LineWidth',2);
+    rG2_L = HTs.AG2_L(1:3,4);
+    plot3(rG2_L(1),rG2_L(2),rG2_L(3),'bx','LineWidth',2,'MarkerSize',10)
+    plot3([rG1_L(1) rG2_L(1)],[rG1_L(2) rG2_L(2)],[rG1_L(3) rG2_L(3)], ...
+           'k', 'LineWidth',2);
+    rG3_L = HTs.AG3_L(1:3,4);
+    plot3(rG3_L(1),rG3_L(2),rG3_L(3),'bx','LineWidth',2,'MarkerSize',10)
+    plot3([rG2_L(1) rG3_L(1)],[rG2_L(2) rG3_L(2)],[rG2_L(3) rG3_L(3)], ...
+           'k', 'LineWidth',2);
+    % RIGHT
+    rG0_R = HTs.AG0_R(1:3,4);
+    plot3(rG0_R(1),rG0_R(2),rG0_R(3),'bx','LineWidth',2,'MarkerSize',5)
+    plot3([model.rGBg(1) rG0_R(1)], ...
+          [model.rGBg(2) rG0_R(2)], ...
+          [model.rGBg(3) rG0_R(3)],'k', 'LineWidth',2);
+    rG1_R = HTs.AG1_R(1:3,4);
+    plot3(rG1_R(1),rG1_R(2),rG1_R(3),'rx','LineWidth',2,'MarkerSize',10)
+    plot3([rG0_R(1) rG1_R(1)],[rG0_R(2) rG1_R(2)],[rG0_R(3) rG1_R(3)], ...
+           'k', 'LineWidth',2);
+    rG2_R = HTs.AG2_R(1:3,4);
+    plot3(rG2_R(1),rG2_R(2),rG2_R(3),'rx','LineWidth',2,'MarkerSize',10)
+    plot3([rG1_R(1) rG2_R(1)],[rG1_R(2) rG2_R(2)],[rG1_R(3) rG2_R(3)], ...
+           'k', 'LineWidth',2);
+    rG3_R = HTs.AG3_R(1:3,4);
+    plot3(rG3_R(1),rG3_R(2),rG3_R(3),'rx','LineWidth',2,'MarkerSize',10)
+    plot3([rG2_R(1) rG3_R(1)],[rG2_R(2) rG3_R(2)],[rG2_R(3) rG3_R(3)], ...
+           'k', 'LineWidth',2);
+
+    legend({'+X_0','+Y_0','+Z_0','{\bfr}_B^{global}'},...
+            Location='west');
+    
+    %    [MIN,   MAX,
+    axis([ -1,     1, ... % X
+           -0.5, 0.5, ... % Y
+           -0.05,  1]);   % Z
 
 %% MAIN LOOPs
 tic % START TIMING
