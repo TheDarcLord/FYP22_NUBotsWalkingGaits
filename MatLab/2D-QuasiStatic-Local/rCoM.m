@@ -22,26 +22,26 @@ function [rCoMb] = rCoM(q,index,model,params)
 
     %% JOINT & LINK Mass Position
     rBLb = model.rBLb(:,index);                 % LEFT  Sole
-        rB0b  = [rBLb(1); Sa+rBLb(2); rBLb(3)]; %       Ankle
+        rB0b  = [rBLb(1); rBLb(2); -Sa+rBLb(3)]; %       Ankle
         rFoLb = R*(rBLb+rB0b);                  %       Foot
-        rB1b  = [rBLb(1)-Ll*sin(q(1));          %       Knee
-                 rBLb(2)+Ll*cos(q(1))+Sa;
-                 rBLb(3)];
+        rB1b  = [rB0b(1)+Ll*sin(q(1));          %       Knee
+                 rB0b(2);
+                 rB0b(3)-Ll*cos(q(1))];
         rLlLb = R*(rB0b+rB1b);                  %       Fibula
-        rB2b  = [rB1b(1)-Lu*sin(q(1)+q(2)); 
-                 rB1b(2)+Lu*cos(q(1)+q(2)); 
-                 rB1b(3)];                      %       Hip
+        rB2b  = [rB1b(1)+Lu*sin(q(1)+q(2)); 
+                 rB1b(2); 
+                 rB1b(3)-Lu*cos(q(1)+q(2))];    %       Hip
         rLuLb = R*(rB1b+rB2b);                  %       Femur 
     rBRb = model.rBRb(:,index);                 % RIGHT Sole
-        rB5b  = [rBRb(1); Sa+rBRb(2); rBRb(3)]; %       Ankle
+        rB5b  = [rBRb(1); rBRb(2); -Sa+rBRb(3)]; %       Ankle
         rFoRb = R*(rBRb+rB5b);                  %       Foot
-        rB4b  = [rBRb(1)+Ll*sin(q(6));          %       Knee
-                 rBRb(2)+Ll*cos(q(6))+Sa;
-                 rBRb(3)];
+        rB4b  = [rB5b(1)+Ll*sin(q(6));          %       Knee
+                 rB5b(2);
+                 rB5b(3)-Ll*cos(q(6))];
         rLlRb = R*(rB5b+rB4b);                  %       Fibula
         rB3b  = [rB4b(1)+Lu*sin(q(5)+q(6));
-                 rB4b(2)+Lu*cos(q(5)+q(6));
-                 rB4b(3)];                      %       Hip
+                 rB4b(2);
+                 rB4b(3)-Lu*cos(q(5)+q(6))];    %       Hip
         rLuRb = R*(rB4b+rB3b);                  %       Femur
     rBHb = [rB3b(1);
             rB3b(2);

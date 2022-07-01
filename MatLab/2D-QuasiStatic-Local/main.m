@@ -11,7 +11,7 @@ model.xe            = zeros(6,length(model.tspan)); % xe    [XYZϕθΨ]ᵀ
 model.rGBg          = zeros(3,length(model.tspan)); %       [XYZ]ᵀ
 model.rBLb          = zeros(3,length(model.tspan)); %       [XYZ]ᵀ
 model.rBRb          = zeros(3,length(model.tspan)); %       [XYZ]ᵀ
-model.rCoMg         = zeros(3,length(model.tspan)); % rCoMb [XYZ]ᵀ
+model.rCoMb         = zeros(3,length(model.tspan)); % rCoMb [XYZ]ᵀ
 model.mode          = zeros(1,length(model.tspan)); % mode
 
 % Physical Parameters
@@ -53,6 +53,7 @@ params.mass.foot    = 0.1;  % Foot
    [model.rBLb(:,1), ...
     model.rBRb(:,1), ...
     HTs]            = k_init(model.q0, params);
+    model.rCoMb(:,1)= rCoM(model.q0,1,model,params);
 
 INTITAL_FIGURE = figure(1);
     clf(INTITAL_FIGURE)
@@ -71,13 +72,18 @@ INTITAL_FIGURE = figure(1);
     quiver3(0,0,0, 0.5, 0, 0,'r','LineWidth',2); % X
     quiver3(0,0,0, 0, 0.5, 0,'b','LineWidth',2); % Y
     quiver3(0,0,0, 0, 0, 0.5,'g','LineWidth',2); % Z
-
+    
     % MAIN COMPONENTS
     plot3(model.rGBg(1),model.rGBg(2),model.rGBg(3), ...    % BODY
           'mx','LineWidth',2,'MarkerSize',10);
-    
+
     plot3(model.xe(1,1),model.xe(2,1),model.xe(3,1), ...    % END EFFECTOR
           'ko','LineWidth',2,'MarkerSize',10);
+
+    plot3(model.rCoMb(1,1),model.rCoMb(2,1),model.rCoMb(3,1), ... % CoM
+          'ro','LineWidth',2,'MarkerSize',10);            
+
+    
     % LEFT
     rG0_L = HTs.AG0_L(1:3,4);
     plot3(rG0_L(1),rG0_L(2),rG0_L(3),'bx','LineWidth',2,'MarkerSize',5)
@@ -114,7 +120,7 @@ INTITAL_FIGURE = figure(1);
     plot3(rG3_R(1),rG3_R(2),rG3_R(3),'rx','LineWidth',2,'MarkerSize',10)
     plot3([rG2_R(1) rG3_R(1)],[rG2_R(2) rG3_R(2)],[rG2_R(3) rG3_R(3)], ...
            'k', 'LineWidth',2);
-
+    
     legend({'+X_0','+Y_0','+Z_0','{\bfr}_B^{global}'},...
             Location='west');
     
@@ -122,6 +128,15 @@ INTITAL_FIGURE = figure(1);
     axis([ -1,     1, ... % X
            -0.5, 0.5, ... % Y
            -0.05,  1]);   % Z
+
+%% Trajectory Generation
+
+[Q1,~,~] = trajectoryGeneration(1, model, 1:61, params);
+
+
+
+
+
 
 %% MAIN LOOPs
 tic % START TIMING
