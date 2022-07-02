@@ -14,7 +14,7 @@ function [Q, V, A] = trajectoryGeneration(index, model, span, params)
     rRY = model.rBRb(2,index);
     rRZ = model.rBRb(3,index);
 
-    rHx = model.rBHb(1,index);
+    rHx = model.rGBg(1,index);
 
     rLX = model.rBLb(1,index);
     rLY = model.rBLb(2,index);
@@ -25,7 +25,7 @@ function [Q, V, A] = trajectoryGeneration(index, model, span, params)
     rCZ = model.rCoMb(3,index);
 
     %% SPECIAL MATRICES
-    D  = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!
+    D  = diag(1:5,-1);                 % Special D - Diag Matrix   Qunitic!
     TT = model.tspan(span).^((0:5).'); % [1;t;t²;t³;t⁴;t⁵] (t) Quintic!
     
     %% TRAJECTORY OPTIONS
@@ -37,9 +37,9 @@ function [Q, V, A] = trajectoryGeneration(index, model, span, params)
         tt0 = t0.^(0:5).';
         T0 = [tt0, D*tt0, D^2*tt0];
         %---------------------------------------------
-        q1 = [rHx               0.1    0;  %  X  Ẋ  Ẍ 
-              rRY+0.1           0       0;  % qY vY aY
-              rRZ               0       0]; % qZ vZ aZ
+        q1 = [rHx               0       0;  %  X  Ẋ  Ẍ 
+              rRY               0       0;  % qY vY aY
+              rRZ-0.0           0       0]; % qZ vZ aZ
         t1 = t0 + 3;
         tt1 = t1.^(0:5).';
         T1 = [tt1, D*tt1, D^2*tt1];
@@ -64,7 +64,7 @@ function [Q, V, A] = trajectoryGeneration(index, model, span, params)
         tt0 = t0.^(0:5).';
         T0 = [tt0, D*tt0, D^2*tt0];
         %---------------------------------------------
-        q1 = [0.5*(rAX+rCX)     0.1     0;  %  X  Ẋ  Ẍ 
+        q1 = [0.5*(rAX+rCX)     0       0;  %  X  Ẋ  Ẍ 
               rCY               0       0;  % qY vY aY
               rCZ               0       0]; % qZ vZ aZ
         t1 = t0 + 3;
@@ -86,8 +86,8 @@ function [Q, V, A] = trajectoryGeneration(index, model, span, params)
         T0 = [tt0, D*tt0, D^2*tt0];
         %---------------------------------------------
         q1 = [rHx               0.1     0;  %  X  Ẋ  Ẍ 
-              rLY+0.1           0       0;  % qY vY aY
-              rLZ               0       0]; % qZ vZ aZ
+              rLY               0       0;  % qY vY aY
+              rLZ-0.0           0       0]; % qZ vZ aZ
         t1 = t0 + 3;
         tt1 = t1.^(0:5).';
         T1 = [tt1, D*tt1, D^2*tt1];

@@ -44,8 +44,8 @@ function [rCoMb] = rCoM(q,index,model,params)
                  rB4b(3)-Lu*cos(q(5)+q(6))];    %       Hip
         rLuRb = R*(rB4b+rB3b);                  %       Femur
     rBHb = [rB3b(1);
-            rB3b(2);
-            rB3b(3)+(H/2)];
+            rB3b(2)+(H/2);
+            rB3b(3)];
 
     %% Position of the CoM in Base Co-ordinates
     sigmaMass = (mJo * 6) + ...% Joints (Ankle, Knee, Hip)
@@ -60,6 +60,5 @@ function [rCoMb] = rCoM(q,index,model,params)
         + (mLl*(rLlLb+rLlRb)) ...
         + (mLu*(rLuLb+rLuRb)) ...
     )/ sigmaMass;
-
 end
 

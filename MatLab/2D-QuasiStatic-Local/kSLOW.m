@@ -29,8 +29,8 @@ function [xe, HTs] = k(q, index, model, params)
                    0,        0,         0,1];
     %% Origin
     TGBg = T(rGBg(1),rGBg(2),rGBg(3));
-    TBRb = T(rBRb(1),rBRb(2),rBRb(3));
-    TBLb = T(rBLb(1),rBLb(2),rBLb(3));
+    TBRb = T(rBRb(1),rBRb(2),rBRb(3))* Rx(-pi/2);
+    TBLb = T(rBLb(1),rBLb(2),rBLb(3))* Rx(-pi/2);
 
     TB0l = TGBg*Rx(-pi/2)*T(0,0,H/2);
     TB0r = TGBg*Rx(-pi/2)*T(0,0,-H/2);
@@ -39,14 +39,21 @@ function [xe, HTs] = k(q, index, model, params)
     %% STEP LOGIC
     if params.mode == -1    % LEFT FIXED
         TBE = TBLb * inv( ...
-                Rz(q(3))*T(0,-Lu,0) ... A01-L
+               Rz(q(3))*T(0,-Lu,0) ... A01-L
                *Rz(q(2))*T(0,-Ll,0) ... A12-L
                *Rz(q(1))*T(0,-Sa,0) ... A23-L
             )* T(0,0,-H) ...
             *Rz(q(4))*T(0,-Lu,0) ... A01-R
             *Rz(q(5))*T(0,-Ll,0) ... A12-R
             *Rz(q(6))*T(0,-Sa,0) ... A23-R
-            * TNE;
+            *TNE;  % RIGHT ANKLE
+        
+        TBF = TB0l ...
+            *Rz(q(3))*T(0,-Lu,0) ... A01-L
+            *Rz(q(2))*T(0,-Ll,0) ... A12-L
+            *Rz(q(1))*T(0,-Sa,0) ... A23-L
+            *TNE; % FIXED ANKLE
+
     elseif params.mode == 0 % BOTH FIXED
         TBEl = TBLb *inv( ...
                 Rz(q(3))*T(0,-Lu,0) ... A01-L
@@ -59,7 +66,7 @@ function [xe, HTs] = k(q, index, model, params)
                *Rz(q(6))*T(0,-Sa,0) ... A23-L
             )* T(0,0, H/2) * TNE;
     elseif params.mode == 1 % RIGHT FIXED
-        TBE = TBLb * inv( ...
+        TBE = TBRb * inv( ...
                 Rz(q(4))*T(0,-Lu,0) ... A01-L
                *Rz(q(5))*T(0,-Ll,0) ... A12-L
                *Rz(q(6))*T(0,-Sa,0) ... A23-L
@@ -68,6 +75,12 @@ function [xe, HTs] = k(q, index, model, params)
             *Rz(q(2))*T(0,-Ll,0) ... A12-L
             *Rz(q(1))*T(0,-Sa,0) ... A23-L
             * TNE;
+
+        TBF = TB0r ...
+            *Rz(q(4))*T(0,-Lu,0) ... A01-L
+            *Rz(q(5))*T(0,-Ll,0) ... A12-L
+            *Rz(q(6))*T(0,-Sa,0) ... A23-L
+            *TNE; % FIXED ANKLE
     end
 
     %% Homogeneous Transforms
@@ -83,6 +96,8 @@ function [xe, HTs] = k(q, index, model, params)
         HTs.AG2_R = HTs.AG1_R *Rz(q(5))*T(0,-Ll,0);
         HTs.AG3_R = HTs.AG2_R *Rz(q(6))*T(0,-Sa,0);
         HTs.AGE_R = HTs.AG3_R * TNE;
+
+        HTs.AGH = HTs.AG0_L * T(0,0,-H/2);
 
     elseif params.mode == 0
         HTs.AG0_L = TB0l;
@@ -109,6 +124,8 @@ function [xe, HTs] = k(q, index, model, params)
         HTs.AG2_L = HTs.AG1_L * Rz(q(2))*T(0,-Ll,0);
         HTs.AG3_L = HTs.AG2_L * Rz(q(1))*T(0,-Sa,0);
         HTs.AGE_L = HTs.AG3_L * TNE;
+
+        HTs.AGH = HTs.AG0_R * T(0,0,H/2);
     end
 
     %% End Effector Parameterisation
@@ -123,10 +140,8 @@ function [xe, HTs] = k(q, index, model, params)
         theta = atan2(-TBE(3,1), sqrt( TBE(3,2)^2 + TBE(3,3)^2 ) );
         psi =   atan2( TBE(2,1), TBE(1,1) );
         
-        xe = [TBE(1:3,4); % X Y Z
-              phi;        % ϕ
-              theta;      % θ
-              psi];       % Ψ
+        xe = [TBE(1:3,4);phi;theta;psi;TBF(1:3,4)];
+        
     else
         Lphi   = 0;%atan2( TAEL(3,2), TAEL(3,3) );  
         Ltheta = 0;%atan2(-TAEL(3,1), sqrt( TAEL(3,2)^2 + TAEL(3,3)^2 ) );
