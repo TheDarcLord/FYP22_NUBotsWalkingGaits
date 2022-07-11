@@ -16,3 +16,5 @@ FinalYearLatex/3.FinalReportA/FinalReportA.pdf
 FinalYearLatex/3.FinalReportA/_content/All_Text.txt
 *.synctex(busy)
 *.lof
+*.lof
+*.lot
