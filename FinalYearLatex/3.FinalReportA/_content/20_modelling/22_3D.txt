@@ -68,7 +68,7 @@ the parameters found in table \ref{tab:LinkLengths3D}.
 %% TABLES OF JOINT ANGLES AND LINK LENGTHS
 \begin{table}[h!]\centering
     \begin{center}
-        \caption{Joint Angles}\label{tab:JointAngles3D}
+        \caption{Joint Angles for 3D model}\label{tab:JointAngles3D}
         {\footnotesize
             \begin{tabular}{c r c}
             \hline\hline\textbf{Joint Angles} & & \\
@@ -91,7 +91,7 @@ the parameters found in table \ref{tab:LinkLengths3D}.
 \end{table}
 \begin{table}[h!]\centering
     \begin{center}
-        \caption{Link Lengths}\label{tab:LinkLengths3D}
+        \caption{Link Lengths for 3D model}\label{tab:LinkLengths3D}
         {\footnotesize
             \begin{tabular}{c l l l}
             \hline\hline\textbf{Link Lengths} & & &\\
@@ -112,7 +112,7 @@ provide context as to the movement of the sets of joints that make up the hip jo
 \begin{figure}[!ht]
     \begin{center}
         \includegraphics[width=.9\linewidth]{_figures/3D_2.png}
-        \caption{3D Model, plotted using FKM.}
+        \caption{3D model plotted using FKM.}
         \label{fig:3D_2}
     \end{center}
 \end{figure}

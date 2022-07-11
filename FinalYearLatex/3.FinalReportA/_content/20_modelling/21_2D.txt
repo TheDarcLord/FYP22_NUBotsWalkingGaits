@@ -60,7 +60,7 @@ the parameters found in table \ref{tab:LinkLengths}.
 %% TABLES OF JOINT ANGLES AND LINK LENGTHS
 \begin{table}[h!]\centering
     \begin{center}
-        \caption{Joint Angles}\label{tab:JointAngles}
+        \caption{Joint Angles for 2D model}\label{tab:JointAngles}
         {\footnotesize
             \begin{tabular}{c r l}
             \hline\hline\textbf{Joint Angles} & & \\
@@ -77,7 +77,7 @@ the parameters found in table \ref{tab:LinkLengths}.
 \end{table}
 \begin{table}[h!]\centering
     \begin{center}
-        \caption{Link Lengths}\label{tab:LinkLengths}
+        \caption{Link Lengths for 2D model}\label{tab:LinkLengths}
         {\footnotesize
             \begin{tabular}{c l l l}
             \hline\hline\textbf{Link Lengths} & & &\\
@@ -99,7 +99,7 @@ a vast proportion of the matlab script code be reused.
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=.85\linewidth]{_figures/2D_2.png}
-        \caption{2D Model plotted in 3D (left) and 2D (right).}
+        \caption{2D model plotted in 3D (left) and 2D (right).}
         \label{fig:2D_2}
     \end{center}
 \end{figure}

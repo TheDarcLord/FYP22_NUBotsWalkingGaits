@@ -1,4 +1,7 @@
-You may like to say thank you to someone that helped you with your project.
+Thank you Joel for supporting me to bite off more than I could chew last year,
+and guiding me back to a logical progression of knowledge for this year's FYP. 
+\\ \\ \\
+\textit{ Citations for self reference ... Have yet to drop them anywhere in this text}
 \\\citep{kajita_2002_a}	- A realtime pattern generator for biped walking
 \\\citep{kajita_2003_biped} - ZMP
 \\\citep{katayama_1985_design} - Preview Control Discrete
