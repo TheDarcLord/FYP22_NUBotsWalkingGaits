@@ -2,28 +2,24 @@ clear all
 close all
 clc 
 
-tic % START TIMING
-
 %% Setup
 params.framerate    = 10;
 model.tspan         = 0:(1 / params.framerate):24;
 
-model.q             = zeros(6,length(model.tspan)); % q    [θ₁θ₂θ₃θ₄θ₅θ₆]ᵀ
-model.xe            = zeros(6,length(model.tspan)); % xe   [XYZϕθΨ]ᵀ
-model.r01g          = zeros(3,length(model.tspan)); % A01  [XYZ]ᵀ
-model.r06g          = zeros(3,length(model.tspan)); % A06  [XYZ]ᵀ
-model.r0Hg          = zeros(3,length(model.tspan)); % A0H  [XYZ]ᵀ
-model.rCoM          = zeros(3,length(model.tspan)); % rCoM [XYZ]ᵀ
+model.q             = zeros(6,length(model.tspan)); % q     [θ₁θ₂θ₃θ₄θ₅θ₆]ᵀ
+model.xe            = zeros(6,length(model.tspan)); % xe    [XYZϕθΨ]ᵀ
+model.rBLb          = zeros(3,length(model.tspan)); %       [XYZ]ᵀ
+model.rBRb          = zeros(3,length(model.tspan)); %       [XYZ]ᵀ
+model.rBHb          = zeros(3,length(model.tspan)); %       [XYZ]ᵀ
+model.rCoMb         = zeros(3,length(model.tspan)); % rCoMb [XYZ]ᵀ
+model.mode          = zeros(1,length(model.tspan)); % mode
 
 % Physical Parameters
-params.fibula       = 0.5;
-params.femur        = 0.5;
-params.HipWidth     = 0.25;
-params.StepSize     = 0.2;
-params.r0Lg         = zeros(3,1);  % Left  Position from 0rigin in Global
-params.r0Hg         = zeros(3,1);  % Waist Position from 0rigin in Global
-params.r0Rg         = zeros(3,1);  % Right Position from 0rigin in Global
-params.r0CoMg       = zeros(3,1);  % CoM   Position from 0rigin in Global
+params.fibula       = 0.4;
+params.femur        = 0.4;
+params.tarsal       = 0.05;              
+params.HipWidth     = 0.2;
+params.StepSize     = 0.25;
 params.mode         = -1;          % LEFT  FIXED - FKM T16
 %                      0;          % BOTH  FIXED - FKM T1H T6H
 %                      1;          % RIGHT FIXED - FKM T61
@@ -32,107 +28,99 @@ params.mass.femur   = 1;    % Thigh Bone
 params.mass.fibula  = 1;    % Paired with `tibia`
 params.mass.joint   = 0.5;  % Knee Bone / Joints / Ankles
 params.mass.pelvis  = 0.7;  % Waist
+params.mass.foot    = 0.1;  % Foot
 
-%% Initial Position & Orientation
+%% Initial Position & Orientation & Conditions
+    model.q0 = [-pi/6;      % θ₁
+               2*pi/6;      % θ₂
+                -pi/6;      % θ₃
+                 pi/6;      % θ₄
+              -2*pi/6;      % θ₅
+                 pi/6];     % θ₆
 
-model.q0 = [-pi/6;      % θ₁
-           2*pi/6;      % θ₂
-            -pi/6;      % θ₃
-             pi/6;      % θ₄
-          -2*pi/6;      % θ₅
-             pi/6];     % θ₆
+    % Initial Conditions
+    model.q(:,1)        = model.q0;
+   [model.xe(:,1), HTs] = k(model.q0, 1, model, params);
+    % ... Thus, initial positons
+    model.rBLb(:,1)     = HTs.ABLb(1:3,4);
+    model.rBRb(:,1)     = HTs.ABRb(1:3,4);
+    model.rBHb(:,1)     = HTs.AbH(1:3,4);
+    % ... Thus, initial CoM 
+    model.rCoMb(:,1) = rCoM(model.q(:,1),1,model,params);
+    model.mode(1,1)  = params.mode;
 
-%% LOOP
-% Initial Conditions
- model.q( :,1)              = model.q0;
-[model.xe(:,1), ~, HTs]     = k(model.q0, params);
-% ... Thus, initial positons
- model.r06g(:,1)            = HTs.A06(1:3,4);
- model.r01g(:,1)            = HTs.A01(1:3,4);
- model.r0Hg(:,1)            = HTs.A0H(1:3,4);
-% ... Store in Params... Maybe Parse Model ?
- params.r0Lg                = model.r01g(:,1);
- params.r0Rg                = model.r06g(:,1);
- params.r0Hg                = model.r0Hg(:,1);
-% ... Thus, initial CoM 
- model.rCoM(:,1)            = rCoM(model.q(:,1),params);
- params.r0CoMg              = model.rCoM(:,1);
 
+
+%% MAIN LOOPs
+tic % START TIMING
 % Trajectory Generation
-[Q1,~,~] = trajectoryGeneration(model, 1:61,params);
+[Q1,~,~] = trajectoryGeneration(1, model, 1:61, params);
+ Q = Q1;
 
 for i=2:61
-    model.xe(:,i)   = [Q1(:,i); zeros(3,1)];
-    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
-    [~, ~, HTs]     = k(model.q(:,i), params);
-    model.r01g(:,i) = HTs.A01(1:3,4);
-     params.r0Lg    = model.r01g(:,i);
-    model.r06g(:,i) = HTs.A06(1:3,4);
-     params.r0Rg    = model.r06g(:,i);
-    model.r0Hg(:,i) = HTs.A0H(1:3,4);
-     params.r0Hg    = model.r0Hg(:,i);
-    model.rCoM(:,i) = rCoM(model.q(:,i),params);
-     params.r0CoMg  = model.rCoM(:,i);
+    model.xe(:,i)   = [Q(:,i); zeros(3,1)];
+    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
+    [~, HTs]        = k(model.q(:,i),(i-1),model, params);
+    model.rBLb(:,i) = HTs.ABLb(1:3,4);
+    model.rBRb(:,i) = HTs.ABRb(1:3,4);
+    model.rBHb(:,i) = HTs.AbH(1:3,4);
+    model.rCoMb(:,i) = rCoM(model.q(:,i),i,model,params);
+    model.mode(:,i) = params.mode;
 end
 
 params.mode = 0;
 % Trajectory Generation
-[Q2,~,~] = trajectoryGeneration(model, 62:121,params); 
+[Q2,~,~] = trajectoryGeneration(61, model, 62:121, params);
+ Q = [Q Q2];
 
 for i=62:121
-    model.xe(:,i)   = [Q2(:,i-61); zeros(3,1)];
-    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
-    [~, ~, HTs]     = k(model.q(:,i), params);
-    model.r01g(:,i) = HTs.A01(1:3,4);
-     params.r0Lg    = model.r01g(:,i);
-    model.r06g(:,i) = HTs.A06(1:3,4);
-     params.r0Rg    = model.r06g(:,i);
-    model.r0Hg(:,i) = HTs.A0H(1:3,4);
-     params.r0Hg    = model.r0Hg(:,i);
-    model.rCoM(:,i) = rCoM(model.q(:,i),params);
-     params.r0CoMg  = model.rCoM(:,i);
+    model.xe(:,i)   = [Q(:,i); zeros(3,1)];
+    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
+    [~, HTs]        = k(model.q(:,i),(i-1),model, params);
+    model.rBLb(:,i) = HTs.ABLb(1:3,4);
+    model.rBRb(:,i) = HTs.ABRb(1:3,4);
+    model.rBHb(:,i) = HTs.AbH(1:3,4);
+    model.rCoMb(:,i) = rCoM(model.q(:,i),i,model,params);
+    model.mode(:,i) = params.mode;
 end
+
 
 params.mode = 1;
 % Trajectory Generation
-[Q3,~,~] = trajectoryGeneration(model, 122:181,params); 
+[Q3,~,~] = trajectoryGeneration(121, model, 122:181, params);
+ Q = [Q Q3];
 
 for i=122:181
-    model.xe(:,i)   = [Q3(:,i-121); zeros(3,1)];
-    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
-    [~, ~, HTs]     = k(model.q(:,i), params);
-    model.r01g(:,i) = HTs.A01(1:3,4);
-     params.r0Lg    = model.r01g(:,i);
-    model.r06g(:,i) = HTs.A06(1:3,4);
-     params.r0Rg    = model.r06g(:,i);
-    model.r0Hg(:,i) = HTs.A0H(1:3,4);
-     params.r0Hg    = model.r0Hg(:,i);
-    model.rCoM(:,i) = rCoM(model.q(:,i),params);
-     params.r0CoMg  = model.rCoM(:,i);
+    model.xe(:,i)   = [Q(:,i); zeros(3,1)];
+    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
+    [~, HTs]     = k(model.q(:,i),(i-1),model, params);
+    model.rBLb(:,i) = HTs.ABLb(1:3,4);
+    model.rBRb(:,i) = HTs.ABRb(1:3,4);
+    model.rBHb(:,i) = HTs.AbH(1:3,4);
+    model.rCoMb(:,i) = rCoM(model.q(:,i),i,model,params);
+    model.mode(:,i) = params.mode;
 end
 
 params.mode = 0;
 % Trajectory Generation
-[Q4,~,~] = trajectoryGeneration(model, 182:241,params); 
+[Q4,~,~] = trajectoryGeneration(181, model, 182:241, params);
+ Q = [Q Q4];
 
 for i=182:241
-    model.xe(:,i)   = [Q4(:,i-181); zeros(3,1)];
-    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), params);
-    [~, ~, HTs]     = k(model.q(:,i), params);
-    model.r01g(:,i) = HTs.A01(1:3,4);
-     params.r0Lg    = model.r01g(:,i);
-    model.r06g(:,i) = HTs.A06(1:3,4);
-     params.r0Rg    = model.r06g(:,i);
-    model.r0Hg(:,i) = HTs.A0H(1:3,4);
-     params.r0Hg    = model.r0Hg(:,i);
-    model.rCoM(:,i) = rCoM(model.q(:,i),params);
-     params.r0CoMg  = model.rCoM(:,i);
+    model.xe(:,i)   = [Q(:,i); zeros(3,1)];
+    model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
+    [~, HTs]     = k(model.q(:,i),(i-1),model, params);
+    model.rBLb(:,i) = HTs.ABLb(1:3,4);
+    model.rBRb(:,i) = HTs.ABRb(1:3,4);
+    model.rBHb(:,i) = HTs.AbH(1:3,4);
+    model.rCoMb(:,i) = rCoM(model.q(:,i),i,model,params);
+    model.mode(:,i) = params.mode;
 end
 
 toc % FINISH TIMING
 
 %% Figures 
-figure('Name','Joint Variables, q(t)')
+jointVariables = figure(2);
     hold on
     plot(model.tspan,model.q(1,:),'r-','LineWidth',2);
     plot(model.tspan,model.q(2,:),'g-','LineWidth',2);
@@ -146,129 +134,88 @@ figure('Name','Joint Variables, q(t)')
     title('All Joint Variables: {\itθ}_{1-6}({\itt})','FontSize',12);
     legend('θ₁','θ₂','θ₃', 'θ₄','θ₅','θ₆');
 
-figure('Name','Foot,Waist,CoM Movement')
-    hold on
-    grid on
-    title('Foot & Waist & CoM Trajectories','FontSize',12);
-    set(gca,'Color','#CCCCCC');
-    plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
-    plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
-    plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
-    plot3(model.r01g(3,:),model.r01g(1,:),model.r01g(2,:),...
-        'c-','LineWidth',2);
-    plot3(model.r06g(3,:),model.r06g(1,:),model.r06g(2,:),...
-        'g-','LineWidth',2);
-    plot3(model.r0Hg(3,:),model.r0Hg(1,:),model.r0Hg(2,:),...
-        'm-','LineWidth',2);
-    plot3(model.rCoM(3,:),model.rCoM(1,:),model.rCoM(2,:),...
-        'r-','LineWidth',1);
-
-    legend('+Z','+X','+Y','Left','Right','Waist', 'CoM');
-    axis([-(params.HipWidth+0.2) 0.2 min(model.r0Hg(1,:))-0.1 max(model.r0Hg(1,:))+0.2 0 1]);
-    view(135,35);
-
-figure('Name','Animation')
-% Preallocate IMAGE
-[IMAGE(1:length(model.tspan)).cdata]    = deal([]); 
-[IMAGE(1:length(model.tspan)).colormap] = deal([]); 
+ANIMATION = figure(3);
 for i=1:length(model.tspan)
+    params.mode = model.mode(i);
+    [~, HTs] = kSLOW(model.q(:,i), i, model, params);
 
-    cla    % Clears Data but not Titles/Labels  
+    clf(ANIMATION)
     hold on
     grid on
+    view(145,20);
+    xlabel('{\bfZ} (metres)');
+    ylabel('{\bfX} (metres)');
+    zlabel('{\bfY} (metres)');
+    set(gca,'Color','#EEEEEE');
+    axis([-0.4,0.2, -1,1, 0,1]);
+    title("2D Model - 3D View");
+ 
+    % ZERO: Z,X,Y,   Z,  X,  Y
+    quiver3(0,0,0, 0.5,0.0,0.0,'b','LineWidth',2); % Z
+    quiver3(0,0,0, 0.0,0.5,0.0,'r','LineWidth',2); % X
+    quiver3(0,0,0, 0.0,0.0,0.5,'g','LineWidth',2); % Y
     
-    txt = " Time: " + num2str(model.tspan(i)) + " sec";
-    text(0,2,2,txt)
-    if i > 181
-        params.r0Lg     = model.r01g(:,181);
-        params.r0Rg     = model.r06g(:,181);
-        params.r0Hg     = model.r0Hg(:,181);
-        params.r0CoMg   = model.rCoM(:,181);
-        params.mode     =  0;
-    elseif i > 121
-        params.r0Lg     = model.r01g(:,121);
-        params.r0Rg     = model.r06g(:,121);
-        params.r0Hg     = model.r0Hg(:,121);
-        params.r0CoMg   = model.rCoM(:,121);
-        params.mode     =  1;
-    elseif i > 61
-        params.r0Lg     = model.r01g(:,61);
-        params.r0Rg     = model.r06g(:,61);
-        params.r0Hg     = model.r0Hg(:,61);
-        params.r0CoMg   = model.rCoM(:,61);
-        params.mode     =  0;
-    else 
-        params.r0Lg     = model.r01g(:,1);
-        params.r0Rg     = model.r06g(:,1);
-        params.r0Hg     = model.r0Hg(:,1);
-        params.r0CoMg   = model.rCoM(:,1);
-        params.mode     = -1;
-    end
-    set(gca,'Color','#CCCCCC');
-    [~, ~, HomegeneousTransforms] = k(model.q(:,i), params);
-
-    % ZERO:  Z      X      Y
-    plot3([0 1], [0 0], [0 0],'r', 'LineWidth',0.5); % Z
-    plot3([0 0], [0 1], [0 0],'g', 'LineWidth',0.5); % X
-    plot3([0 0], [0 0], [0 1],'b', 'LineWidth',0.5); % Y
-    if i < 2
-        legend('+Z','+X','+Y', 'Trajectory','Autoupdate','off');
-        title("Stand | Initial Step | Multiple Steps")
-        xlabel('Z','FontWeight','bold');
-        ylabel('X','FontWeight','bold');
-        zlabel('Y','FontWeight','bold');
-    end
     % MAIN COMPONENTS
-    % ONE
-    r01 = HomegeneousTransforms.A01(1:3,4);
-    plot3(r01(3), r01(1), r01(2), 'cx', 'LineWidth',2);         % J ONE
-    % TWO
-    r02 = HomegeneousTransforms.A02(1:3,4);
-    plot3([r01(3) r02(3)], [r01(1) r02(1)], [r01(2) r02(2)],... % L TWO
+    rBB = HTs.AbB(1:3,4);
+    rB0 = HTs.Ab0(1:3,4);
+    plot3([rBB(3), rB0(3)], ... Z
+          [rBB(1), rB0(1)], ... X
+          [rBB(2), rB0(2)], ... Y
+        'k', 'LineWidth',2);
+    plot3(rB0(3), rB0(1), rB0(2), 'rx', 'LineWidth',2,'MarkerSize',10);
+    rB1 = HTs.Ab1(1:3,4);
+    plot3([rB0(3) rB1(3)],[rB0(1) rB1(1)],[rB0(2) rB1(2)],...
+        'k', 'LineWidth',2);
+    plot3(rB1(3), rB1(1), rB1(2) ,'rx', 'LineWidth',2,'MarkerSize',10);
+    rB2 = HTs.Ab2(1:3,4);
+    plot3([rB1(3) rB2(3)], [rB1(1) rB2(1)], [rB1(2) rB2(2)],...
+        'k', 'LineWidth',2);
+    plot3(rB2(3), rB2(1), rB2(2) ,'rx', 'LineWidth',2,'MarkerSize',10);
+    rbH = HTs.AbH(1:3,4);
+    plot3(rbH(3), rbH(1), rbH(2), 'mx', 'LineWidth',2,'MarkerSize',10);
+    rB3 = HTs.Ab3(1:3,4);
+    plot3([rB2(3) rB3(3)], [rB2(1) rB3(1)], [rB2(2) rB3(2)],...
+        'k', 'LineWidth',2);
+    plot3(rB3(3), rB3(1), rB3(2), 'bx', 'LineWidth',2,'MarkerSize',10);
+    rB4 = HTs.Ab4(1:3,4);
+    plot3([rB3(3) rB4(3)], [rB3(1) rB4(1)], [rB3(2) rB4(2)],...
     'k', 'LineWidth',2);
-    plot3(r02(3), r02(1), r02(2) ,'cx', 'LineWidth',2);         % J TWO
-    % THREE
-    r03 = HomegeneousTransforms.A03(1:3,4);
-    plot3([r02(3) r03(3)], [r02(1) r03(1)], [r02(2) r03(2)],... % L THREE
-    'k', 'LineWidth',2);
-    plot3(r03(3), r03(1), r03(2), 'cx', 'LineWidth',2);         % J THREE
-    % MID WAIST
-    r0H = HomegeneousTransforms.A0H(1:3,4);
-    plot3(r0H(3), r0H(1), r0H(2), 'mx', 'LineWidth',2);         % J MID WST
-    % FOUR
-    r04 = HomegeneousTransforms.A04(1:3,4);
-    plot3([r03(3) r04(3)], [r03(1) r04(1)], [r03(2) r04(2)],... % L FOUR
-    'k', 'LineWidth',2);
-    plot3(r04(3), r04(1), r04(2), 'gx', 'LineWidth',2);         % J FOUR
-    % FIVE
-    r05 = HomegeneousTransforms.A05(1:3,4);
-    plot3([r04(3) r05(3)], [r04(1) r05(1)], [r04(2) r05(2)],... % L FIVE
-    'k', 'LineWidth',2);
-    plot3(r05(3), r05(1), r05(2), 'gx', 'LineWidth',2);         % J FIVE
-    % SIX 
-    r06 = HomegeneousTransforms.A06(1:3,4);
-    plot3([r05(3) r06(3)], [r05(1) r06(1)], [r05(2) r06(2)],... % L SIX
-    'k', 'LineWidth',2);
-    plot3(r06(3), r06(1), r06(2), 'gx', 'LineWidth',2);         % J SIX
+    plot3(rB4(3), rB4(1), rB4(2), 'bx', 'LineWidth',2,'MarkerSize',10);
+    rB5 = HTs.Ab5(1:3,4);
+    plot3([rB4(3) rB5(3)], [rB4(1) rB5(1)], [rB4(2) rB5(2)],...
+        'k', 'LineWidth',2);
+    plot3(rB5(3), rB5(1), rB5(2), 'bx', 'LineWidth',2,'MarkerSize',10);
+    rB6 = HTs.Ab6(1:3,4);
+    plot3([rB5(3) rB6(3)], [rB5(1) rB6(1)], [rB5(2) rB6(2)],...
+        'k', 'LineWidth',2);
+    plot3(rB6(3), rB6(1), rB6(2), 'bx', 'LineWidth',2,'MarkerSize',10);
+    rBE = HTs.AbE(1:3,4);
+    plot3([rB6(3) rBE(3)], [rB6(1) rBE(1)], [rB6(2) rBE(2)],...
+        'k', 'LineWidth',2);
+    plot3(rBE(3), rBE(1), rBE(2), 'ko', 'LineWidth',2,'MarkerSize',10);
 
-    % Plot the CoM
-    r0CoM = model.rCoM(:,i);
-    plot3(r0CoM(3),r0CoM(1),r0CoM(2), 'ro', 'LineWidth',1.5);
-    plot3(r0CoM(3),r0CoM(1),0, 'rx', 'LineWidth',2);
+    plot3(model.rCoMb(3,i)*[1 1], ...
+          model.rCoMb(1,i)*[1 1], ...
+          model.rCoMb(2,i)*[1 0],'m:','LineWidth',2)
 
-    %    [         MIN,          MAX, ...
-    axis([          -1,            1, ...
-          (r0H(1))-1.1, (r0H(1)+1.1), ...
-                     0,            2]);
-    view(135,35);
-    % view(90,0); % -> 2D
+    legend({'+Z_0','+X_0','+Y_0','{r}^B_0 - \it{Link 0}',...
+            'Joints (1 - 3)','','','','','Mid Waist','',...
+            'Joints (4 - 6)','','','','','','','', ...
+            'End Effector', 'CoM'},...
+            Location='west');
+    
+    %    [      MIN,      MAX, ...
+    axis([     -0.4,      0.2, ... % Z
+           rbH(1)-1, rbH(1)+1, ... % X
+                  0,        1]);   % Y
+    
     IMAGE(i) = getframe(gcf);
     drawnow
 end
 
 %% VIDEO
 videoWriterObj           = VideoWriter('2D_Step.mp4','MPEG-4');
-videoWriterObj.FrameRate = params.framerate;
+videoWriterObj.FrameRate = params.framerate * 2;
 open(videoWriterObj);                        
 for i=1:length(IMAGE)
     frame = IMAGE(i);   % Convert from an Image to a Frame

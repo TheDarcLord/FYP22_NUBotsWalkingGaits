@@ -1,4 +1,4 @@
-function [Q, V, A] = trajectoryGeneration(model, span, params)
+function [Q, V, A] = trajectoryGeneration(index, model, span, params)
 %   [2D Model] Trajectory Generation
 %       
 %       Returns:    [Q, V, A]
@@ -10,19 +10,19 @@ function [Q, V, A] = trajectoryGeneration(model, span, params)
     %% PARAMS
     StepSize = params.StepSize;
 
-    rRX = params.r0Rg(1);
-    rRY = params.r0Rg(2);
-    rRZ = params.r0Rg(3);
+    rRX = model.rBRb(1,index);
+    rRY = model.rBRb(2,index);
+    rRZ = model.rBRb(3,index);
 
-    rHx = params.r0Hg(1);
+    rHx = model.rBHb(1,index);
 
-    rLX = params.r0Lg(1);
-    rLY = params.r0Lg(2);
-    rLZ = params.r0Lg(2);
+    rLX = model.rBLb(1,index);
+    rLY = model.rBLb(2,index);
+    rLZ = model.rBLb(3,index);
 
-    rCX = params.r0CoMg(1);
-    rCY = params.r0CoMg(2);
-    rCZ = params.r0CoMg(3);
+    rCX = model.rCoMb(1,index);
+    rCY = model.rCoMb(2,index);
+    rCZ = model.rCoMb(3,index);
 
     %% SPECIAL MATRICES
     D  = diag(1:5,-1);                  % Special D - Diag Matrix   Qunitic!

@@ -1,4 +1,4 @@
-function [xe, TAE, HTs] = k(q, params)
+function [xe, HTs] = k(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -9,194 +9,91 @@ function [xe, TAE, HTs] = k(q, params)
     %% LINK VARIABLES
     Ll     = params.fibula;     % Lower Leg
     Lu     = params.femur;      % Upper Leg
+    Sa     = params.tarsal;     % Sole to Ankle
     H      = params.HipWidth;
     
-    A0L    = [eye(3), params.r0Lg;  % LEFT Ankle Position from 
-              zeros(1,3),       1]; %      0rigin in Global
-    A0R    = [eye(3), params.r0Rg;  % RIGHT Ankle Position from 
-              zeros(1,3),       1]; %       0rigin in Global
+    rBLb    = model.rBLb(:,index); % LEFT  Sole Position
+    rBRb    = model.rBRb(:,index); % RIGHT Sole Position
 
-    %% JOINT VARIABLES
-    sigT        = sum(q);        % Σθᵢ    i=1:6
-    sigT15      = sum(q(1:5));   % Σθᵢ    i=1:5
-    sigT14      = sum(q(1:4));   % Σθᵢ    i=1:4
-    sigT13      = sum(q(1:3));   % Σθᵢ    i=1:3
-    sigT12      = sum(q(1:2));   % Σθᵢ    i=1:2
+    %% HOMOGENEOUS CONSTANTS
+    TNE  = [1, 0, 0,   0; 
+            0, 1, 0, -Sa;
+            0, 0, 1,   0; 
+            0, 0, 0,   1];
+    Tb0R = [1, 0, 0, rBRb(1); 0, 1, 0, Sa+rBRb(2);
+            0, 0, 1, rBRb(3); 0, 0, 0,         1];
+    Tb0L = [1, 0, 0, rBLb(1); 0, 1, 0, Sa+rBLb(2);
+            0, 0, 1, rBLb(3); 0, 0, 0,         1];
 
-    sigT26      = sum(q(2:6));   % Σθᵢ    i=2:6
-    sigT36      = sum(q(3:6));   % Σθᵢ    i=3:6
-    sigT46      = sum(q(4:6));   % Σθᵢ    i=4:6
-    sigT56      = sum(q(5:6));   % Σθᵢ    i=5:6
+    %% STEP LOGIC
+    if params.mode == -1    % LEFT FIXED
+        sig16 = q(1)+q(2)+q(3)+q(4)+q(5)+q(6);
+        sig15 = q(1)+q(2)+q(3)+q(4)+q(5);
+        sig14 = q(1)+q(2)+q(3)+q(4);
+        sig13 = q(1)+q(2)+q(3);
+        sig12 = q(1)+q(2);
 
-    %% HOMOGENOUS TRANSFORM
-    if params.mode == -1        % LEFT FIXED
-        T16x = Lu*(sin(sigT14) - sin(sigT12)) + ...
-               Ll*(sin(sigT15) - sin( q(1) ));
-        T16y = Lu*(cos(sigT12) - cos(sigT14)) + ...
-               Ll*(cos( q(1) ) - cos(sigT15));
-        T16z = -H;
-       
-        T16 = [cos(sigT), -sin(sigT), 0, T16x;
-               sin(sigT),  cos(sigT), 0, T16y;
-                       0,          0, 1, T16z;
-                       0,          0, 0,    1];
-        TAE = A0L*T16;
-    elseif params.mode == 0     % BOTH FIXED
-        % Need to locate the CoM !
-        % Shift the waist instead...!
-        % T1H
-        T1Hx = -Lu*sin(sigT12)-Ll*sin(q(1));
-        T1Hy =  Lu*cos(sigT12)+Ll*cos(q(1));
-        T1Hz = -H/2;
-        T1H  = [cos(sigT12), -sin(sigT12), 0, T1Hx;
-                sin(sigT12),  cos(sigT12), 0, T1Hy;
-                          0,            0, 1, T1Hz;
-                          0,            0, 0,    1];
-        TAEL = A0L*T1H;
-        
-        % T6H
-        T6Hx = Lu*sin(sigT56)+Ll*sin(q(6));
-        T6Hy = Lu*cos(sigT56)+Ll*cos(q(6));
-        T6Hz = H/2;
-        T6H  = [cos(sigT46), -sin(sigT46), 0, T6Hx;
-                sin(sigT46),  cos(sigT46), 0, T6Hy;
-                          0,           0,  1, T6Hz;
-                          0,           0,  0,    1];
-        TAER = A0R*T6H;
+        r06 = [Lu*(sin(sig14)-sin(sig12))-Ll*(sin(q(1))-sin(sig15));
+               Lu*(cos(sig12)-cos(sig14))+Ll*(cos(q(1))-cos(sig15));
+              -H];
+        R06 = [cos(sig16), -sin(sig16), 0;
+               sin(sig16),  cos(sig16), 0;
+                        0,           0, 1];
+        T06 = [R06, r06; 0,0,0,1];
+        Tbe = Tb0L * T06 * TNE;
 
-        TAE  = TAEL;
-    elseif params.mode == 1     % RIGHT FIXED
-        T61x = Lu*(sin(sigT56) - sin(sigT36)) + ...
-               Ll*(sin( q(6) ) - sin(sigT26));
-        T61y = Lu*(cos(sigT56) - cos(sigT36)) + ... 
-               Ll*(cos( q(6) ) - cos(sigT26));
-        T61z = H;
-        T61  = [cos(sigT),  sin(sigT), 0, T61x;
-               -sin(sigT),  cos(sigT), 0, T61y;
-                        0,          0, 1, T61z;
-                        0,          0, 0,    1];
-        TAE = A0R*T61;
-    end
+        HTs.ABRb = Tbe;
+        HTs.ABLb = [eye(3),rBLb; 0,0,0,1];
+        HTs.AbH  = HTs.ABLb * ...
+            [cos(sig13), -sin(sig13), 0, -Lu*sin(sig12)-Ll*sin(q(1));
+             sin(sig13),  cos(sig13), 0,  Sa+Lu*cos(sig12)+Ll*cos(q(1));
+                      0,           0, 1, -H/2;
+                      0,           0, 0,  1];
 
-    %% Homogeneous Transforms
-    if params.mode == -1
-        HTs.A01 = A0L;
-        % A0A * A12 = A02
-            A12x = -Ll*sin(q(1));
-            A12y =  Ll*cos(q(1));
-        HTs.A02  = A0L*[cos( q(1) ), -sin( q(1) ), 0, A12x;
-                        sin( q(1) ),  cos( q(1) ), 0, A12y;
-                                  0,            0, 1,    0;
-                                  0,            0, 0,    1];
-        % A0A * A13 = A03
-            A13x = -Lu*sin(sigT12)-Ll*sin(q(1));
-            A13y =  Lu*cos(sigT12)+Ll*cos(q(1));
-        HTs.A03  = A0L*[cos(sigT12), -sin(sigT12), 0, A13x;
-                        sin(sigT12),  cos(sigT12), 0, A13y;
-                                  0,            0, 1,    0;
-                                  0,            0, 0,    1];
-        % A0A * A1H = A0H
-            A1Hx = -Lu*sin(sigT12)-Ll*sin(q(1));
-            A1Hy =  Lu*cos(sigT12)+Ll*cos(q(1));
-        HTs.A0H  = A0L*[cos(sigT12), -sin(sigT12), 0, A1Hx;
-                        sin(sigT12),  cos(sigT12), 0, A1Hy;
-                                  0,            0, 1,  -H/2;
-                                  0,            0, 0,    1];
-        % A0A * A14 = A04
-            A14x = -Lu*sin(sigT12)-Ll*sin(q(1));
-            A14y =  Lu*cos(sigT12)+Ll*cos(q(1));
-        HTs.A04  = A0L*[cos(sigT13), -sin(sigT13), 0, A14x;
-                        sin(sigT13),  cos(sigT13), 0, A14y;
-                                  0,            0, 1,   -H;
-                                  0,            0, 0,    1];
-        % A0A * A15 = A05
-            A15x =  Lu*(sin(sigT14)-sin(sigT12))-Ll*sin(q(1));
-            A15y =  Lu*(cos(sigT12)-cos(sigT14))+Ll*cos(q(1));
-        HTs.A05  = A0L*[cos(sigT14), -sin(sigT14), 0,  A15x;
-                        sin(sigT14),  cos(sigT14), 0,  A15y;
-                                  0,            0, 1,    -H;
-                                  0,            0, 0,     1];
-        % A0A * T16 = A06
-        HTs.A06 = A0L*T16;
-    elseif params.mode == 0
-        HTs.A01 = A0L;
-        % A0A * A12 = A02
-            A12x = -Ll*sin(q(1));
-            A12y =  Ll*cos(q(1));
-        HTs.A02  = A0L*[cos( q(1) ), -sin( q(1) ), 0, A12x;
-                        sin( q(1) ),  cos( q(1) ), 0, A12y;
-                                  0,            0, 1,    0;
-                                  0,            0, 0,    1];
-        % A0A * A13 = A03
-            A13x = -Lu*sin(sigT12)-Ll*sin(q(1));
-            A13y =  Lu*cos(sigT12)+Ll*cos(q(1));
-        HTs.A03  = A0L*[cos(sigT12), -sin(sigT12), 0, A13x;
-                        sin(sigT12),  cos(sigT12), 0, A13y;
-                                  0,            0, 1,    0;
-                                  0,            0, 0,    1];
-        % A0A * A1H = A0H
-            A1Hx = -Lu*sin(sigT12)-Ll*sin(q(1));
-            A1Hy =  Lu*cos(sigT12)+Ll*cos(q(1));
-        HTs.A0H  = A0L*[cos(sigT12), -sin(sigT12), 0, A1Hx;
-                        sin(sigT12),  cos(sigT12), 0, A1Hy;
-                                  0,            0, 1,  -H/2;
-                                  0,            0, 0,    1];
+    elseif params.mode == 0 % BOTH FIXED
+        sig13 = q(1)+q(2)+q(3);
+        sig12 = q(1)+q(2);
+        sig56 = q(5)+q(6);
+        sig46 = q(4)+q(5)+q(6);
 
-        % A06 * A64 = A04
-            A64x = Lu*sin(sigT56)+Ll*sin(q(6));
-            A64y = Lu*cos(sigT56)+Ll*cos(q(6));
-        HTs.A04  = A0R*[cos(sigT56), sin(sigT56), 0, A64x;
-                       -sin(sigT56), cos(sigT56), 0, A64y;
-                                  0,           0, 1,    0;
-                                  0,           0, 0,    1];
-        % A06 * A65 = A05
-            A65x = Ll*sin(q(6));
-            A65y = Ll*cos(q(6));
-        HTs.A05  = A0R*[cos( q(6) ), sin( q(6) ), 0, A65x;
-                       -sin( q(6) ), cos( q(6) ), 0, A65y;
-                                  0,           0, 1,    0;
-                                  0,           0, 0,    1];
-        
-        % A0A * T16 = A06
-        HTs.A06 = A0R;
-    elseif params.mode == 1
-        % A06 * T61 = A01
-        HTs.A01  = A0R*T61;
-        % A06 * T62 = A02
-            A62x = Lu*(sin(sigT56)-sin(sigT36))+Ll*sin(q(6));
-            A62y = Lu*(cos(sigT56)-cos(sigT36))+Ll*cos(q(6));
-        HTs.A02  = A0R*[cos(sigT36), sin(sigT36), 0, A62x;
-                       -sin(sigT36), cos(sigT36), 0, A62y;
-                                  0,           0, 1,    H;
-                                  0,           0, 0,    1];
-        % A06 * A63 = A03
-            A63x = Lu*sin(sigT56)+Ll*sin(q(6));
-            A63y = Lu*cos(sigT56)+Ll*cos(q(6));
-        HTs.A03  = A0R*[cos(sigT46), sin(sigT46), 0, A63x;
-                       -sin(sigT46), cos(sigT46), 0, A63y;
-                                  0,           0, 1,    H;
-                                  0,           0, 0,    1];
-        % A06 * A6H = A0H
-            A6Hx = Lu*sin(sigT56)+Ll*sin(q(6));
-            A6Hy = Lu*cos(sigT56)+Ll*cos(q(6));
-        HTs.A0H  = A0R*[cos(sigT46), sin(sigT46), 0, A6Hx;
-                       -sin(sigT46), cos(sigT46), 0, A6Hy;
-                                  0,           0, 1,   H/2;
-                                  0,           0, 0,    1];
-        % A06 * A64 = A04
-            A64x = Lu*sin(sigT56)+Ll*sin(q(6));
-            A64y = Lu*cos(sigT56)+Ll*cos(q(6));
-        HTs.A04  = A0R*[cos(sigT56), sin(sigT56), 0, A64x;
-                       -sin(sigT56), cos(sigT56), 0, A64y;
-                                  0,           0, 1,    0;
-                                  0,           0, 0,    1];
-            A65x = Ll*sin(q(6));
-            A65y = Ll*cos(q(6));
-        HTs.A05  = A0R*[cos( q(6) ), sin( q(6) ), 0, A65x;
-                       -sin( q(6) ), cos( q(6) ), 0, A65y;
-                                  0,           0, 1,    0;
-                                  0,           0, 0,    1];
-        HTs.A06 = A0R;
+        T02e = [cos(sig13), -sin(sig13), 0, -Lu*sin(sig12)-Ll*sin(q(1));
+                sin(sig13),  cos(sig13), 0,  Lu*cos(sig12)+Ll*cos(q(1));
+                         0,           0, 1,                        -H/2;
+                         0,           0, 0,                          1];
+        TbeL = Tb0L*T02e;
+        T63e = [cos(sig46),  sin(sig46), 0,  Lu*sin(sig56)+Ll*sin(q(6));
+               -sin(sig46),  cos(sig46), 0,  Lu*cos(sig56)+Ll*cos(q(6));
+                         0,           0, 1,                         H/2;
+                         0,           0, 0,                          1];
+        TbeR = Tb0R*T63e;
+
+        HTs.AbH  = TbeL;
+        HTs.ABLb = [eye(3),rBLb; 0,0,0,1];
+        HTs.ABRb = [eye(3),rBRb; 0,0,0,1];
+
+    elseif params.mode == 1 % RIGHT FIXED
+        sig16 = q(1)+q(2)+q(3)+q(4)+q(5)+q(6);
+        sig56 = q(5)+q(6);
+        sig46 = q(4)+q(5)+q(6);
+        sig36 = q(3)+q(4)+q(5)+q(6);
+        sig26 = q(2)+q(3)+q(4)+q(5)+q(6);
+
+        R60 = [cos(sig16),  sin(sig16), 0;
+              -sin(sig16),  cos(sig16), 0;
+                        0,           0, 1];
+        r60 = [Lu*(sin(sig56)-sin(sig36))+Ll*(sin(q(6))-sin(sig26));
+               Lu*(cos(sig56)-cos(sig36))+Ll*(cos(q(6))-cos(sig26));
+               H];
+        T60 = [R60, r60; 0,0,0,1];
+        Tbe = Tb0R * T60 * TNE;
+
+        HTs.ABRb = [eye(3),rBRb; 0,0,0,1];
+        HTs.ABLb = Tbe;
+        HTs.AbH  = HTs.ABRb * ...
+            [cos(sig46), sin(sig46), 0, Lu*sin(sig56)+Ll*sin(q(6));
+            -sin(sig46), cos(sig46), 0, Sa+Lu*cos(sig56)+Ll*cos(q(6));
+                      0,          0, 1, H/2;
+                      0,          0, 0, 1];
     end
 
     %% End Effector Parameterisation
@@ -207,24 +104,24 @@ function [xe, TAE, HTs] = k(q, params)
     % R₃₃:  cθ₂
     
     if params.mode ~= 0
-        phi =   atan2( TAE(3,2), TAE(3,3) );  
-        theta = atan2(-TAE(3,1), sqrt( TAE(3,2)^2 + TAE(3,3)^2 ) );
-        psi =   atan2( TAE(2,1), TAE(1,1) );
+        phi    = 0;%atan2( Tbe(3,2), Tbe(3,3) );  
+        theta  = 0;%atan2(-Tbe(3,1), sqrt( Tbe(3,2)^2 + Tbe(3,3)^2 ) );
+        psi    = atan2( Tbe(2,1), Tbe(1,1) );
         
-        xe = [TAE(1:3,4); % X Y Z
+        xe = [Tbe(1:3,4); % X Y Z
               phi;        % ϕ
               theta;      % θ
               psi];       % Ψ
     else
-        Lphi   = 0;%atan2( TAEL(3,2), TAEL(3,3) );  
-        Ltheta = 0;%atan2(-TAEL(3,1), sqrt( TAEL(3,2)^2 + TAEL(3,3)^2 ) );
-        Lpsi   = 0;%atan2( TAEL(2,1), TAEL(1,1) );
-        Rphi   = 0;%atan2( TAER(3,2), TAER(3,3) );  
-        Rtheta = 0;%atan2(-TAER(3,1), sqrt( TAER(3,2)^2 + TAER(3,3)^2 ) );
-        Rpsi   = 0;%atan2( TAER(2,1), TAER(1,1) );
+        Lphi   = 0;%atan2( TbeL(3,2), TbeL(3,3) );  
+        Ltheta = 0;%atan2(-TbeL(3,1), sqrt( TbeL(3,2)^2 + TbeL(3,3)^2 ) );
+        Lpsi   = atan2( TbeL(2,1), TbeL(1,1) );
+        Rphi   = 0;%atan2( TbeR(3,2), TbeR(3,3) );  
+        Rtheta = 0;%atan2(-TbeR(3,1), sqrt( TbeR(3,2)^2 + TbeR(3,3)^2 ) );
+        Rpsi   = atan2( TbeR(2,1), TbeR(1,1) );
         
-        Lxe    = [TAEL(1:3,4);Lphi;Ltheta;Lpsi];
-        Rxe    = [TAER(1:3,4);Rphi;Rtheta;Rpsi];
+        Lxe    = [TbeL(1:3,4);Lphi;Ltheta;Lpsi];
+        Rxe    = [TbeR(1:3,4);Rphi;Rtheta;Rpsi];
         xe     = Lxe - Rxe;
     end
 end

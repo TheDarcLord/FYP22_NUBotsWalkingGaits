@@ -1,7 +1,6 @@
 *.asv
 *.avi
 *.mp4
-*.png
 *.aux
 *.log
 *.out
@@ -12,4 +11,7 @@
 *.dvi
 *.ps
 *.xml
-FinalYearLatex/3.FinalReportA/FinalReportA.bbl
+*.bbl
+FinalYearLatex/3.FinalReportA/FinalReportA.pdf
+FinalYearLatex/3.FinalReportA/_content/All_Text.txt
+*.synctex(busy)
