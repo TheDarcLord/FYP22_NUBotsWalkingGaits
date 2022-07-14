@@ -107,4 +107,5 @@ ANIMATION = figure(2);
                "Z_{c} Height","Z_{c} Plane", ... Zc Plane
                "ZMP_{x}","CoM_{x}",          ... ZMP + CoM
                "Location","east")
+        drawnow
     end
