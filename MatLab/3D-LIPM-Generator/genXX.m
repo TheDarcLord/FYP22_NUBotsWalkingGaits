@@ -1,4 +1,4 @@
-function [Xf1,Xi2,d] = gen(Xd, Xi1, params)
+function [Xf1,Xi2,d] = genXX(Xd, Xi1, params)
 % gen:      Generates walking pattern given:
 %           - Previous/Current CoM position & velocity
 %           - Desired next CoM position & velocity

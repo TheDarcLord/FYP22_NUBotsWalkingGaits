@@ -80,7 +80,7 @@ GENERATION = figure(1);
     Xi1 = [0; 0; 0; 0];   % Initial x x' y y'
     Xd  = [0.1; 0.1; 0; 0];   % Final DESIRED x x' y y'
     acc = [0;0];              % Accumulator
-    [Xf1,Xi2,d] = gen(Xd,Xi1,params);       % Get Xf1, Xi2 & d
+    [Xf1,Xi2,d] = genXX(Xd,Xi1,params);       % Get Xf1, Xi2 & d
     plot3([0  -Xi1(1)],[0 -Xi1(3)],[0 params.zc],...
         'k','LineWidth',2);                 % -Xi
     plot3([acc(1) Xf1(1)],[acc(2) Xf1(3)],[0 params.zc], ...
@@ -93,7 +93,7 @@ GENERATION = figure(1);
     for i=1:10
         acc(1) = acc(1) + abs(Xf1(1)) + d(1) + abs(Xi2(1));  % Accumulate
         acc(2) = acc(2) + abs(Xf1(3)) + d(2) + abs(Xi2(3));  % Accumulate
-        [Xf2,Xi3,d] = gen(Xd,Xi2,params);                    % Get Next
+        [Xf2,Xi3,d] = genXX(Xd,Xi2,params);                    % Get Next
         plot3([acc(1)  acc(1)+Xi2(1)], ...                 % -Xi
               [acc(2)  acc(2)+Xi2(3)], ...                 % -Yi 
               [0       params.zc],'r','LineWidth',2);      % -0
