@@ -33,7 +33,7 @@ params.weights.Qx   = 0    * eye(6,6);
 params.weights.R    = 1e-3 * eye(2,2);
 
 %% Model
-model.t             = 1:params.timestep:10;
+model.t             = 1:params.timestep:20;
 model.x             = zeros(6,length(model.t));
 model.y             = zeros(2,length(model.t));
 model.pREF          = zeros(2,length(model.t));
@@ -56,8 +56,37 @@ end
 %% Sanity Check
 Tzmp = @(px, x, ddx) params.m * (params.g *(x - px)  - ddx*params.zc);
 
+%% TRAJ Pattern Generator...
+TRAJGENERATION = figure(1);
+    clf
+    hold on
+    grid on
+    cla(TRAJGENERATION);
+    title('Trajectory Generation')
+    %axis([-0.2 0.8 -0.5 0.5 0 0.7]);
+    view(30,30)
+
+    quiver3(0,0,0,1,0,0,"r", "LineWidth",2);                    % X Vector
+    quiver3(0,0,0,0,1,0,"g", "LineWidth",2);                    % Y Vector
+    quiver3(0,0,0,0,0,1,"b", "LineWidth",2);                    % Z Vector
+    quiver3(0,-0.1,0,0,0,params.zc,"off",'r','LineWidth',2);    % Zc Plane
+    surf(X,Y,Z(X,Y), "FaceColor","r","LineStyle","none","FaceAlpha",0.1);
+    legend("X+","Y+","Z+",           ... Direction Vectors
+       "Z_{c} Height","Z_{c} Plane", ... Zc Plane
+       "ZMP_{x}","CoM_{x}",          ... ZMP + CoM
+       "Location","east",'AutoUpdate','off');
+    [Q,V,A] = trajGen(model.t);
+    plot3(Q(1,:),Q(2,:),Q(3,:),'k','LineWidth',2);
+    [pREFout, sTEP] = pREF(model.t, params);
+    plot3(pREFout(1,:),pREFout(2,:),zeros(1,length(model.t)),'rx','LineWidth',2);
+    for i = 1:length(sTEP)
+        plot3([sTEP(1,i) sTEP(3,i)],[sTEP(2,i) sTEP(4,i)],[0 0],'b:','LineWidth',2);
+    end
+
+
+
 %% Figure Pattern Generator...
-GENERATION = figure(1);
+GENERATION = figure(2);
     clf
     hold on
     grid on
@@ -109,7 +138,7 @@ GENERATION = figure(1);
     end
 
 %% Figure
-TRAJECTORIES = figure(1);
+TRAJECTORIES = figure(2);
     clf
     subplot(1,2,1)
     hold on
@@ -154,6 +183,7 @@ ANIMATION = figure(2);
     grid on
     view(30,30)
     axis([-0.2 0.8 -0.5 0.5 0 0.7]);
+    
     for j=1:length(model.t)
     cla(ANIMATION) % Clear Axes
     % X Y Z
@@ -182,6 +212,7 @@ ANIMATION = figure(2);
               [model.y(2,j) model.x(4,j)], ...
               [0 params.zc],"k-",...
              "LineWidth",2)
+        plot3(model.pREF(1,1:i),model.pREF(2,1:i),zeros(length(model.t(1:i))), 'k')
     % Legend
         title("Discretised LIPM Animation: " + model.t(j) + " sec")
         legend("X+","Y+","Z+",               ... Direction Vectors
