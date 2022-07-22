@@ -2,7 +2,7 @@ clc
 clear
 
 %% Parameters
-params.timeHorizon  =  1.5;                                     % Seconds 
+params.timeHorizon  =  1;                                     % Seconds 
 params.timestep     =  0.01;                                    % Seconds
 params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
 params.stepSize     =  0.1;
@@ -29,14 +29,15 @@ Z     = @(X,Y) params.kx*X + params.ky*Y + params.zc;
 %       Δx(i): x(i) - x(i-1)    aka Incremental State Vector
 %       Δu(i): u(i) - u(i-1)    aka Incremental Control Vector
 params.weights.Qe   =        eye(2,2);     
-params.weights.Qx   = 0    * eye(6,6);
+params.weights.Qx   = 1    * eye(6,6);
 params.weights.R    = 1e-3 * eye(2,2);
 
 %% Model
 model.t             = 1:params.timestep:20;
 model.x             = zeros(6,length(model.t));
 model.y             = zeros(2,length(model.t));
-model.pREF          = zeros(2,length(model.t));
+model.pREF          = zeros(2,length(model.t)+ ...
+                      (params.timeHorizon/params.timestep));
 model.u             = zeros(2,length(model.t));
 
 %% Initial Condidtions
@@ -77,65 +78,61 @@ TRAJGENERATION = figure(1);
        "Location","east",'AutoUpdate','off');
     [Q,V,A] = trajGen(model.t);
     plot3(Q(1,:),Q(2,:),Q(3,:),'k','LineWidth',2);
-    [pREFout, sTEP] = pREF(model.t, params);
-    plot3(pREFout(1,:),pREFout(2,:),zeros(1,length(model.t)),'rx','LineWidth',2);
-    for i = 1:length(sTEP)
-        plot3([sTEP(1,i) sTEP(3,i)],[sTEP(2,i) sTEP(4,i)],[0 0],'b:','LineWidth',2);
-    end
+    pREFout = pREF(model.t, params);
+    plot3(model.pREF(1,:),model.pREF(2,:),zeros(1,length(model.pREF)),'rx','LineWidth',2);
+    plot3(model.pREF(1,:),model.pREF(2,:),zeros(1,length(model.pREF)),'m:','LineWidth',1);
 
-
-
-%% Figure Pattern Generator...
-GENERATION = figure(2);
-    clf
-    hold on
-    grid on
-    title('Pattern Generation')
-    axis([-0.2 0.8 -0.5 0.5 0 0.7]);
-    view(30,30)
-    params.Ts = 0.4;
-    params.Tdbl = 0;
-
-    quiver3(0,0,0,1,0,0,"r", "LineWidth",2);                    % X Vector
-    quiver3(0,0,0,0,1,0,"g", "LineWidth",2);                    % Y Vector
-    quiver3(0,0,0,0,0,1,"b", "LineWidth",2);                    % Z Vector
-    quiver3(0,-0.1,0,0,0,params.zc,"off",'r','LineWidth',2);    % Zc Plane
-    surf(X,Y,Z(X,Y), "FaceColor","r","LineStyle","none","FaceAlpha",0.1);
-    legend("X+","Y+","Z+",           ... Direction Vectors
-       "Z_{c} Height","Z_{c} Plane", ... Zc Plane
-       "ZMP_{x}","CoM_{x}",          ... ZMP + CoM
-       "Location","east",'AutoUpdate','off');
-    
-    Xi1 = [0; 0; 0; 0];   % Initial x x' y y'
-    Xd  = [0.1; 0.1; 0; 0];   % Final DESIRED x x' y y'
-    acc = [0;0];              % Accumulator
-    [Xf1,Xi2,d] = genXX(Xd,Xi1,params);       % Get Xf1, Xi2 & d
-    plot3([0  -Xi1(1)],[0 -Xi1(3)],[0 params.zc],...
-        'k','LineWidth',2);                 % -Xi
-    plot3([acc(1) Xf1(1)],[acc(2) Xf1(3)],[0 params.zc], ...
-        'k--','LineWidth',2);               % +Xf
-    plot3([acc(1)+Xf1(1) acc(1)+Xf1(1)+d(1)], ...
-          [acc(2)+Xf1(3) acc(2)+Xf1(3)+d(2)], ...
-          [params.zc     params.zc], ...
-        'k','LineWidth',2);                 % +d
-        
-    for i=1:10
-        acc(1) = acc(1) + abs(Xf1(1)) + d(1) + abs(Xi2(1));  % Accumulate
-        acc(2) = acc(2) + abs(Xf1(3)) + d(2) + abs(Xi2(3));  % Accumulate
-        [Xf2,Xi3,d] = genXX(Xd,Xi2,params);                    % Get Next
-        plot3([acc(1)  acc(1)+Xi2(1)], ...                 % -Xi
-              [acc(2)  acc(2)+Xi2(3)], ...                 % -Yi 
-              [0       params.zc],'r','LineWidth',2);      % -0
-        plot3([acc(1)  acc(1)+Xf2(1)], ...                 % +Xf
-              [acc(2)  acc(2)+Xf2(3)], ...                 % +Yf
-              [0       params.zc], 'r--','LineWidth',2);   % +0                
-        plot3([acc(1)+Xf2(1) acc(1)+Xf2(1)+d(1)], ...      % d_x
-              [acc(2)+Xf2(3) acc(2)+Xf2(3)+d(2)], ...      % d_y
-              [params.zc params.zc],'r','LineWidth',2);    % +0
-        Xi2 = Xi3;
-        Xf1 = Xf2;
-        drawnow
-    end
+% %% Figure Pattern Generator...
+% GENERATION = figure(2);
+%     clf
+%     hold on
+%     grid on
+%     title('Pattern Generation')
+%     axis([-0.2 0.8 -0.5 0.5 0 0.7]);
+%     view(30,30)
+%     params.Ts = 0.4;
+%     params.Tdbl = 0;
+% 
+%     quiver3(0,0,0,1,0,0,"r", "LineWidth",2);                    % X Vector
+%     quiver3(0,0,0,0,1,0,"g", "LineWidth",2);                    % Y Vector
+%     quiver3(0,0,0,0,0,1,"b", "LineWidth",2);                    % Z Vector
+%     quiver3(0,-0.1,0,0,0,params.zc,"off",'r','LineWidth',2);    % Zc Plane
+%     surf(X,Y,Z(X,Y), "FaceColor","r","LineStyle","none","FaceAlpha",0.1);
+%     legend("X+","Y+","Z+",           ... Direction Vectors
+%        "Z_{c} Height","Z_{c} Plane", ... Zc Plane
+%        "ZMP_{x}","CoM_{x}",          ... ZMP + CoM
+%        "Location","east",'AutoUpdate','off');
+%     
+%     Xi1 = [0; 0; 0; 0];   % Initial x x' y y'
+%     Xd  = [0.1; 0.1; 0; 0];   % Final DESIRED x x' y y'
+%     acc = [0;0];              % Accumulator
+%     [Xf1,Xi2,d] = genXX(Xd,Xi1,params);       % Get Xf1, Xi2 & d
+%     plot3([0  -Xi1(1)],[0 -Xi1(3)],[0 params.zc],...
+%         'k','LineWidth',2);                 % -Xi
+%     plot3([acc(1) Xf1(1)],[acc(2) Xf1(3)],[0 params.zc], ...
+%         'k--','LineWidth',2);               % +Xf
+%     plot3([acc(1)+Xf1(1) acc(1)+Xf1(1)+d(1)], ...
+%           [acc(2)+Xf1(3) acc(2)+Xf1(3)+d(2)], ...
+%           [params.zc     params.zc], ...
+%         'k','LineWidth',2);                 % +d
+%         
+%     for i=1:10
+%         acc(1) = acc(1) + abs(Xf1(1)) + d(1) + abs(Xi2(1));  % Accumulate
+%         acc(2) = acc(2) + abs(Xf1(3)) + d(2) + abs(Xi2(3));  % Accumulate
+%         [Xf2,Xi3,d] = genXX(Xd,Xi2,params);                    % Get Next
+%         plot3([acc(1)  acc(1)+Xi2(1)], ...                 % -Xi
+%               [acc(2)  acc(2)+Xi2(3)], ...                 % -Yi 
+%               [0       params.zc],'r','LineWidth',2);      % -0
+%         plot3([acc(1)  acc(1)+Xf2(1)], ...                 % +Xf
+%               [acc(2)  acc(2)+Xf2(3)], ...                 % +Yf
+%               [0       params.zc], 'r--','LineWidth',2);   % +0                
+%         plot3([acc(1)+Xf2(1) acc(1)+Xf2(1)+d(1)], ...      % d_x
+%               [acc(2)+Xf2(3) acc(2)+Xf2(3)+d(2)], ...      % d_y
+%               [params.zc params.zc],'r','LineWidth',2);    % +0
+%         Xi2 = Xi3;
+%         Xf1 = Xf2;
+%         drawnow
+%     end
 
 %% Figure
 TRAJECTORIES = figure(2);
@@ -145,7 +142,7 @@ TRAJECTORIES = figure(2);
     grid on
     plot(model.t,Tzmp(model.y(1,:),model.x(1,:),model.x(3,:)),...
         'm-','LineWidth',2)
-    plot(model.t,model.pREF(1,:),"k--","LineWidth",2)
+    plot(model.t,model.pREF(1,1:length(model.t)),"k--","LineWidth",2)
     plot(model.t,model.y(1,:),"g-","LineWidth",2)
     plot(model.t,model.x(1,:), "r-","LineWidth",2)
     legend({'{\tau_{x}} about ZMP_{x}','ZMP Ref','ZMP_{x}','CoM_x'},...
@@ -162,7 +159,7 @@ TRAJECTORIES = figure(2);
     grid on
     plot(model.t,Tzmp(model.y(2,:),model.x(4,:),model.x(6,:)),...
         'm-','LineWidth',2)
-    plot(model.t,model.pREF(2,:),"k--","LineWidth",2)
+    plot(model.t,model.pREF(2,1:length(model.t)),"k--","LineWidth",2)
     plot(model.t,model.y(2,:), "g-","LineWidth",2)
     plot(model.t,model.x(4,:), "r-","LineWidth",2)
     legend({'{\tau_{y}} about ZMP_{y}','ZMP Ref','ZMP_{y}','CoM_y'},...
@@ -178,7 +175,7 @@ TRAJECTORIES = figure(2);
 %% Animation
 % Preallocate IMAGE
 
-ANIMATION = figure(2);
+ANIMATION = figure(3);
     hold on
     grid on
     view(30,30)
