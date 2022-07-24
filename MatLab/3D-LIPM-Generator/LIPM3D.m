@@ -2,7 +2,6 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
 % LIPM: Discretised Linear Inverted Pendulum
 %   Detailed explanation goes here
     % Params
-        T_hrznI = params.timeHorizon / params.timestep;
         T       = params.timestep;
         NL      = params.Nl;
         g       = params.g;
@@ -62,7 +61,7 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
         % State Feedback
             Gx           = gainCore * K_hat * F_hat;
         % Feedforward / Preview Action - page 685 !
-            Yd      = model.pREF(:,k+1:k+T_hrznI);
+            Yd      = model.pREF(:,k+1:k+NL);
             Gp_Yd   =  zeros(size(Yd));
             Ac_hat  =  A_hat - B_hat * gainCore * K_hat* A_hat;
             Gd      = @(l) -gainCore*((Ac_hat')^(l-1))*K_hat*I_hat;

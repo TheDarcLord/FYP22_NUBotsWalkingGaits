@@ -2,8 +2,8 @@ clc
 clear
 
 %% Parameters
-params.timeHorizon  =  1;                                     % Seconds 
-params.timestep     =  0.01;                                    % Seconds
+params.timeHorizon  =  1.5;                                       % Seconds 
+params.timestep     =  0.02;                                    % Seconds
 params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
 params.stepSize     =  0.1;
 params.kx           =  0;
@@ -33,11 +33,10 @@ params.weights.Qx   = 1    * eye(6,6);
 params.weights.R    = 1e-3 * eye(2,2);
 
 %% Model
-model.t             = 1:params.timestep:20;
+model.t             = 0:params.timestep:20;
 model.x             = zeros(6,length(model.t));
 model.y             = zeros(2,length(model.t));
-model.pREF          = zeros(2,length(model.t)+ ...
-                      (params.timeHorizon/params.timestep));
+model.pREF          = zeros(2,length(model.t)+params.Nl);
 model.u             = zeros(2,length(model.t));
 
 %% Initial Condidtions
@@ -91,7 +90,7 @@ TRAJGENERATION = figure(1);
 %     axis([-0.2 0.8 -0.5 0.5 0 0.7]);
 %     view(30,30)
 %     params.Ts = 0.4;
-%     params.Tdbl = 0;
+%     params.Tdbl = 0.1;
 % 
 %     quiver3(0,0,0,1,0,0,"r", "LineWidth",2);                    % X Vector
 %     quiver3(0,0,0,0,1,0,"g", "LineWidth",2);                    % Y Vector
@@ -103,7 +102,7 @@ TRAJGENERATION = figure(1);
 %        "ZMP_{x}","CoM_{x}",          ... ZMP + CoM
 %        "Location","east",'AutoUpdate','off');
 %     
-%     Xi1 = [0; 0; 0; 0];   % Initial x x' y y'
+%     Xi1 = [0.01; 0; 0; 0];   % Initial x x' y y'
 %     Xd  = [0.1; 0.1; 0; 0];   % Final DESIRED x x' y y'
 %     acc = [0;0];              % Accumulator
 %     [Xf1,Xi2,d] = genXX(Xd,Xi1,params);       % Get Xf1, Xi2 & d

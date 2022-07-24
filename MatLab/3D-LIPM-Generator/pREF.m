@@ -1,9 +1,10 @@
 function pREF = pREF(t, params)
 % pREF(t)   X
 %           Next Increment ...
+    Nl       = params.Nl;
     stepSize = params.stepSize;
-    [Q,V,A]  = trajGen(t);
-    pREF     = zeros(2,length(Q)+100);
+    [Q,~,~]  = trajGen(t);
+    pREF     = zeros(2,length(Q)+Nl);
     r        = 0.1;
     RIGHT    = -1;
     gradFUNC = @(A,B) (B(2) - A(2))/(B(1) - A(1));
