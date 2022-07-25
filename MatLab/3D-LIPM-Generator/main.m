@@ -5,7 +5,7 @@ clear
 params.timeHorizon  =  1.5;                                       % Seconds 
 params.timestep     =  0.02;                                    % Seconds
 params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
-params.stepSize     =  0.1;
+params.stepSize     =  0.05;
 params.kx           =  0;
 params.ky           =  0;
 params.zc           =  0.495;   % m     - Approximate Height of the CoM 
