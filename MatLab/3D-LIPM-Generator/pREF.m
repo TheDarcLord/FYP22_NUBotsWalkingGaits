@@ -19,7 +19,7 @@ function pREF = pREF(t, params)
         if accDist > stepSize
             B = Q(:,i);
             M = gradFUNC(A,B);
-            C = B(1:2);%midpFUNC(A(1:2),B(1:2));
+            C = midpFUNC(A(1:2),B(1:2));
             % Right (+) & Left (-)
             pREF(:,i)   = C + (RIGHT*[M*r*sqrt(1/(1+M^2)); ...
                                        -r*sqrt(1/(1+M^2))]);
