@@ -43,7 +43,7 @@ function [xe, HTs] = k(q, index, model, params)
     q12 = q(12);    % θ₁₂
 
     %% HOMOGENOUS TRANSFORM
-    if params.mode == -1        % LEFT FIXED
+    if params.mode ==  1        % LEFT FIXED
         HTs.A0EL = A0EL;
         HTs.A01  = HTs.A0EL * AE1;
 
@@ -281,7 +281,7 @@ function [xe, HTs] = k(q, index, model, params)
         % ___  MID-END  ___ %
         TAER = HTs.A07 * A7H;
         
-    elseif params.mode == 1     % RIGHT FIXED
+    elseif params.mode == -1     % RIGHT FIXED
         HTs.A0ER = A0ER;
         HTs.A012 = HTs.A0ER * AE12;
         
