@@ -4,7 +4,7 @@ function pass = plotRobot(FIGURE_NAME,index,model,params)
     quiver3(0,0,0,0,1,0,"LineWidth",2,'Color','#379203');   % X Vector
     quiver3(0,0,0,0,0,1,"LineWidth",2,'Color','b');         % Y Vector
 
-    [~, HTs]    = k( model.r.q(:,index),index,model,params);
+    [~, HTs]    = kSLOW( model.r.q(:,index),index,model,params);
 
     r0ER = HTs.A0ER(1:3,4);                     % END EFFECTOR
     plot3(r0ER(3),r0ER(1),r0ER(2), ...          %   RIGHT!
