@@ -5,11 +5,12 @@ clc
 tic % START TIMING
 
 %% Video/Time Parameters
-    params.framerate = 40;                                   % FPS
-    model.timestp    = params.framerate^(-1);                % Seconds
-    model.tspan      = 0 : model.timestp : 6;               % [ time ]
-    model.timeHrzn   = 1.5;                                  % Seconds
-    model.Nl         = model.timeHrzn / model.timestp;       % INTEGER
+    params.framerate  = 40;                                   % FPS
+    model.timestp     = params.framerate^(-1);                % Seconds
+    model.tspan       = 0 : model.timestp : 6;                % [ time ]
+    model.timeHrzn    = 1.5;                                  % Seconds
+    model.Nl          = model.timeHrzn / model.timestp;       % INTEGER
+   [model.glbTrj,~,~] = trajGenGlobal(model.tspan);
  % Weights for controller `Performance Index`
     % Design of an optimal controller for a discrete-time system subject
     % to previewable demand
@@ -77,25 +78,23 @@ tic % START TIMING
                  pi/6;     % θ₁₁   ->  2D θ₆ Ankle
                     0];    % θ₁₂
     
-    
-    model.r.q(:,1)            = model.r.q0;
-   [model.r.xe(:,1), HTs]     = k(model.r.q0, 1, model, params);
-    
-    model.r.r0Rg(:,1)         = HTs.A0ER(1:3,4);
-    model.r.r0Lg(:,1)         = HTs.A0EL(1:3,4);
-    model.r.r0Hg(:,1)         = HTs.A0H(1:3,4);
-    model.r.r0CoMg(:,1)       = rCoM(model.r.q0,1,model,params);
+    model.r.q(:,1)                = model.r.q0;
+   [model.r.xe(:,1), A0EL, A0ER, A0H] = k(model.r.q0, 1, model, params);
+    model.r.r0Hg(:,1)             = A0H(1:3,4);
+    model.r.r0Rg(:,1)             = A0ER(1:3,4);
+    model.r.r0Lg(:,1)             = A0EL(1:3,4);
+    model.r.r0CoMg(:,1)           = rCoM(model.r.q0,1,model,params);
 
     model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
                       model.r.r0CoMg(3,1); 0; 0]; % Position Z
 
-    Q   = [];
-    t_p = 1;
 %% Generate ZMP Reference + Trajectory
    [model.p.pREF, model.p.sTM] = pREF(model.tspan,model,params);
 
 %% STEPPING
-tic
+
+    Q   = [];
+    t_p = 1;
     for i=1:length(model.p.sTM)-1
         t_c = model.p.sTM(1,i);         % Time Index CURRENT
         t_n = model.p.sTM(1,i+1);       % Time Index NEXT
@@ -113,14 +112,14 @@ tic
             
             model.r.xe(:,j)   = [Q(:,j); zeros(3,1)];
             model.r.q(:,j)    = k_Inv(model.r.q(:,jn), model.r.xe(:,j), j, model, params);
-            [~, HTs] = k(model.r.q(:,j), jn, model, params);
-            model.r.r0Lg(:,j) = HTs.A0EL(1:3,4);
-            model.r.r0Rg(:,j) = HTs.A0ER(1:3,4);
-            model.r.r0Hg(:,j) = HTs.A0H(1:3,4);
+            [~, A0EL, A0ER, A0H] = k(model.r.q(:,j), jn, model, params);
+            model.r.r0Hg(:,j) = A0H(1:3,4);
+            model.r.r0Lg(:,j) = A0EL(1:3,4);
+            model.r.r0Rg(:,j) = A0ER(1:3,4);
+
         end
         t_p = t_n - 1;
     end
-toc
 
 %% Animation
     ROBOT_FRAME = figure(1);
