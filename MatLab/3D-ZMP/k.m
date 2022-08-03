@@ -1,4 +1,4 @@
-function [xe, A0EL, A0ER, A0H] = k(q, index, model, params)
+function [xe, r0EL, r0ER, r0H] = k(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -17,15 +17,29 @@ function [xe, A0EL, A0ER, A0H] = k(q, index, model, params)
             0  0  0  1];  %
     ROW4 = [0  0  0  1];
 
+    Rzyx   = @(Rz,Ry,Rx) ...
+        [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
+                    sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
+          sin(Rz)*cos(Ry),  cos(Rz)*cos(Rx)+sin(Rz)*sin(Ry)*sin(Rx),...
+                   -cos(Rz)*sin(Rx)+sin(Rz)*sin(Ry)*cos(Rx);
+                 -sin(Ry),  cos(Ry)*sin(Rx)                        ,...
+                    cos(Ry)*cos(Rx)];
+
     %% LINK VARIABLES
     Ll     = params.fibula;     % Lower Leg
     Lu     = params.femur;      % Upper Leg
     H      = params.HipWidth;
     S      = params.ServoSize;  % SERVO DIST
     
-    A0EL    = [eye(3), model.r.r0Lg(:,index);  % LEFT Ankle Position from 
+    A0EL    = [Rzyx(model.r.r0Lg(6,index), ...
+                    model.r.r0Lg(5,index), ...
+                    model.r.r0Lg(4,index)),... 
+                    model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
               zeros(1,3),           1]; %           0rigin in Global
-    A0ER    = [eye(3), model.r.r0Rg(:,index);  % RIGHT Ankle Position from 
+    A0ER    = [Rzyx(model.r.r0Rg(6,index), ...
+                    model.r.r0Rg(5,index), ...
+                    model.r.r0Rg(4,index)),... 
+                    model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
               zeros(1,3),           1]; %           0rigin in Global
     
     %% JOINT VARIABLES
@@ -375,22 +389,23 @@ function [xe, A0EL, A0ER, A0H] = k(q, index, model, params)
         TAE  = A0EL;
     end
     
-    %% End Effector Parameterisation
-    % R₁₁:  cθ₁cθ₂      Ψ = atan2( R₃₂, R₃₃)
-    % R₂₁:  sθ₁cθ₂      θ = atan2(-R₃₁, SQRT(R₃₂² + R₃₃²))
-    % R₃₁: -sθ₂         ϕ = atan2( R₂₁, R₁₁)
+    %% End Effector Parameterisation X Y Z R₂Ψ Rᵧθ Rₓϕ
+    % R₁₁:  cθ₁cθ₂  Ψ = atan2( R₂₁, R₁₁)               Z
+    % R₂₁:  sθ₁cθ₂  θ = atan2(-R₃₁, SQRT(R₃₂² + R₃₃²)) Y
+    % R₃₁: -sθ₂     ϕ = atan2( R₃₂, R₃₃)               X   
     % R₃₂:  0
     % R₃₃:  cθ₂
     
     if params.mode ~= 0
-        phi =   atan2( TAE(3,2), TAE(3,3) );  
-        theta = atan2(-TAE(3,1), sqrt( TAE(3,2)^2 + TAE(3,3)^2 ) );
-        psi =   atan2( TAE(2,1), TAE(1,1) );
-        
-        xe = [TAE(1:3,4); % X Y Z
-              phi;        % ϕ
-              theta;      % θ
-              psi];       % Ψ
+        parameteriseXYZ = @(A) ...
+            [A(1:3,4);                                  % X Y Z
+             atan2( A(3,2), A(3,3));                    % ϕ R(x)
+             atan2(-A(3,1), sqrt(A(3,2)^2 + A(3,3)^2)); % θ R(y) 
+             atan2( A(2,1), A(1,1))];                   % Ψ R(z)
+        xe   = parameteriseXYZ(TAE);
+        r0EL = parameteriseXYZ(A0EL);
+        r0ER = parameteriseXYZ(A0ER);
+        r0H  = parameteriseXYZ(A0H);
     else
         Lphi   = atan2( TAEL(3,2), TAEL(3,3) );  
         Ltheta = atan2(-TAEL(3,1), sqrt( TAEL(3,2)^2 + TAEL(3,3)^2 ) );

@@ -1,4 +1,4 @@
-function [xe, HTs] = k(q, index, model, params)
+function [HTs] = kSLOW(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -17,15 +17,29 @@ function [xe, HTs] = k(q, index, model, params)
             0  0  0  1];  %
     ROW4 = [0  0  0  1];
 
+    Rzyx   = @(Rz,Ry,Rx) ...
+        [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
+                    sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
+          sin(Rz)*cos(Ry),  cos(Rz)*cos(Rx)+sin(Rz)*sin(Ry)*sin(Rx),...
+                   -cos(Rz)*sin(Rx)+sin(Rz)*sin(Ry)*cos(Rx);
+                 -sin(Ry),  cos(Ry)*sin(Rx)                        ,...
+                    cos(Ry)*cos(Rx)];
+
     %% LINK VARIABLES
     Ll     = params.fibula;     % Lower Leg
     Lu     = params.femur;      % Upper Leg
     H      = params.HipWidth;
     S      = params.ServoSize;  % SERVO DIST
     
-    A0EL    = [eye(3), model.r.r0Lg(:,index);  % LEFT Ankle Position from 
+    A0EL    = [Rzyx(model.r.r0Lg(6,index), ...
+                    model.r.r0Lg(5,index), ...
+                    model.r.r0Lg(4,index)),... 
+                    model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
               zeros(1,3),           1]; %           0rigin in Global
-    A0ER    = [eye(3), model.r.r0Rg(:,index);  % RIGHT Ankle Position from 
+    A0ER    = [Rzyx(model.r.r0Rg(6,index), ...
+                    model.r.r0Rg(5,index), ...
+                    model.r.r0Rg(4,index)),... 
+                    model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
               zeros(1,3),           1]; %           0rigin in Global
     
     %% JOINT VARIABLES
@@ -163,8 +177,6 @@ function [xe, HTs] = k(q, index, model, params)
                  1,         0,         0];
         A12E  = [A12ER, [A12Ex A12Ey A12Ez]'; ROW4];
         HTs.A0ER = HTs.A012 * A12E;
-
-        TAE = HTs.A0ER;
     elseif params.mode == 0     % BOTH FIXED
         HTs.A0EL = A0EL;
         HTs.A01 = HTs.A0EL * AE1;
@@ -222,7 +234,6 @@ function [xe, HTs] = k(q, index, model, params)
         A6H  = [A6HR, [A6Hx A6Hy A6Hz]'; ROW4];
         HTs.A0H =  HTs.A06 * A6H;
         % ___  MID-END  ___ %
-        TAEL = HTs.A0H;
 
         HTs.A0ER = A0ER;
         HTs.A012 = HTs.A0ER * AE12;
@@ -279,7 +290,6 @@ function [xe, HTs] = k(q, index, model, params)
         A7HR = eye(3);
         A7H  = [A7HR, [A7Hx A7Hy A7Hz]'; ROW4];
         % ___  MID-END  ___ %
-        TAER = HTs.A07 * A7H;
         
     elseif params.mode == -1     % RIGHT FIXED
         HTs.A0ER = A0ER;
@@ -401,36 +411,5 @@ function [xe, HTs] = k(q, index, model, params)
                 1,       0,        0];
         A1E  = [A1ER, [A1Ex A1Ey A1Ez]'; ROW4];
         HTs.A0EL = HTs.A01 * A1E;
-
-        TAE = HTs.A0EL;
-    end
-    
-    %% End Effector Parameterisation
-    % R₁₁:  cθ₁cθ₂      Ψ = atan2( R₃₂, R₃₃)
-    % R₂₁:  sθ₁cθ₂      θ = atan2(-R₃₁, SQRT(R₃₂² + R₃₃²))
-    % R₃₁: -sθ₂         ϕ = atan2( R₂₁, R₁₁)
-    % R₃₂:  0
-    % R₃₃:  cθ₂
-    
-    if params.mode ~= 0
-        phi =   atan2( TAE(3,2), TAE(3,3) );  
-        theta = atan2(-TAE(3,1), sqrt( TAE(3,2)^2 + TAE(3,3)^2 ) );
-        psi =   atan2( TAE(2,1), TAE(1,1) );
-        
-        xe = [TAE(1:3,4); % X Y Z
-              phi;        % ϕ
-              theta;      % θ
-              psi];       % Ψ
-    else
-        Lphi   = atan2( TAEL(3,2), TAEL(3,3) );  
-        Ltheta = atan2(-TAEL(3,1), sqrt( TAEL(3,2)^2 + TAEL(3,3)^2 ) );
-        Lpsi   = atan2( TAEL(2,1), TAEL(1,1) );
-        Rphi   = atan2( TAER(3,2), TAER(3,3) );  
-        Rtheta = atan2(-TAER(3,1), sqrt( TAER(3,2)^2 + TAER(3,3)^2 ) );
-        Rpsi   = atan2( TAER(2,1), TAER(1,1) );
-        
-        Lxe    = [TAEL(1:3,4);Lphi;Ltheta;Lpsi];
-        Rxe    = [TAER(1:3,4);Rphi;Rtheta;Rpsi];
-        xe     = Lxe - Rxe;
     end
 end

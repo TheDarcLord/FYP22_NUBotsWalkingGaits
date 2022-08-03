@@ -43,19 +43,20 @@ tic % START TIMING
     params.mass.joint  = 0.5;    % Knee Bone / Joints
     params.mass.pelvis = 1.5;    % Waist
 
- % Stepping mode... Array!?
-    params.mode         = -1;       % RIGHT  FIXED - FKM T16
-    %                      0;       % BOTH  FIXED - FKM T1H T6H
-    %                      1;       % LEFY FIXED - FKM T61
-
 %% Model setup
+ % Steps
+    % Stepping mode... Array!?
+    model.mode     = zeros(1,length(model.tspan));
+    params.mode    = -1;       % RIGHT FIXED - FKM T16
+    %                 0;       % BOTH  FIXED - FKM T1H T6H
+    %                 1;       % LEFY  FIXED - FKM T61
  % Robot
-    model.r.q      = zeros(12,length(model.tspan)); % q     [θ₁θ₂θ₃ ...]ᵀ
-    model.r.xe     = zeros(6,length(model.tspan));  % xe    [XYZϕθΨ]ᵀ
-    model.r.r0Lg   = zeros(3,length(model.tspan));  % A0EL     [XYZ]ᵀ
-    model.r.r0Rg   = model.r.r0Lg;                  % A0ER     [XYZ]ᵀ
-    model.r.r0Hg   = model.r.r0Lg;                  % A0H      [XYZ]ᵀ
-    model.r.r0CoMg = model.r.r0Lg;                  % r0CoMg   [XYZ]ᵀ
+    model.r.q      = zeros(12,length(model.tspan)); % q   [θ₁θ₂θ₃ ...]ᵀ
+    model.r.xe     = zeros(6,length(model.tspan));  % xe      [XYZϕθΨ]ᵀ
+    model.r.r0Lg   = model.r.xe;                    % r0EL    [XYZϕθΨ]ᵀ
+    model.r.r0Rg   = model.r.xe;                    % r0ER    [XYZϕθΨ]ᵀ
+    model.r.r0Hg   = model.r.xe;                    % r0H     [XYZϕθΨ]ᵀ
+    model.r.r0CoMg = zeros(3,length(model.tspan));  % r0CoMg  [XYZ]ᵀ
  % Pendulum
     model.p.x      = zeros(6,length(model.tspan));  % Xcom      [x x' x"]ᵀ
     model.p.y      = zeros(2,length(model.tspan));  % pₓᵧ     [ZMPx ZMPy]ᵀ
@@ -63,64 +64,65 @@ tic % START TIMING
     model.p.u      = model.p.y;                     % Uₓᵧ         [Ux Uy]        
 
 %% Initial Position & Orientation
-    model.r.r0Lg    = [0; 0;  params.HipWidth/2];
-    model.r.r0Rg    = [0; 0; -params.HipWidth/2];
-    model.r.q0 = [  0;     % θ₁    
-                -pi/6;     % θ₂    ->  2D θ₁ Ankle
-               2*pi/6;     % θ₃    ->  2D θ₂ Knee
-                -pi/6;     % θ₄    ->  2D θ₃ Hip
-                    0;     % θ₅
-                    0;     % θ₆
-                    0;     % θ₇
-                    0;     % θ₈
-                 pi/6;     % θ₉    ->  2D θ₄ Hip
-              -2*pi/6;     % θ₁₀   ->  2D θ₅ Knee
-                 pi/6;     % θ₁₁   ->  2D θ₆ Ankle
-                    0];    % θ₁₂
+    model.r.r0Lg(:,1) = [0; 0;  params.HipWidth/2;0;0;0];
+    model.r.r0Rg(:,1) = [0; 0; -params.HipWidth/2;0;0;0];
+    model.r.q0        = [0;     % θ₁    
+                     -pi/6;     % θ₂    ->  2D θ₁ Ankle
+                    2*pi/6;     % θ₃    ->  2D θ₂ Knee
+                     -pi/6;     % θ₄    ->  2D θ₃ Hip
+                         0;     % θ₅
+                         0;     % θ₆
+                         0;     % θ₇
+                         0;     % θ₈
+                      pi/6;     % θ₉    ->  2D θ₄ Hip
+                   -2*pi/6;     % θ₁₀   ->  2D θ₅ Knee
+                      pi/6;     % θ₁₁   ->  2D θ₆ Ankle
+                         0];    % θ₁₂
     
-    model.r.q(:,1)                = model.r.q0;
-   [model.r.xe(:,1), A0EL, A0ER, A0H] = k(model.r.q0, 1, model, params);
-    model.r.r0Hg(:,1)             = A0H(1:3,4);
-    model.r.r0Rg(:,1)             = A0ER(1:3,4);
-    model.r.r0Lg(:,1)             = A0EL(1:3,4);
-    model.r.r0CoMg(:,1)           = rCoM(model.r.q0,1,model,params);
+    model.r.q(:,1) = model.r.q0;
 
+   [  model.r.xe(:,1), model.r.r0Lg(:,1), ... F
+    model.r.r0Rg(:,1), model.r.r0Hg(:,1)] ... K
+        = k(model.r.q0, 1, model, params);%   M
+
+    model.r.r0CoMg(:,1) = rCoM(model.r.q0,1,model,params);
     model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
-                      model.r.r0CoMg(3,1); 0; 0]; % Position Z
+                      model.r.r0CoMg(3,1); 0; 0]; % Position Zrob aka Ypend
 
 %% Generate ZMP Reference + Trajectory
    [model.p.pREF, model.p.sTM] = pREF(model.tspan,model,params);
 
 %% STEPPING
-
+    tic
     Q   = [];
     t_p = 1;
     for i=1:length(model.p.sTM)-1
         t_c = model.p.sTM(1,i);         % Time Index CURRENT
         t_n = model.p.sTM(1,i+1);       % Time Index NEXT
         params.mode = model.p.sTM(2,i);
-        Q = [Q trajGenStep(model.p.pREF(:,t_n),t_c:(t_n-1),t_p,model,params)];
-        for j=t_c:(t_n-1)
 
+        Q = [Q trajGenStep(model.p.pREF(:,t_n),t_c:(t_n-1),t_p,model,params)];
+
+        for j=t_c:(t_n-1)
+            
             jn = j - 1;
             if jn < 1
                 jn = 1;
             end
 
+            model.mode(j)       = params.mode;
             [ZMPk, CoMk, model] = LIPM3D(model,j,params);
             model.r.r0CoMg(:,j) = [CoMk(1); params.zc; CoMk(2)];
             
             model.r.xe(:,j)   = [Q(:,j); zeros(3,1)];
             model.r.q(:,j)    = k_Inv(model.r.q(:,jn), model.r.xe(:,j), j, model, params);
-            [~, A0EL, A0ER, A0H] = k(model.r.q(:,j), jn, model, params);
-            model.r.r0Hg(:,j) = A0H(1:3,4);
-            model.r.r0Lg(:,j) = A0EL(1:3,4);
-            model.r.r0Rg(:,j) = A0ER(1:3,4);
-
+           [model.r.xe(:,j),   model.r.r0Lg(:,j),  ... F
+            model.r.r0Rg(:,j), model.r.r0Hg(:,j)]  ... K
+                = k(model.r.q(:,j), jn, model, params);%M
         end
         t_p = t_n - 1;
     end
-
+    toc
 %% Animation
     ROBOT_FRAME = figure(1);
     

@@ -6,7 +6,7 @@ function pass = plotRobot(FIGURE_NAME,index,model,params)
 
     AFOOT = [eye(3),[0.05; 0; 0];[0,0,0,1]];    % Foot Transform
 
-    [~, HTs]    = kSLOW( model.r.q(:,index),index,model,params);
+    HTs   = kSLOW( model.r.q(:,index),index,model,params);
 
     r0ER = HTs.A0ER(1:3,4);                     % END EFFECTOR
     A0FR = HTs.A0ER*AFOOT;                      % + FOOT
