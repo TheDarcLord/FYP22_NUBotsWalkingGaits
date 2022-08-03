@@ -4,14 +4,30 @@ function pass = plotRobot(FIGURE_NAME,index,model,params)
     quiver3(0,0,0,0,1,0,"LineWidth",2,'Color','#379203');   % X Vector
     quiver3(0,0,0,0,0,1,"LineWidth",2,'Color','b');         % Y Vector
 
+    AFOOT = [eye(3),[0.05; 0; 0];[0,0,0,1]];    % Foot Transform
+
     [~, HTs]    = kSLOW( model.r.q(:,index),index,model,params);
 
     r0ER = HTs.A0ER(1:3,4);                     % END EFFECTOR
+    A0FR = HTs.A0ER*AFOOT;                      % + FOOT
+    r0FR = A0FR(1:3,4);                         % + TOE
     plot3(r0ER(3),r0ER(1),r0ER(2), ...          %   RIGHT!
-          'bo','LineWidth',0.5,'MarkerSize',10);
+          'bo','LineWidth',1,'MarkerSize',5);
+    plot3(r0FR(3),r0FR(1),r0FR(2), ...          %   RIGHT TOE!
+          'bx','LineWidth',1,'MarkerSize',5);
+    plot3([r0ER(3),r0FR(3)],[r0ER(1),r0FR(1)],[r0ER(2),r0FR(2)],...
+          'k','LineWidth',2);
+
     r0EL = HTs.A0EL(1:3,4);                     % END EFFECTOR
+    A0FL = HTs.A0EL*AFOOT;                      % + FOOT
+    r0FL = A0FL(1:3,4);                         % + TOE
     plot3(r0EL(3),r0EL(1),r0EL(2), ...          %   LEFT!
-          'ro','LineWidth',0.5,'MarkerSize',10);
+          'ro','LineWidth',1,'MarkerSize',5);
+    plot3(r0FL(3),r0FL(1),r0FL(2), ...          %   LEFT TOE!
+          'rx','LineWidth',1,'MarkerSize',5);
+    plot3([r0EL(3),r0FL(3)],[r0EL(1),r0FL(1)],[r0EL(2),r0FL(2)],...
+          'k','LineWidth',2);
+%% OTHER JOINTS & LINKS
     r01 = HTs.A01(1:3,4);                       % ONE
     plot3(r01(3),r01(1),r01(2),...              % -> Joint
           'rx','LineWidth',1,'markersize',5);         
