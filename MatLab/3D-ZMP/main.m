@@ -114,7 +114,7 @@ tic % START TIMING
             [ZMPk, CoMk, model] = LIPM3D(model,j,params);
             model.r.r0CoMg(:,j) = [CoMk(1); params.zc; CoMk(2)];
             
-            model.r.xe(:,j)   = [Q(:,j); zeros(3,1)];
+            model.r.xe(:,j)   = [Q(:,j)];
             model.r.q(:,j)    = k_Inv(model.r.q(:,jn), model.r.xe(:,j), j, model, params);
            [model.r.xe(:,j),   model.r.r0Lg(:,j),  ... F
             model.r.r0Rg(:,j), model.r.r0Hg(:,j)]  ... K

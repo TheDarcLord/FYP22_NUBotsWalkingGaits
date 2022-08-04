@@ -9,10 +9,12 @@ function [Q, V, A] = trajGenStep(ZMP,indexspan,index,model,params)
     rRX = model.r.r0Rg(1,index);
     rRY = model.r.r0Rg(2,index);
     rRZ = model.r.r0Rg(3,index);
+    RRY = model.r.r0Rg(5,index);
 
     rLX = model.r.r0Lg(1,index);
     rLY = model.r.r0Lg(2,index);
     rLZ = model.r.r0Lg(3,index);
+    RLY = model.r.r0Lg(5,index);
 
     %% SPECIAL MATRICES
     D  = diag(1:3,-1);  % Special D - Diag Matrix   Qunitic!        
@@ -20,13 +22,24 @@ function [Q, V, A] = trajGenStep(ZMP,indexspan,index,model,params)
 
     %% TIME
         t0_i = indexspan(1);
-        t1_i = indexspan(floor(length(indexspan)/2));
+        %t1_i = indexspan(floor(length(indexspan)/2));
         t2_i = indexspan(end);
+
+    %% TANGENTS 
+        vTraj = model.glbTrj(:,indexspan(end)) - ...
+                model.glbTrj(:,indexspan(end)-1);
+        vXec1  = [1 0 0];
+        dotAng =  acos( (vXec1 * vTraj)/norm(vTraj) );
+
+
     %% TRAJECTORY OPTIONS
     if params.mode == 1                    
-        q0 = [rRX 0;  %  X  Ẋ
-              rRY 0;  % qY vY
-              rRZ 0]; % qZ vZ
+        q0 = [rRX 0; %  X  Ẋ
+              rRY 0; % qY vY
+              rRZ 0; % qZ vZ
+                0 0; % qR(x)
+              RRY 0; % qR(y)
+                0 0];% qR(z)
         t0 = model.tspan(t0_i);
         tt0 = t0.^(0:3).';
         T0 = [tt0, D*tt0];
@@ -39,9 +52,12 @@ function [Q, V, A] = trajGenStep(ZMP,indexspan,index,model,params)
 %         T1 = [tt1, D*tt1];
 
     elseif params.mode == -1
-        q0 = [rLX 0;  %  X  Ẋ
-              rLY 0;  % qY vY
-              rLZ 0]; % qZ vZ
+        q0 = [rLX 0; %  X  Ẋ
+              rLY 0; % qY vY
+              rLZ 0; % qZ vZ
+                0 0; % qR(x)
+              RLY 0; % qR(y)
+                0 0];% qR(z)
         t0 = model.tspan(t0_i);
         tt0 = t0.^(0:3).';
         T0 = [tt0, D*tt0];
@@ -55,9 +71,12 @@ function [Q, V, A] = trajGenStep(ZMP,indexspan,index,model,params)
     end
 
     %---------------------------------------------
-    q2 = [ZMP(1) 0;  %  X  Ẋ
-          0      0;  % qY vY
-          ZMP(2) 0]; % qZ vZ
+    q2 = [ZMP(1) 0; %  X  Ẋ
+          0      0; % qY vY
+          ZMP(2) 0; % qZ vZ
+          0      0; % qR(x)
+          dotAng 0; % qR(y)
+          0      0];% qR(z)
     t2 = model.tspan(t2_i);
     tt2 = t2.^(0:3).';
     T2 = [tt2, D*tt2];
