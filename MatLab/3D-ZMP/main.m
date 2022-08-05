@@ -78,7 +78,6 @@ tic % START TIMING
                    -2*pi/6;     % θ₁₀   ->  2D θ₅ Knee
                       pi/6;     % θ₁₁   ->  2D θ₆ Ankle
                          0];    % θ₁₂
-    
     model.r.q(:,1) = model.r.q0;
 
    [  model.r.xe(:,1), model.r.r0Lg(:,1), ... F
@@ -133,7 +132,7 @@ tic % START TIMING
     xlabel('{\bfZ} (metres)');
     ylabel('{\bfX} (metres)');
     zlabel('{\bfY} (metres)');
-    view(-160,55);
+    view(-160,15);
     axis([ -1.0, 0.5, -0.5, 1.0, 0.0, 1.0]);
     for i=1:213
         cla(ROBOT_FRAME)
