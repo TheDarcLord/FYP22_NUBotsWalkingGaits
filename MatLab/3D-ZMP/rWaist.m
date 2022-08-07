@@ -162,5 +162,5 @@ function [v67g, r67g] = rWaist(q, index, model, params)
     end
 
     r67g = [A06(1:3,4) A07(1:3,4)];
-    v67g = A07([1 3 2],4) - A06([1 3 2],4);
+    v67g = A07(1:3,4) - A06(1:3,4);
 end

@@ -1,4 +1,4 @@
-function pass = plotPend(FIGURE_NAME,index,model,params)
+function pass = plotPend(index,model,params)
     plot3(model.p.y(2,index),... % Y|Z
           model.p.y(1,index),... % X
           0,'kx','LineWidth',3,'MarkerSize',10)

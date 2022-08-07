@@ -2,20 +2,19 @@ clear all
 close all
 clc 
 
-%% Video/Time Parameters
-    params.framerate  = 40;                                   % FPS
-    model.timestp     = params.framerate^(-1);                % Seconds
-    model.tspan       = 0 : model.timestp : 20;                % [ time ]
-    model.timeHrzn    = 1.5;                                  % Seconds
-    model.Nl          = model.timeHrzn / model.timestp;       % INTEGER
-   [model.glbTrj,~,~] = trajGenGlobal(model.tspan);
+%% Video & Time Parameters
+    params.framerate  = 40;                             % FPS
+    model.timestp     = params.framerate^(-1);          % Seconds
+    model.tspan       = 0 : model.timestp : 20;         % [ time ]
+    model.timeHrzn    = 1.5;                            % Seconds
+    model.Nl          = model.timeHrzn / model.timestp; % INTEGER
  % Weights for controller `Performance Index`
     % Design of an optimal controller for a discrete-time system subject
     % to previewable demand
     %   1985 - KATAYAMA et al.
-    %       ∞     
-    %% Ju = Σ [ e(i)ᵀ⋅Qₑ⋅e(i) + Δx(i)ᵀ⋅Qₓ⋅Δx(i) + Δu(i)ᵀ⋅R⋅u(i) ]
-    %      i=k
+    %      ∞     
+    % Jᵤ = Σ [ e(i)ᵀ⋅Qₑ⋅e(i) + Δx(i)ᵀ⋅Qₓ⋅Δx(i) + Δu(i)ᵀ⋅R⋅u(i) ]
+    %     i=k
     % where:
     %        e(i): ZMPₓ(i) - Yₓ     aka Tracking Error 
     %       Δx(i): x(i) - x(i-1)    aka Incremental State Vector
@@ -34,7 +33,7 @@ clc
     params.femur     = 0.4;      % m    - Upper Leg
     params.HipWidth  = 0.2;      % m    - Pelvis
     params.ServoSize = 0.05;     % m    - Approximation/Spacing
-    params.StepSize  = 0.1;       % m    - 10 cm Step forward
+    params.StepSize  = 0.15;     % m    - 15 cm Step forward
  % Masses
     params.mass.fibula = 1.5;    % Paired with `tibia`
     params.mass.femur  = 1.5;    % Thigh Bone
@@ -43,7 +42,7 @@ clc
 
 %% Model setup
  % Steps
-    % Stepping mode... Array!?
+    % Stepping mode... Array!? ... ?
     model.mode     = zeros(1,length(model.tspan));
     params.mode    = -1;       % RIGHT FIXED - FKM T16
     %                 0;       % BOTH  FIXED - FKM T1H T6H
@@ -57,9 +56,9 @@ clc
     model.r.r0CoMg = zeros(3,length(model.tspan));  % r0CoMg  [XYZ]ᵀ
  % Pendulum
     model.p.x      = zeros(6,length(model.tspan));  % Xcom      [x x' x"]ᵀ
-    model.p.y      = zeros(2,length(model.tspan));  % pₓᵧ     [ZMPx ZMPy]ᵀ
-    model.p.pREF   = model.p.y;                     % pₓᵧREF  [REFx REFy]ᵀ
-    model.p.u      = model.p.y;                     % Uₓᵧ         [Ux Uy]        
+    model.p.y      = zeros(2,length(model.tspan));  % pₓ₂     [ZMPx ZMPz]ᵀ
+    model.p.pREF   = model.p.y;                     % pₓ₂REF  [REFx REFz]ᵀ
+    model.p.u      = model.p.y;                     % Uₓ₂         [Ux Uz]        
 
 %% Initial Position & Orientation
     model.r.r0Lg(:,1) = [0; 0;  params.HipWidth/2;0;0;0];
@@ -84,20 +83,29 @@ clc
 
     model.r.r0CoMg(:,1) = rCoM(model.r.q0,1,model,params);
     model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
-                      model.r.r0CoMg(3,1); 0; 0]; % Position Zrob aka Ypend
+                      model.r.r0CoMg(3,1); 0; 0]; % Position Z
 
-%% Generate ZMP Reference + Trajectory
-   [model.p.pREF, model.p.sTM] = pREF(model.tspan,model,params);
+%% Generate Trajectory
+   [model.glbTrj,~,~] = trajGenGlobal(model.tspan, ...     % Time Span
+                                      model.r.r0Rg(1:3,1));% Init Position
+
+%% Generate ZMP Reference
+   [model.p.pREF, model.p.sTM] = pREF(model,params);
 
 %% STEPPING
     Q   = [];
     t_p = 1;
     for i=1:length(model.p.sTM)-1
+        tic
         t_c = model.p.sTM(1,i);         % Time Index CURRENT
         t_n = model.p.sTM(1,i+1);       % Time Index NEXT
-        params.mode = model.p.sTM(2,i);
-        Q = [Q trajGenStep(model.p.pREF(:,t_n),t_c:(t_n-1),t_p,model,params)];
-        tic
+        params.mode = model.p.sTM(2,i); % Mode
+        Q = [Q ...
+             trajGenStep(model.p.pREF(:,t_n),   ...
+                         t_c:(t_n-1),           ...
+                         t_p,                   ...
+                         model,params)];
+        
         for j=t_c:(t_n-1)
             
             jn = j - 1;
@@ -111,9 +119,9 @@ clc
             
             model.r.xe(:,j)   = [Q(:,j)];
             model.r.q(:,j)    = k_Inv(model.r.q(:,jn), model.r.xe(:,j), j, model, params);
-           [model.r.xe(:,j),   model.r.r0Lg(:,j),  ... F
-            model.r.r0Rg(:,j), model.r.r0Hg(:,j)]  ... K 
-                = k(model.r.q(:,j), jn, model, params);%M        
+           [model.r.xe(:,j),   model.r.r0Lg(:,j),  ...  % F
+            model.r.r0Rg(:,j), model.r.r0Hg(:,j)]  ...  % K 
+                = k(model.r.q(:,j), jn, model, params); % M
         end
         t_p = t_n - 1;
         toc
@@ -131,13 +139,13 @@ clc
     zlabel('{\bfY} (metres)');
     view(-165,50);
     
-    for i=1:length(model.tspan)-20
+    for i=1:length(model.tspan)-19
         cla(ROBOT_FRAME)
         CM = model.r.r0CoMg([1 3],i);
         axis([ CM(2)-1, CM(2)+1, CM(1)-1, CM(1)+1, 0.0, 1.0]);
         [~] = plotRobot(ROBOT_FRAME,i,model,params);
-        [~] = plotSteps(ROBOT_FRAME,model);
-        [~] = plotPend(ROBOT_FRAME,i,model,params);
+        [~] = plotSteps(model);
+        [~] = plotPend(i,model,params);
         
         IMAGE(i) = getframe(gcf);
     end
