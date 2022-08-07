@@ -2,12 +2,10 @@ clear all
 close all
 clc 
 
-tic % START TIMING
-
 %% Video/Time Parameters
     params.framerate  = 40;                                   % FPS
     model.timestp     = params.framerate^(-1);                % Seconds
-    model.tspan       = 0 : model.timestp : 6;                % [ time ]
+    model.tspan       = 0 : model.timestp : 20;                % [ time ]
     model.timeHrzn    = 1.5;                                  % Seconds
     model.Nl          = model.timeHrzn / model.timestp;       % INTEGER
    [model.glbTrj,~,~] = trajGenGlobal(model.tspan);
@@ -82,7 +80,7 @@ tic % START TIMING
 
    [  model.r.xe(:,1), model.r.r0Lg(:,1), ... F
     model.r.r0Rg(:,1), model.r.r0Hg(:,1)] ... K
-        = k(model.r.q0, 1, model, params);%   M
+        = k(model.r.q0, 1, model, params);   %M
 
     model.r.r0CoMg(:,1) = rCoM(model.r.q0,1,model,params);
     model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
@@ -92,16 +90,14 @@ tic % START TIMING
    [model.p.pREF, model.p.sTM] = pREF(model.tspan,model,params);
 
 %% STEPPING
-    tic
     Q   = [];
     t_p = 1;
     for i=1:length(model.p.sTM)-1
         t_c = model.p.sTM(1,i);         % Time Index CURRENT
         t_n = model.p.sTM(1,i+1);       % Time Index NEXT
         params.mode = model.p.sTM(2,i);
-
         Q = [Q trajGenStep(model.p.pREF(:,t_n),t_c:(t_n-1),t_p,model,params)];
-
+        tic
         for j=t_c:(t_n-1)
             
             jn = j - 1;
@@ -116,12 +112,13 @@ tic % START TIMING
             model.r.xe(:,j)   = [Q(:,j)];
             model.r.q(:,j)    = k_Inv(model.r.q(:,jn), model.r.xe(:,j), j, model, params);
            [model.r.xe(:,j),   model.r.r0Lg(:,j),  ... F
-            model.r.r0Rg(:,j), model.r.r0Hg(:,j)]  ... K
-                = k(model.r.q(:,j), jn, model, params);%M
+            model.r.r0Rg(:,j), model.r.r0Hg(:,j)]  ... K 
+                = k(model.r.q(:,j), jn, model, params);%M        
         end
         t_p = t_n - 1;
+        toc
     end
-    toc
+
 %% Animation
     ROBOT_FRAME = figure(1);
     
@@ -132,13 +129,16 @@ tic % START TIMING
     xlabel('{\bfZ} (metres)');
     ylabel('{\bfX} (metres)');
     zlabel('{\bfY} (metres)');
-    view(-160,15);
-    axis([ -1.0, 0.5, -0.5, 1.0, 0.0, 1.0]);
-    for i=1:213
+    view(-165,50);
+    
+    for i=1:length(model.tspan)-20
         cla(ROBOT_FRAME)
+        CM = model.r.r0CoMg([1 3],i);
+        axis([ CM(2)-1, CM(2)+1, CM(1)-1, CM(1)+1, 0.0, 1.0]);
         [~] = plotRobot(ROBOT_FRAME,i,model,params);
-        [~] = plotPend(ROBOT_FRAME,i,model,params);
         [~] = plotSteps(ROBOT_FRAME,model);
+        [~] = plotPend(ROBOT_FRAME,i,model,params);
+        
         IMAGE(i) = getframe(gcf);
     end
 

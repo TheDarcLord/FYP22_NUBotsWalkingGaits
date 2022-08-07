@@ -28,9 +28,8 @@ function [Q, V, A] = trajGenStep(ZMP,indexspan,index,model,params)
     %% TANGENTS 
         vTraj = model.glbTrj(:,indexspan(end)) - ...
                 model.glbTrj(:,indexspan(end)-1);
-        vXec1  = [1 0 0];
-        dotAng =  acos( (vXec1 * vTraj)/norm(vTraj) );
-
+        vZec1  = [0 1 0];
+        dotAng =  acos( (vZec1 * vTraj)/norm(vTraj) ) - (pi/2);
 
     %% TRAJECTORY OPTIONS
     if params.mode == 1                    
