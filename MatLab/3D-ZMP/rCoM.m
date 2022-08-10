@@ -28,6 +28,14 @@ function [r0CoM] = rCoM(q, index, model, params)
             0  0  0  1];  %
     ROW4 = [0  0  0  1];
 
+    Rzyx   = @(Rz,Ry,Rx) ...
+        [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
+                    sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
+          sin(Rz)*cos(Ry),  cos(Rz)*cos(Rx)+sin(Rz)*sin(Ry)*sin(Rx),...
+                   -cos(Rz)*sin(Rx)+sin(Rz)*sin(Ry)*cos(Rx);
+                 -sin(Ry),  cos(Ry)*sin(Rx)                        ,...
+                    cos(Ry)*cos(Rx)];
+
     %% Lengths
     Ll = params.fibula;     % Lower Leg
     Lu = params.femur;      % Upper Leg
@@ -40,12 +48,19 @@ function [r0CoM] = rCoM(q, index, model, params)
     mPe = params.mass.pelvis;   % Waist Mass
     
     %% JOINT POSITIONS
-    A0Sl   = [eye(3), model.r.r0Lg(1:3,index);  % LEFT  Sole Position from 
-              zeros(1,3),       1]; %       0rigin in Global
-    A0Sr   = [eye(3), model.r.r0Rg(1:3,index);  % RIGHT Sole Position from 
-              zeros(1,3),       1]; %       0rigin in Global
     A0H    = [eye(3), model.r.r0Hg(1:3,index);  % PELVIS Mid  Position from 
               zeros(1,3),       1]; %       0rigin in Global
+
+    A0Sl    = [Rzyx(model.r.r0Lg(6,index), ...
+                model.r.r0Lg(5,index), ...
+                model.r.r0Lg(4,index)),... 
+                model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
+          zeros(1,3),           1]; %           0rigin in Global
+    A0Sr    = [Rzyx(model.r.r0Rg(6,index), ...
+                    model.r.r0Rg(5,index), ...
+                    model.r.r0Rg(4,index)),... 
+                    model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
+              zeros(1,3),           1]; %           0rigin in Global
     
 %% LEFT
     % LEFT ANKLE

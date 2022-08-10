@@ -62,28 +62,40 @@ clc
 
 %% Initial Position & Orientation
     model.r.r0Lg(:,1) = [0; 0;  params.HipWidth/2;0;0;0];
-    model.r.r0Rg(:,1) = [0; 0; -params.HipWidth/2;0;0;0];
-    model.r.q0        = [0;     % θ₁    
-                     -pi/6;     % θ₂    ->  2D θ₁ Ankle
-                    2*pi/6;     % θ₃    ->  2D θ₂ Knee
-                     -pi/6;     % θ₄    ->  2D θ₃ Hip
-                         0;     % θ₅
-                         0;     % θ₆
-                         0;     % θ₇
-                         0;     % θ₈
-                      pi/6;     % θ₉    ->  2D θ₄ Hip
-                   -2*pi/6;     % θ₁₀   ->  2D θ₅ Knee
-                      pi/6;     % θ₁₁   ->  2D θ₆ Ankle
-                         0];    % θ₁₂
+    model.r.r0Rg(:,1) = [0; 0; -params.HipWidth/2;pi/8;0;0];
+    model.r.q0        = [0;    % θ₁    
+                    -pi/12;    % θ₂    ->  2D θ₁ Ankle
+                   2*pi/12;    % θ₃    ->  2D θ₂ Knee
+                    -pi/12;    % θ₄    ->  2D θ₃ Hip
+                         0;    % θ₅
+                         0;    % θ₆
+                         0;    % θ₇
+                         0;    % θ₈
+                     pi/12;    % θ₉    ->  2D θ₄ Hip
+                  -2*pi/12;    % θ₁₀   ->  2D θ₅ Knee
+                     pi/12;    % θ₁₁   ->  2D θ₆ Ankle
+                         0];   % θ₁₂
     model.r.q(:,1) = model.r.q0;
-
-   [  model.r.xe(:,1), model.r.r0Lg(:,1), ... F
-    model.r.r0Rg(:,1), model.r.r0Hg(:,1)] ... K
-        = k(model.r.q0, 1, model, params);   %M
+   [model.r.xe(:,1),   model.r.r0Lg(:,1), ...% F
+    model.r.r0Rg(:,1), model.r.r0Hg(:,1)] ...% K
+        = k(model.r.q0, 1, model, params);   % M
 
     model.r.r0CoMg(:,1) = rCoM(model.r.q0,1,model,params);
     model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
                       model.r.r0CoMg(3,1); 0; 0]; % Position Z
+
+    % +-+-+-+-+-+-+-+-+-+-+-+
+    ROBOT_FRAME = figure(1);
+        hold on
+        grid on
+        set(gca,'Color','#CCCCCC');
+        title("3D Model - ZMP Walking",'FontSize',12);
+        xlabel('{\bfZ} (metres)');
+        ylabel('{\bfX} (metres)');
+        zlabel('{\bfY} (metres)');
+        view(-165,50);
+        [~] = plotRobot(1,model,params);
+    % +-+-+-+-+-+-+-+-+-+-+-+
 
 %% Generate Trajectory
    [model.glbTrj,~,~] = trajGenGlobal(model.tspan, ...     % Time Span
@@ -138,12 +150,13 @@ clc
     ylabel('{\bfX} (metres)');
     zlabel('{\bfY} (metres)');
     view(-165,50);
+    [~] = plotRobot(i,model,params);
     
     for i=1:length(model.tspan)-19
         cla(ROBOT_FRAME)
         CM = model.r.r0CoMg([1 3],i);
         axis([ CM(2)-1, CM(2)+1, CM(1)-1, CM(1)+1, 0.0, 1.0]);
-        [~] = plotRobot(ROBOT_FRAME,i,model,params);
+        [~] = plotRobot(i,model,params);
         [~] = plotSteps(model);
         [~] = plotPend(i,model,params);
         

@@ -1,36 +1,43 @@
-function pass = plotRobot(FIGURE_NAME,index,model,params)
+function pass = plotRobot(index,model,params)
     % Origin
     quiver3(0,0,0,1,0,0,"LineWidth",2,'Color','r');         % Z Vector
     quiver3(0,0,0,0,1,0,"LineWidth",2,'Color','#379203');   % X Vector
     quiver3(0,0,0,0,0,1,"LineWidth",2,'Color','b');         % Y Vector
 
-    AFOOT = [eye(3),[0.05; 0; 0];[0,0,0,1]];    % Foot Transform
+    AFOOT = [eye(3), [0.05; 0; 0];[0,0,0,1]];    % Foot Transform
 
     HTs   = kSLOW( model.r.q(:,index),index,model,params);
-
-    r0ER = HTs.A0ER(1:3,4);                     % END EFFECTOR
-    A0FR = HTs.A0ER*AFOOT;                      % + FOOT
-    r0FR = A0FR(1:3,4);                         % + TOE
-    plot3(r0ER(3),r0ER(1),r0ER(2), ...          %   RIGHT!
+    
+    rGER = HTs.AGER(1:3,4);                     % END EFFECTOR
+    AGFR = HTs.AGER*AFOOT;                      % + FOOT
+    rGFR = AGFR(1:3,4);                         % + TOE
+    plot3(rGER(3),rGER(1),rGER(2), ...          %   RIGHT!
           'bo','LineWidth',1,'MarkerSize',5);
-    plot3(r0FR(3),r0FR(1),r0FR(2), ...          %   RIGHT TOE!
+    plot3(rGFR(3),rGFR(1),rGFR(2), ...          %   RIGHT TOE!
           'bx','LineWidth',1,'MarkerSize',5);
-    plot3([r0ER(3),r0FR(3)],[r0ER(1),r0FR(1)],[r0ER(2),r0FR(2)],...
+    plot3([rGER(3),rGFR(3)],[rGER(1),rGFR(1)],[rGER(2),rGFR(2)],...
           'k','LineWidth',2);
 
-    r0EL = HTs.A0EL(1:3,4);                     % END EFFECTOR
-    A0FL = HTs.A0EL*AFOOT;                      % + FOOT
-    r0FL = A0FL(1:3,4);                         % + TOE
-    plot3(r0EL(3),r0EL(1),r0EL(2), ...          %   LEFT!
+    rGEL = HTs.AGEL(1:3,4);                     % END EFFECTOR
+    AGFL = HTs.AGEL*AFOOT;                      % + FOOT
+    rGFL = AGFL(1:3,4);                         % + TOE
+    plot3(rGEL(3),rGEL(1),rGEL(2), ...          %   LEFT!
           'ro','LineWidth',1,'MarkerSize',5);
-    plot3(r0FL(3),r0FL(1),r0FL(2), ...          %   LEFT TOE!
+    plot3(rGFL(3),rGFL(1),rGFL(2), ...          %   LEFT TOE!
           'rx','LineWidth',1,'MarkerSize',5);
-    plot3([r0EL(3),r0FL(3)],[r0EL(1),r0FL(1)],[r0EL(2),r0FL(2)],...
+    plot3([rGEL(3),rGFL(3)],[rGEL(1),rGFL(1)],[rGEL(2),rGFL(2)],...
           'k','LineWidth',2);
 %% OTHER JOINTS & LINKS
+    rLB0 = HTs.ALB0(1:3,4);                     % BASE LEFT
+    plot3(rLB0(3),rLB0(1),rLB0(2),'rx','LineWidth',1,'markersize',5);
+    rRB0 = HTs.ARB0(1:3,4);                     % BASE RIGHT
+    plot3(rRB0(3),rRB0(1),rRB0(2),'bx','LineWidth',1,'markersize',5);
+
     r01 = HTs.A01(1:3,4);                       % ONE
     plot3(r01(3),r01(1),r01(2),...              % -> Joint
-          'rx','LineWidth',1,'markersize',5);         
+          'rx','LineWidth',1,'markersize',5);
+    plot3([rLB0(3),r01(3)],[rLB0(1),r01(1)],[rLB0(2),r01(2)],... % Link 0-1
+          'k','LineWidth',2);
     r02 = HTs.A02(1:3,4);                       % TWO
     plot3(r02(3),r02(1),r02(2),...              % -> Joint
           'rx','LineWidth',1,'markersize',5); 
@@ -53,7 +60,7 @@ function pass = plotRobot(FIGURE_NAME,index,model,params)
           'k','LineWidth',2);
     r06 = HTs.A06(1:3,4);                       % SIX 
     plot3(r06(3),r06(1),r06(2),...              % -> Joint
-          'rx','LineWidth',1,'markersize',5);    
+          'bx','LineWidth',1,'markersize',5);    
     plot3([r05(3),r06(3)],[r05(1),r06(1)],[r05(2),r06(2)],...
           'k','LineWidth',2);
     r07 = HTs.A07(1:3,4);                       % SEVEN
@@ -81,11 +88,7 @@ function pass = plotRobot(FIGURE_NAME,index,model,params)
           'bx','LineWidth',1,'markersize',5);
     plot3([r010(3),r011(3)],[r010(1),r011(1)],[r010(2),r011(2)],...
           'k', 'LineWidth',2);
-    r012 = HTs.A0ER(1:3,4);                     % TWELEVE
-    plot3(r012(3),r012(1),r012(2),...           % -> Joint
-          'bx','LineWidth',1,'markersize',5);
-    plot3([r011(3),r012(3)],[r011(1),r012(1)],[r011(2),r012(2)],...
-          'k', 'LineWidth',2);
+    
 
     rCoM = model.r.r0CoMg(:,index);
     plot3(rCoM(3),rCoM(1),rCoM(2),'mo','MarkerSize',10,'LineWidth',2);
