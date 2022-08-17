@@ -1,4 +1,4 @@
-function [xe, r0EL, r0ER, r0H] = k_1(q, index, model, params)
+function [xe, r0EL, r0ER, r0H] = k(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -33,143 +33,102 @@ function [xe, r0EL, r0ER, r0H] = k_1(q, index, model, params)
               zeros(1,3),           1]; %           0rigin in Global
     
     %% JOINT VARIABLES
-    q1  = q(1);     % θ₁
-    q2  = q(2);     % θ₂
-    q3  = q(3);     % θ₃
-    q4  = q(4);     % θ₄
-    q5  = q(5);     % θ₅
-    q6  = q(6);     % θ₆
-    q7  = q(7);     % θ₇
-    q8  = q(8);     % θ₈
-    q9  = q(9);     % θ₉
-    q10 = q(10);    % θ₁₀
-    q11 = q(11);    % θ₁₁
-    q12 = q(12);    % θ₁₂
+    c1   = cos(q(1));
+    s1   = sin(q(1));
+    c2   = cos(q(2));
+    s2   = sin(q(2));
+    c23  = cos(q(2)+q(3));
+    s23  = sin(q(2)+q(3));
+    c234 = cos(q(2)+q(3)+q(4));
+    s234 = sin(q(2)+q(3)+q(4));
+    c34 = cos(q(3)+q(4));
+    s34 = sin(q(3)+q(4));
+    c4   = cos(q(4));
+    s4   = sin(q(4));
 
+    s5   = sin(q(5));
+    c5   = cos(q(5));
+    s6   = sin(q(6));
+    c6   = cos(q(6));
+
+    s7   = sin(q(7));
+    c7   = cos(q(7));
+    s8   = sin(q(8));
+    c8   = cos(q(8));
+
+    c9   = cos(q(9));
+    s9   = sin(q(9));
+    s90  = sin(q(9)  +q(10));
+    c90  = cos(q(9)  +q(10));
+    s901 = sin(q(9)  +q(10)  +q(11));
+    c901 = cos(q(9)  +q(10)  +q(11));
+    s101 = sin(q(10) +q(11));
+    c101 = cos(q(10) +q(11));
+    s11  = sin(q(11));
+    c11  = cos(q(11));
+    c12  = cos(q(12));
+    s12  = sin(q(12));
     %% HOMOGENOUS TRANSFORM
     if params.mode ==  1        % LEFT FIXED
         TB0   = [0,0,1,0; 0,1,0,0;
                 -1,0,0,0; 0,0,0,1];
         % INVERTIBLE !!!
-        A01   = [0, -sin(q1), -cos(q1), -S*sin(q1);
-                 0,  cos(q1), -sin(q1),  S*cos(q1);
-                 1,        0,        0,          0;
-                 0,        0,        0,          1];
-        A12   = [cos(q2), -sin(q2), 0, -Ll*sin(q2);
-                 sin(q2),  cos(q2), 0,  Ll*cos(q2);
-                       0,        0, 1,           0;
-                       0,        0, 0,           1];
-        A23   = [cos(q3), -sin(q3), 0, -Lu*sin(q3);
-                 sin(q3),  cos(q3), 0,  Lu*cos(q3);
-                       0,        0, 1,           0;
-                       0,        0, 0,           1];
-        A34   = [0, -sin(q4), cos(q4), -S*sin(q4);
-                 0,  cos(q4), sin(q4),  S*cos(q4);
-                -1,        0,       0,          0;
-                 0,        0,       0,          1];
-        A45   = [cos(q5), 0,  sin(q5), -S*sin(q5);
-                 sin(q5), 0, -cos(q5),  S*cos(q5);
-                       0, 1,        0,          0;
-                       0, 0,        0,          1];
-        A56   = [cos(q6), -sin(q6), 0, H*cos(q6);
-                 sin(q6),  cos(q6), 0, H*sin(q6);
-                       0,        0, 1,         0;
-                       0,        0, 0,         1];
-        A67   = [cos(q7),  0, -sin(q7), 0;
-                 sin(q7),  0,  cos(q7), 0;
-                       0, -1,        0, S;
-                       0,  0,        0, 1];
-        A78   = [0, -sin(q8), -cos(q8),  S*sin(q8);
-                 0,  cos(q8), -sin(q8), -S*cos(q8);
-                 1,        0,        0,          0;
-                 0,        0,        0,          1];
-        A89   = [cos(q9), -sin(q9), 0,  Lu*sin(q9);
-                 sin(q9),  cos(q9), 0, -Lu*cos(q9);
-                       0,        0, 1,           0;
-                       0,        0, 0,           1];
-        A910  = [cos(q10), -sin(q10), 0,  Ll*sin(q10);
-                 sin(q10),  cos(q10), 0, -Ll*cos(q10);
-                        0,         0, 1,            0;
-                        0,         0, 0,            1];
-        A1011 = [ 0, -sin(q11), cos(q11),  S*sin(q11);
-                  0,  cos(q11), sin(q11), -S*cos(q11);
-                 -1,         0,        0,           0;
-                  0,         0,        0,           1];
-        A1112 = [cos(q12), -sin(q12), 0, 0;
-                 sin(q12),  cos(q12), 0, 0;
-                        0,         0, 1, 0;
-                        0,         0, 0, 1];
+        A04 = [c1, -s1*c234, -s1*s234, -s1*(Lu*c23 +Ll*c2 +S*(c234+1));
+               s1,  c1*c234,  c1*s234,  c1*(Lu*c23 +Ll*c2 +S*(c234+1));
+                0,    -s234,     c234,  -1*(Lu*s23 +Ll*s2 +S*s234);
+                0,        0,        0,   1];
+        A46 = [c5*c6, -c5*s6,  s5, (H*c5*c6 -S*s5);
+               s5*c6, -s5*s6, -c5, (H*s5*c6 +S*c5);
+                  s6,     c6,   0, (H*s6);
+                   0,      0,   0, 1];
+        A68 = [-s7, -c7*s8, -c7*c8, S*c7*s8;
+                c7, -s7*s8, -c8*s7, S*s7*s8;
+                 0,    -c8,     s8, S*(c8+1);
+                 0,      0,      0, 1];
+        A812 = [-s901*s12, -s901*c12, c901,  Ll*s90+Lu*s9+S*s901;
+                 c901*s12,  c901*c12, s901, -Ll*c90-Lu*c9-S*c901;
+                     -c12,       s12,    0,  0;
+                        0,         0,    0,  1];
         % INVERTIBLE !!!
         T12B  = [0,0,-1,0; 0,1,0,0;
                  1,0, 0,0; 0,0,0,1];
         
-        AB6  = ABEL*TB0*A01*A12*A23*A34*A45*A56;
+        AB6  = ABEL*TB0*A04*A46;
+
         ABH  = AB6*[eye(3),[-H/2;0;0];
                      0,0,0,        1];
-        ABER = AB6*A67*A78*A89*A910*A1011*A1112*T12B;
+
+        ABER = AB6*A68*A812*T12B;
         TAE  = ABER;
     
     elseif params.mode == -1     % RIGHT FIXED
-        TB0   = [0,0,1,0; 0,1,0,0;
-                -1,0,0,0; 0,0,0,1];
-        % INVERTIBLE !!!
-        A01   = [0, -sin(q1), -cos(q1), -S*sin(q1);
-                 0,  cos(q1), -sin(q1),  S*cos(q1);
-                 1,        0,        0,          0;
-                 0,        0,        0,          1];
-        A12   = [cos(q2), -sin(q2), 0, -Ll*sin(q2);
-                 sin(q2),  cos(q2), 0,  Ll*cos(q2);
-                       0,        0, 1,           0;
-                       0,        0, 0,           1];
-        A23   = [cos(q3), -sin(q3), 0, -Lu*sin(q3);
-                 sin(q3),  cos(q3), 0,  Lu*cos(q3);
-                       0,        0, 1,           0;
-                       0,        0, 0,           1];
-        A34   = [0, -sin(q4), cos(q4), -S*sin(q4);
-                 0,  cos(q4), sin(q4),  S*cos(q4);
-                -1,        0,       0,          0;
-                 0,        0,       0,          1];
-        A45   = [cos(q5), 0,  sin(q5), -S*sin(q5);
-                 sin(q5), 0, -cos(q5),  S*cos(q5);
-                       0, 1,        0,          0;
-                       0, 0,        0,          1];
-        A56   = [cos(q6), -sin(q6), 0, H*cos(q6);
-                 sin(q6),  cos(q6), 0, H*sin(q6);
-                       0,        0, 1,         0;
-                       0,        0, 0,         1];
-        A67   = [cos(q7),  0, -sin(q7), 0;
-                 sin(q7),  0,  cos(q7), 0;
-                       0, -1,        0, S;
-                       0,  0,        0, 1];
-        A78   = [0, -sin(q8), -cos(q8),  S*sin(q8);
-                 0,  cos(q8), -sin(q8), -S*cos(q8);
-                 1,        0,        0,          0;
-                 0,        0,        0,          1];
-        A89   = [cos(q9), -sin(q9), 0,  Lu*sin(q9);
-                 sin(q9),  cos(q9), 0, -Lu*cos(q9);
-                       0,        0, 1,           0;
-                       0,        0, 0,           1];
-        A910  = [cos(q10), -sin(q10), 0,  Ll*sin(q10);
-                 sin(q10),  cos(q10), 0, -Ll*cos(q10);
-                        0,         0, 1,            0;
-                        0,         0, 0,            1];
-        A1011 = [ 0, -sin(q11), cos(q11),  S*sin(q11);
-                  0,  cos(q11), sin(q11), -S*cos(q11);
-                 -1,         0,        0,           0;
-                  0,         0,        0,           1];
-        A1112 = [cos(q12), -sin(q12), 0, 0;
-                 sin(q12),  cos(q12), 0, 0;
-                        0,         0, 1, 0;
-                        0,         0, 0, 1];
-        % INVERTIBLE !!!
         T12B  = [0,0,-1,0; 0,1,0,0;
                  1,0, 0,0; 0,0,0,1];
+        % INVERTIBLE !!!
+        A40 = [     c1,      s1,     0,  0;
+              -c234*s1, c234*c1, -s234, -1*(Ll*c34 +Lu*c4 +S*(c234+1));
+              -s234*s1, s234*c1,  c234, -1*(Ll*s34 +Lu*s4 +S*s234);
+                     0,       0,     0,  1];
+        A64 = [c5*c6,  c6*s5, s6, -H;
+              -c5*s6, -s5*s6, c6,  0;
+                  s5,    -c5,  0,  S;
+                   0,      0,  0,  1];
+        A86 = [  -s7,     c7,   0,  0;
+              -c7*s8, -s7*s8, -c8,  S*(c8 + 1);
+              -c7*c8, -c8*s7,  s8, -S*s8;
+                   0,      0,   0,  1];
+        A128 = [-s12*s901, s12*c901, -c12, (Lu*c101 +Ll*c11 +S)*s12;
+                -c12*s901, c12*c901,  s12, (Lu*c101 +Ll*c11 +S)*c12;
+                     c901,     s901,    0, (Lu*s101 +Ll*s11);
+                        0,        0,    0, 1];
+        % INVERTIBLE !!!
+        TB0   = [0,0,1,0; 0,1,0,0;
+                -1,0,0,0; 0,0,0,1];
         
-        AB6  = ABER*inv(T12B)*inv(A1112)*inv(A1011)*inv(A910)* ...
-                inv(A89)*inv(A78)*inv(A67);
+        AB6  = ABER*TB0*A128*A86;
         ABH  = AB6*[eye(3),[-H/2;0;0];
                      0,0,0,        1];
-        ABEL = AB6*inv(A56)*inv(A45)*inv(A34)*inv(A23)*inv(A12)*inv(A01)*inv(TB0);
+        ABEL = AB6*A64*A40*T12B;
         TAE  = ABEL;
     end
     
