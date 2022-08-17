@@ -106,14 +106,15 @@ function [HTs] = kSLOW(q, index, model, params)
              1,0, 0,0; 0,0,0,1];
 
     %% EXPORT
-    HTs.AGEL = AGEL;
-    HTs.ALB0 = HTs.AGEL*TB0;
-    HTs.A01  = HTs.ALB0*A01;
-    HTs.A02  = HTs.A01 *A12;
-    HTs.A03  = HTs.A02 *A23;
-    HTs.A04  = HTs.A03 *A34;
-    HTs.A05  = HTs.A04 *A45;
-    HTs.A06  = HTs.A05 *A56;
+%     HTs.AGEL = AGEL;
+%     HTs.ALB0 = HTs.AGEL*TB0;
+%     HTs.A01  = HTs.ALB0*A01;
+%     HTs.A02  = HTs.A01 *A12;
+%     HTs.A03  = HTs.A02 *A23;
+%     HTs.A04  = HTs.A03 *A34;
+%     HTs.A05  = HTs.A04 *A45;
+%     HTs.A06  = HTs.A05 *A56;
+     
 %     HTs.A07  = HTs.A06 *A67;
 %     HTs.A08  = HTs.A07 *A78;
 %     HTs.A09  = HTs.A08 *A89;
@@ -129,4 +130,13 @@ function [HTs] = kSLOW(q, index, model, params)
     HTs.A09  = HTs.A010 * inv(A910);
     HTs.A08  = HTs.A09  * inv(A89);
     HTs.A07  = HTs.A08  * inv(A78);
+
+    HTs.A06  = HTs.A07  * inv(A67);
+    HTs.A05  = HTs.A06  * inv(A56);
+    HTs.A04  = HTs.A05  * inv(A45);
+    HTs.A03  = HTs.A04  * inv(A34);
+    HTs.A02  = HTs.A03  * inv(A23);
+    HTs.A01  = HTs.A02  * inv(A12);
+    HTs.ALB0 = HTs.A01  * inv(A01);
+    HTs.AGEL = HTs.ALB0 * inv(TB0);
 end

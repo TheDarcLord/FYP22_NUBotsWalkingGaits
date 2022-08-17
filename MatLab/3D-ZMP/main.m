@@ -62,7 +62,7 @@ clc
 
 %% Initial Position & Orientation
     model.r.r0Lg(:,1) = [0; 0;  params.HipWidth/2;0;0;0];
-    model.r.r0Rg(:,1) = [0; 0; -params.HipWidth/2;pi/8;0;0];
+    model.r.r0Rg(:,1) = [0; 0; -params.HipWidth/2;0;0;0];
     model.r.q0        = [0;    % θ₁    
                     -pi/12;    % θ₂    ->  2D θ₁ Ankle
                    2*pi/12;    % θ₃    ->  2D θ₂ Knee
