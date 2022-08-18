@@ -1,4 +1,4 @@
-function [v67g, r67g] = rWaist(q, index, model, params)
+function [v6Bg, r6Bg] = rWaist(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -7,16 +7,6 @@ function [v67g, r67g] = rWaist(q, index, model, params)
 %       Transforms: All other Homogenous Transforms
     
     %% HELPER VARS
-    AE1  = [0  0  1  0;   %
-            0  1  0  0;   %
-           -1  0  0  0;   %
-            0  0  0  1];  %
-    AE12 = [0  0  1  0;   %
-            0  1  0  0;   %
-           -1  0  0  0;   %
-            0  0  0  1];  %
-    ROW4 = [0  0  0  1];
-
     Rzyx   = @(Rz,Ry,Rx) ...
         [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
                     sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
@@ -30,137 +20,82 @@ function [v67g, r67g] = rWaist(q, index, model, params)
     Lu     = params.femur;      % Upper Leg
     H      = params.HipWidth;
     S      = params.ServoSize;  % SERVO DIST
-    
-    A0EL    = [Rzyx(model.r.r0Lg(6,index), ...
-                    model.r.r0Lg(5,index), ...
-                    model.r.r0Lg(4,index)),... 
-                    model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
-              zeros(1,3),           1]; %           0rigin in Global
-    A0ER    = [Rzyx(model.r.r0Rg(6,index), ...
-                    model.r.r0Rg(5,index), ...
-                    model.r.r0Rg(4,index)),... 
-                    model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
-              zeros(1,3),           1]; %           0rigin in Global
-    
-    %% JOINT VARIABLES
-    q1  = q(1);     % θ₁
-    q2  = q(2);     % θ₂
-    q3  = q(3);     % θ₃
-    q4  = q(4);     % θ₄
-    q5  = q(5);     % θ₅
-    q6  = q(6);     % θ₆
-    q7  = q(7);     % θ₇
-    q8  = q(8);     % θ₈
-    q9  = q(9);     % θ₉
-    q10 = q(10);    % θ₁₀
-    q11 = q(11);    % θ₁₁
-    q12 = q(12);    % θ₁₂
 
     %% HOMOGENOUS TRANSFORM
     if params.mode ==  1        % LEFT FIXED
-        A12x = -S*sin(q1);
-        A12y =  S*cos(q1);
-        A12z =  0;
-        A12R = [0, -sin(q1), -cos(q1);
-                0,  cos(q1), -sin(q1);
-                1,        0,        0];
-        A12  = [A12R, [A12x A12y A12z]'; ROW4];
+        ABEL = [Rzyx(model.r.r0Lg(6,index), ...
+                     model.r.r0Lg(5,index), ...
+                     model.r.r0Lg(4,index)),... 
+                     model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
+               zeros(1,3),           1]; %           0rigin in Global
+        % JOINT VARIABLES
+        c1   = cos(q(1));
+        s1   = sin(q(1));
+        c2   = cos(q(2));
+        s2   = sin(q(2));
+        c23  = cos(q(2)+q(3));
+        s23  = sin(q(2)+q(3));
+        c234 = cos(q(2)+q(3)+q(4));
+        s234 = sin(q(2)+q(3)+q(4));
+        s5   = sin(q(5));
+        c5   = cos(q(5));
+        s6   = sin(q(6));
+        c6   = cos(q(6));
 
-        A23x = -Ll*sin(q2);
-        A23y =  Ll*cos(q2);
-        A23z =  0;
-        A23R = [cos(q2), -sin(q2), 0;
-                sin(q2),  cos(q2), 0;
-                      0,        0, 1];
-        A23  = [A23R, [A23x A23y A23z]'; ROW4];
+        TB0   = [0,0,1,0; 0,1,0,0;
+                -1,0,0,0; 0,0,0,1];
+        % INVERTIBLE !!!
+        A04 = [c1, -s1*c234, -s1*s234, -s1*(Lu*c23 +Ll*c2 +S*(c234+1));
+               s1,  c1*c234,  c1*s234,  c1*(Lu*c23 +Ll*c2 +S*(c234+1));
+                0,    -s234,     c234,  -1*(Lu*s23 +Ll*s2 +S*s234);
+                0,        0,        0,   1];
+        A46 = [c5*c6, -c5*s6,  s5, (H*c5*c6 -S*s5);
+               s5*c6, -s5*s6, -c5, (H*s5*c6 +S*c5);
+                  s6,     c6,   0, (H*s6);
+                   0,      0,   0, 1];
+        % INVERTIBLE !!!
+        
+        AB6  = ABEL*TB0*A04*A46;
 
-        A34x = -Lu*sin(q3);
-        A34y =  Lu*cos(q3);
-        A34z =  0;
-        A34R = [cos(q3), -sin(q3), 0;
-                sin(q3),  cos(q3), 0;
-                      0,        0, 1];
-        A34  = [A34R, [A34x A34y A34z]'; ROW4];
-
-        A45x = -S*sin(q4);
-        A45y =  S*cos(q4);
-        A45z =  0;
-        A45R = [0, -sin(q4),  cos(q4);
-                0,  cos(q4),  sin(q4);
-               -1,        0,        0];
-        A45  = [A45R, [A45x A45y A45z]'; ROW4];
-
-        A56x = -S*sin(q5);
-        A56y =  S*cos(q5);
-        A56z =  0;
-        A56R = [cos(q5), 0,  sin(q5);
-                sin(q5), 0, -cos(q5);
-                      0, 1,        0];
-        A56  = [A56R, [A56x A56y A56z]'; ROW4];
-
-        A67x =  H*cos(q6);
-        A67y =  H*sin(q6);
-        A67z =  0;
-        A67R = [cos(q6), -sin(q6), 0;
-                sin(q6),  cos(q6), 0;
-                      0,        0, 1];
-        A67  = [A67R, [A67x A67y A67z]'; ROW4];
-
-        A06  = A0EL*AE1*A12*A23*A34*A45*A56;
-        A07  = A06*A67; 
-
+        ABH  = AB6*[eye(3),[-H;0;0];
+                     0,0,0,        1];
     elseif params.mode == -1     % RIGHT FIXED
-        A1211x =  S*sin(q12);
-        A1211y =  S*cos(q12);
-        A1211z =  0;
-        A1211R = [0,  sin(q12),  -cos(q12);
-                  0,  cos(q12),   sin(q12);
-                  1,         0,          0];
-        A1211  = [A1211R, [A1211x A1211y A1211z]'; ROW4];
-        A1110x =  Ll*sin(q11);
-        A1110y =  Ll*cos(q11);
-        A1110z =  0;
-        A1110R = [cos(q11), sin(q11), 0;
-                 -sin(q11), cos(q11), 0;
-                         0,        0, 1];
-        A1110  = [A1110R, [A1110x A1110y A1110z]'; ROW4];
-    
-        A109x =  Lu*sin(q10);
-        A109y =  Lu*cos(q10);
-        A109z =  0;
-        A109R = [cos(q10), sin(q10), 0;
-                -sin(q10), cos(q10), 0;
-                       0,       0,   1];
-        A109  = [A109R, [A109x A109y A109z]'; ROW4];
-    
-        A98x = S*sin(q9);
-        A98y = S*cos(q9);
-        A98z = 0;
-        A98R = [0, sin(q9),  cos(q9);
-                0, cos(q9), -sin(q9);
-               -1,       0,       0];
-        A98  = [A98R, [A98x A98y A98z]'; ROW4];
-    
-        A87x =  S*sin(q8);
-        A87y =  S*cos(q8);
-        A87z =  0;
-        A87R = [cos(q8), 0, -sin(q8);
-               -sin(q8), 0, -cos(q8);
-                      0, 1,        0];
-        A87  = [A87R, [A87x A87y A87z]'; ROW4];
-    
-        A76x = -H*cos(q7);
-        A76y =  H*sin(q7);
-        A76z =  0;
-        A76R = [cos(q7), sin(q7), 0;
-               -sin(q7), cos(q7), 0;
-                      0,       0, 1];
-        A76  = [A76R, [A76x A76y A76z]'; ROW4];
-
-        A07  = A0ER*AE12*A1211*A1110*A109*A98*A87;
-        A06  = A07*A76; 
+        ABER = [Rzyx(model.r.r0Rg(6,index), ...
+                     model.r.r0Rg(5,index), ...
+                     model.r.r0Rg(4,index)),... 
+                     model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
+               zeros(1,3),           1]; %           0rigin in Global
+        % JOINT VARIABLES
+        s7   = sin(q(7));
+        c7   = cos(q(7));
+        s8   = sin(q(8));
+        c8   = cos(q(8));
+        s901 = sin(q(9)  +q(10)  +q(11));
+        c901 = cos(q(9)  +q(10)  +q(11));
+        s101 = sin(q(10) +q(11));
+        c101 = cos(q(10) +q(11));
+        s11  = sin(q(11));
+        c11  = cos(q(11));
+        c12  = cos(q(12));
+        s12  = sin(q(12));
+        % INVERTIBLE !!!
+        A86 = [  -s7,     c7,   0,  0;
+              -c7*s8, -s7*s8, -c8,  S*(c8 + 1);
+              -c7*c8, -c8*s7,  s8, -S*s8;
+                   0,      0,   0,  1];
+        A128 = [-s12*s901, s12*c901, -c12, (Lu*c101 +Ll*c11 +S)*s12;
+                -c12*s901, c12*c901,  s12, (Lu*c101 +Ll*c11 +S)*c12;
+                     c901,     s901,    0, (Lu*s101 +Ll*s11);
+                        0,        0,    0, 1];
+        % INVERTIBLE !!!
+        TB0   = [0,0,1,0; 0,1,0,0;
+                -1,0,0,0; 0,0,0,1];
+        
+        AB6  = ABER*TB0*A128*A86;
+        ABH  = AB6*[eye(3),[-H;0;0];
+                     0,0,0,      1];
     end
 
-    r67g = [A06(1:3,4) A07(1:3,4)];
-    v67g = A07(1:3,4) - A06(1:3,4);
+    r6Bg = [AB6(1:3,4) ABH(1:3,4)];
+    v6Bg = ABH(1:3,4) - AB6(1:3,4);
 end
