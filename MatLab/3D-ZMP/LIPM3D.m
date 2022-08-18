@@ -1,16 +1,15 @@
-function [ZMPk, CoMk, model] = LIPM3D(model,index,ZMP0,ZMP1,ZMPtim,params)
+function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
 % LIPM: Discretised Linear Inverted Pendulum
 %   Detailed explanation goes here
     % Params
-        T_hrzn  = model.timeHrzn;
         T       = model.timestp;
         NL      = model.Nl;
         g       = params.g;
         zc      = params.zc;
         k       = index;
 
-    % Forward Time Horizon
-        fwdT    = model.tspan(k)+T :T: model.tspan(k) + T_hrzn;
+    % Forward Time Horizon INDEX
+        %fwdT_k  = k+T_hrznI;
                  
     % Current State
         X0      = model.p.x(:,k);
@@ -19,9 +18,9 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,ZMP0,ZMP1,ZMPtim,params)
         Ad      = [1,  T,  (T^2)/2,  0,  0,        0;   % x
                    0,  1,        T,  0,  0,        0;   % x'
                    0,  0,        1,  0,  0,        0;   % x"
-                   0,  0,        0,  1,  T,  (T^2)/2;   % y
-                   0,  0,        0,  0,  1,        T;   % y'
-                   0,  0,        0,  0,  0,        1];  % y"
+                   0,  0,        0,  1,  T,  (T^2)/2;   % z
+                   0,  0,        0,  0,  1,        T;   % z'
+                   0,  0,        0,  0,  0,        1];  % z"
         Cd      = [1,  0,  -(zc/g),  0,  0,        0;
                    0,  0,        0,  1,  0,  -(zc/g)];
         Bd      = [(T^3)/6,       0;
@@ -62,7 +61,7 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,ZMP0,ZMP1,ZMPtim,params)
         % State Feedback
             Gx           = gainCore * K_hat * F_hat;
         % Feedforward / Preview Action - page 685 !
-            Yd      = pREF(fwdT,ZMP0,ZMP1,ZMPtim); % model.p.pREF(:,k+1:k+NL);
+            Yd      = model.p.pREF(:,k+1:k+NL);
             Gp_Yd   =  zeros(size(Yd));
             Ac_hat  =  A_hat - B_hat * gainCore * K_hat* A_hat;
             Gd      = @(l) -gainCore*((Ac_hat')^(l-1))*K_hat*I_hat;
@@ -75,19 +74,18 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,ZMP0,ZMP1,ZMPtim,params)
         sigmaError = model.p.y(:,1:k) - model.p.pREF(:,1:k);
         Uk = -Gi*[sum(sigmaError(1,:));
                   sum(sigmaError(2,:))] ...
-             -Gx*model.p.x(:,k)         ...
+             -Gx*model.p.x(:,k)           ...
              -[sum(Gp_Yd(1,:));
                sum(Gp_Yd(2,:))];
 
     % Simulation
         model.p.u(:,k)   = Uk;
         model.p.y(:,k)   = Cd * X0;
-    %if  model.tspan(k) < model.tspan(end)
+    if  model.tspan(k) < model.tspan(end)
         model.p.x(:,k+1) = Ad * X0 + Bd * Uk;
-    %end
+    end
 
     % Output -> X(K + 1)
-        ZMPk =  model.p.y(:,k);
-        CoMk = [model.p.x(1,k);
-                model.p.x(4,k)];
+        ZMPk = model.p.y(:,k);
+        CoMk = model.p.x([1 4],k);
 end
