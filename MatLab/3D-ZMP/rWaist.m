@@ -1,4 +1,4 @@
-function [v6Bg, r6Bg] = rWaist(q, index, model, params)
+function [v6B] = rWaist(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -56,9 +56,6 @@ function [v6Bg, r6Bg] = rWaist(q, index, model, params)
         % INVERTIBLE !!!
         
         AB6  = ABEL*TB0*A04*A46;
-
-        ABH  = AB6*[eye(3),[-H;0;0];
-                     0,0,0,        1];
     elseif params.mode == -1     % RIGHT FIXED
         ABER = [Rzyx(model.r.r0Rg(6,index), ...
                      model.r.r0Rg(5,index), ...
@@ -92,10 +89,9 @@ function [v6Bg, r6Bg] = rWaist(q, index, model, params)
                 -1,0,0,0; 0,0,0,1];
         
         AB6  = ABER*TB0*A128*A86;
-        ABH  = AB6*[eye(3),[-H;0;0];
-                     0,0,0,      1];
     end
 
-    r6Bg = [AB6(1:3,4) ABH(1:3,4)];
-    v6Bg = ABH(1:3,4) - AB6(1:3,4);
+    ABW = AB6*[eye(3),[-H;0;0];
+                0,0,0,      1];
+    v6B = ABW(1:3,4) - AB6(1:3,4);
 end

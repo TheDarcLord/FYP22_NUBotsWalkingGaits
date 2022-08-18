@@ -1,4 +1,4 @@
-function [vHWg, rHWg] = rHip(q, index, model, params)
+function [vHW] = rHip(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -67,9 +67,6 @@ function [vHWg, rHWg] = rHip(q, index, model, params)
         % INVERTIBLE !!!
         
         AB6  = ABEL*TB0*A04*A46;
-        
-        ABH  = AB6*[eye(3),[0;0;S];
-                     0,0,0,     1];
     elseif params.mode == -1     % RIGHT FIXED
         ABER = [Rzyx(model.r.r0Rg(6,index), ...
                      model.r.r0Rg(5,index), ...
@@ -103,10 +100,10 @@ function [vHWg, rHWg] = rHip(q, index, model, params)
                 -1,0,0,0; 0,0,0,1];
         
         AB6  = ABER*TB0*A128*A86;
-        ABH  = AB6*[eye(3),[0;0;S];
-                     0,0,0,     1];
+        
     end
 
-    rHWg = [ABH(1:3,4) AB6(1:3,4)];
-    vHWg = AB6(1:3,4) - ABH(1:3,4);
+    ABH = AB6*[eye(3),[0;0;S];
+                0,0,0,     1];
+    vHW = AB6(1:3,4) - ABH(1:3,4);
 end
