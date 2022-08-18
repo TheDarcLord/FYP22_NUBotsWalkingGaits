@@ -6,7 +6,7 @@ function [pREF, sTM] = pREF(model, params)
     Q        = model.glbTrj;            % Q:            (x,y,z)
     pREF     = zeros(2,length(Q)+Nl);   % [x z]ᵀ
     r        = params.HipWidth/2;       % Radius of Circle 
-    STEP     = -1;                      % DEFINE MODE:  1 RIGHT Step 
+    STEP     = params.mode;             % DEFINE MODE:  1 RIGHT Step 
                                         %              -1 LEFT  Step
     gradFUNC = @(A,B) (B(2) - A(2)) ...
                      /(B(1) - A(1));    % Gradient -> `m`
