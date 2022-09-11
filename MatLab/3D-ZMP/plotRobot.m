@@ -1,37 +1,45 @@
 function pass = plotRobot(index,model,params)
     % Origin
-    quiver3(0,0,0,1,0,0,"LineWidth",2,'Color','r');         % Z Vector
-    quiver3(0,0,0,0,1,0,"LineWidth",2,'Color','#379203');   % X Vector
-    quiver3(0,0,0,0,0,1,"LineWidth",2,'Color','b');         % Y Vector
+    a = 0.25;
+    quiver3(0,0,0,a,0,0,"LineWidth",1,'Color','r');         % Z Vector
+    quiver3(0,0,0,0,a,0,"LineWidth",1,'Color','#379203');   % X Vector
+    quiver3(0,0,0,0,0,a,"LineWidth",1,'Color','b');         % Y Vector
 
-    AFOOT = [eye(3), [0.05; 0; 0];[0,0,0,1]];    % Foot Transform
+    AFOOT = [eye(3), [0.12915; 0; 0];[0,0,0,1]];    % Foot Transform
 
-    HTs   = kSLOW( model.r.q(:,index),index,model,params);
+    HTs   = kNUslow( model.r.q(:,index),index,model,params);
+            %kSLOW( model.r.q(:,index),index,model,params);
     
-    rGER = HTs.AGER(1:3,4);                     % END EFFECTOR
-    AGFR = HTs.AGER*AFOOT;                      % + FOOT
+    rBER = HTs.ABER(1:3,4);                     % END EFFECTOR
+    AGFR = HTs.ABER*AFOOT;                      % + FOOT
     rGFR = AGFR(1:3,4);                         % + TOE
-    plot3(rGER(3),rGER(1),rGER(2), ...          %   RIGHT!
+    plot3(rBER(3),rBER(1),rBER(2), ...          %   RIGHT!
           'bo','LineWidth',1,'MarkerSize',5);
     plot3(rGFR(3),rGFR(1),rGFR(2), ...          %   RIGHT TOE!
           'bx','LineWidth',1,'MarkerSize',5);
-    plot3([rGER(3),rGFR(3)],[rGER(1),rGFR(1)],[rGER(2),rGFR(2)],...
+    plot3([rBER(3),rGFR(3)],[rBER(1),rGFR(1)],[rBER(2),rGFR(2)],...
           'k','LineWidth',2);
 
-    rGEL = HTs.AGEL(1:3,4);                     % END EFFECTOR
-    AGFL = HTs.AGEL*AFOOT;                      % + FOOT
+    rBEL = HTs.ABEL(1:3,4);                     % END EFFECTOR
+    AGFL = HTs.ABEL*AFOOT;                      % + FOOT
     rGFL = AGFL(1:3,4);                         % + TOE
-    plot3(rGEL(3),rGEL(1),rGEL(2), ...          %   LEFT!
+    plot3(rBEL(3),rBEL(1),rBEL(2), ...          %   LEFT!
           'ro','LineWidth',1,'MarkerSize',5);
     plot3(rGFL(3),rGFL(1),rGFL(2), ...          %   LEFT TOE!
           'rx','LineWidth',1,'MarkerSize',5);
-    plot3([rGEL(3),rGFL(3)],[rGEL(1),rGFL(1)],[rGEL(2),rGFL(2)],...
+    plot3([rBEL(3),rGFL(3)],[rBEL(1),rGFL(1)],[rBEL(2),rGFL(2)],...
           'k','LineWidth',2);
 %% OTHER JOINTS & LINKS
     rLB0 = HTs.ALB0(1:3,4);                     % BASE LEFT
     plot3(rLB0(3),rLB0(1),rLB0(2),'rx','LineWidth',1,'markersize',5);
+
+    plot3([rBEL(3), rLB0(3)],[rBEL(1), rLB0(1)],[rBEL(2), rLB0(2)],... % Link B-0
+          'k','LineWidth',2);
     rRB0 = HTs.ARB0(1:3,4);                     % BASE RIGHT
     plot3(rRB0(3),rRB0(1),rRB0(2),'bx','LineWidth',1,'markersize',5);
+    plot3([rBER(3), rRB0(3)],[rBER(1), rRB0(1)],[rBER(2), rRB0(2)],... % Link B-12
+          'k','LineWidth',2);
+
 
     r01 = HTs.A01(1:3,4);                       % ONE
     plot3(r01(3),r01(1),r01(2),...              % -> Joint

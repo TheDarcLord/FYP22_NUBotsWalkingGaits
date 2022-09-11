@@ -29,9 +29,9 @@ clc
     params.g         = 9.81;     % ms⁻² - Acceleration due to Gravity |
     params.m         = 7.4248;   % kg   - Total Mass of a NuGus       |
  % -------------------------------------------------------------------|
-    params.fibula    = 0.4;      % m    - Lower leg
-    params.femur     = 0.4;      % m    - Upper Leg
-    params.HipWidth  = 0.2;      % m    - Pelvis
+    params.fibula    = 0.19942;  % m    - Lower leg NUgus
+    params.femur     = 0.19954;  % m    - Upper Leg NUgus
+    params.HipWidth  = 0.11;     % m    - Pelvis
     params.ServoSize = 0.05;     % m    - Approximation/Spacing
     params.StepSize  = 0.15;     % m    - 15 cm Step forward
  % Masses
@@ -44,9 +44,9 @@ clc
  % Steps
     % Stepping mode... Array!? ... ?
     model.mode     = zeros(1,length(model.tspan));
-    params.mode    = -1;       % RIGHT FIXED - FKM T16
+    params.mode    = -1;       % LEFT  FIXED - FKM T16
     %                 0;       % BOTH  FIXED - FKM T1H T6H
-    %                 1;       % LEFY  FIXED - FKM T61
+    %                 1;       % RIGHT FIXED - FKM T61
  % Robot
     model.r.q      = zeros(12,length(model.tspan)); % q   [θ₁θ₂θ₃ ...]ᵀ
     model.r.xe     = zeros(6,length(model.tspan));  % xe      [XYZϕθΨ]ᵀ
@@ -88,6 +88,7 @@ clc
     ROBOT_FRAME = figure(1);
         hold on
         grid on
+        axis equal
         set(gca,'Color','#CCCCCC');
         title("3D Model - ZMP Walking",'FontSize',12);
         xlabel('{\bfZ} (metres)');

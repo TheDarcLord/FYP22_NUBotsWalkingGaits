@@ -1,4 +1,4 @@
-function [HTs] = kSLOW(q, index, model, params)
+function [HTs] = kNUslow(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -7,15 +7,33 @@ function [HTs] = kSLOW(q, index, model, params)
 %       Transforms: All other Homogenous Transforms
     
     %% HELPER FUNCTIONS
-    Rzyx   = @(Rz,Ry,Rx) ...
+    Rzyx = @(Rz,Ry,Rx) ...
         [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
                     sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
           sin(Rz)*cos(Ry),  cos(Rz)*cos(Rx)+sin(Rz)*sin(Ry)*sin(Rx),...
                    -cos(Rz)*sin(Rx)+sin(Rz)*sin(Ry)*cos(Rx);
                  -sin(Ry),  cos(Ry)*sin(Rx)                        ,...
                     cos(Ry)*cos(Rx)];
+    Txyz    = @(x,y,z) [eye(3),[x,y,z]'; 0,0,0,1];
+    Rx   = @(phi)   [        1,         0,         0, 0; 
+                             0,  cos(phi), -sin(phi), 0;
+                             0,  sin(phi),  cos(phi), 0;
+                             0,         0,         0, 1];
+    Ry   = @(tht)   [ cos(tht),         0,  sin(tht), 0; 
+                             0,         1,         0, 0;
+                     -sin(tht),         0,  cos(tht), 0;
+                             0,         0,         0, 1];
+    Rz   = @(psi)   [ cos(psi), -sin(psi),         0, 0;
+                      sin(psi),  cos(psi),         0, 0;
+                             0,         0,         1, 0;
+                             0,         0,         0, 1];
     
     %% LINK VARIABLES
+    saX  = 0.00566;  % Sole to Ankle
+    saY  = 0.038;
+    h34  = 0.02835;
+    h45Y = 0.049705;
+    h45X = 0.02805; % 4805
     Ll     = params.fibula;     % Lower Leg
     Lu     = params.femur;      % Upper Leg
     H      = params.HipWidth;
@@ -50,60 +68,22 @@ function [HTs] = kSLOW(q, index, model, params)
     %% HOMOGENOUS TRANSFORM
     % TB_0 * [ A⁰₁(q₁)⋅A¹₂(q₂) ... Aᴶ⁻¹ⱼ  ] * T12_B
 
-    TB0   = [0,0,1,0; 0,1,0,0;
-            -1,0,0,0; 0,0,0,1];
+    TB0   = Ry(pi/2)*Txyz(0,saY,-saX);
     % INVERTIBLE !!!
-    A01   = [0, -sin(q1), -cos(q1), -S*sin(q1);
-             0,  cos(q1), -sin(q1),  S*cos(q1);
-             1,        0,        0,          0;
-             0,        0,        0,          1];
-    A12   = [cos(q2), -sin(q2), 0, -Ll*sin(q2);
-             sin(q2),  cos(q2), 0,  Ll*cos(q2);
-                   0,        0, 1,           0;
-                   0,        0, 0,           1];
-    A23   = [cos(q3), -sin(q3), 0, -Lu*sin(q3);
-             sin(q3),  cos(q3), 0,  Lu*cos(q3);
-                   0,        0, 1,           0;
-                   0,        0, 0,           1];
-    A34   = [0, -sin(q4), cos(q4), -S*sin(q4);
-             0,  cos(q4), sin(q4),  S*cos(q4);
-            -1,        0,       0,          0;
-             0,        0,       0,          1];
-    A45   = [cos(q5), 0,  sin(q5), -S*sin(q5);
-             sin(q5), 0, -cos(q5),  S*cos(q5);
-                   0, 1,        0,          0;
-                   0, 0,        0,          1];
-    A56   = [cos(q6), -sin(q6), 0, H*cos(q6);
-             sin(q6),  cos(q6), 0, H*sin(q6);
-                   0,        0, 1,         0;
-                   0,        0, 0,         1];
-    A67   = [cos(q7),  0, -sin(q7), 0;
-             sin(q7),  0,  cos(q7), 0;
-                   0, -1,        0, S;
-                   0,  0,        0, 1];
-    A78   = [0, -sin(q8), -cos(q8),  S*sin(q8);
-             0,  cos(q8), -sin(q8), -S*cos(q8);
-             1,        0,        0,          0;
-             0,        0,        0,          1];
-    A89   = [cos(q9), -sin(q9), 0,  Lu*sin(q9);
-             sin(q9),  cos(q9), 0, -Lu*cos(q9);
-                   0,        0, 1,           0;
-                   0,        0, 0,           1];
-    A910  = [cos(q10), -sin(q10), 0,  Ll*sin(q10);
-             sin(q10),  cos(q10), 0, -Ll*cos(q10);
-                    0,         0, 1,            0;
-                    0,         0, 0,            1];
-    A1011 = [ 0, -sin(q11), cos(q11),  S*sin(q11);
-              0,  cos(q11), sin(q11), -S*cos(q11);
-             -1,         0,        0,           0;
-              0,         0,        0,           1];
-    A1112 = [cos(q12), -sin(q12), 0, 0;
-             sin(q12),  cos(q12), 0, 0;
-                    0,         0, 1, 0;
-                    0,         0, 0, 1];
+    A01   = Rz(q1)*Ry(-pi/2)*Txyz(saX,0,0);
+    A12   = Rz(q2)*Txyz(-saX,Ll,0);
+    A23   = Rz(q3)*Txyz(0,Lu,0);
+    A34   = Rz(q4)*Ry(pi/2)*Txyz(0,0,-h34);
+    A45   = Rz(q5)*Rx(pi/2)*Txyz(0,h45X,-h45Y);
+    A56   = Rz(q6)*Txyz(H,0,0);
+    A67   = Rz(q7)*Rx(-pi/2)*Txyz(0,-h45Y,-h45X);
+    A78   = Rz(q8)*Ry(-pi/2)*Txyz(h34,0,0);
+    A89   = Rz(q9)*Txyz(0,-Lu,0);
+    A910  = Rz(q10)*Txyz(saX,-Ll,0);
+    A1011 = Rz(q11)*Ry(pi/2)*Txyz(0,0,-saX);
+    A1112 = Rz(q12);
     % INVERTIBLE !!!
-    T12B  = [0,0,-1,0; 0,1,0,0;
-             1,0, 0,0; 0,0,0,1];
+    T12B  = Ry(-pi/2)*Txyz(saX,-saY,0);
 
     %% EXPORT
 %     HTs.ABEL = ABEL;
@@ -114,7 +94,7 @@ function [HTs] = kSLOW(q, index, model, params)
 %     HTs.A04  = HTs.A03 *A34;
 %     HTs.A05  = HTs.A04 *A45;
 %     HTs.A06  = HTs.A05 *A56;
-     
+%      
 %     HTs.A07  = HTs.A06 *A67;
 %     HTs.A08  = HTs.A07 *A78;
 %     HTs.A09  = HTs.A08 *A89;
