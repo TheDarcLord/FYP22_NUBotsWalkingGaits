@@ -18,3 +18,6 @@ FinalYearLatex/3.FinalReportA/_content/All_Text.txt
 *.lof
 *.lof
 *.lot
+**.vscode/
+*.dSYM
+*.mexmaci64
