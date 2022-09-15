@@ -46,8 +46,8 @@ class MexFunction : public matlab::mex::Function {
                 std::string messageStr = createMessageStr(inputs[2]);
                 char* messageChr = &messageStr[0];
                 send(sockFD, messageChr, strlen(messageChr), 0);
-                close(sockFD);
                 close(clientFD);
+                close(sockFD);
             } else {
                 char* messageChr = (char*) "GET";
                 send(sockFD, messageChr, strlen(messageChr), 0);
@@ -89,13 +89,13 @@ class MexFunction : public matlab::mex::Function {
             std::ostringstream sstream;
 
             sstream.precision(4);
-            sstream << "[";
+            sstream << " ";
             for(double value : inArray) {
                 sstream << std::fixed << value << ", ";
             }
             std::string msg = sstream.str();
             msg.erase(msg.end()-2, msg.end());
-            msg = msg + "]";
+            msg = msg + " ";
 
             return msg;
         }
