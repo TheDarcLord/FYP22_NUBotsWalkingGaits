@@ -44,15 +44,12 @@ clc
  % Steps
     % Stepping mode... Array!? ... ?
     model.mode     = zeros(1,length(model.tspan));
-    params.mode    = -1;       % RIGHT FIXED - FKM T16
-    %                 0;       % BOTH  FIXED - FKM T1H T6H
-    %                 1;       % LEFY  FIXED - FKM T61
+    params.mode    = -1;    % LEFT  FIXED
+    %                 0;    % BOTH  FIXED
+    %                 1;    % RIGHT FIXED
  % Robot
     model.r.q      = zeros(12,length(model.tspan)); % q   [θ₁θ₂θ₃ ...]ᵀ
-    model.r.xe     = zeros(6,length(model.tspan));  % xe      [XYZϕθΨ]ᵀ
-    model.r.r0Lg   = model.r.xe;                    % r0EL    [XYZϕθΨ]ᵀ
-    model.r.r0Rg   = model.r.xe;                    % r0ER    [XYZϕθΨ]ᵀ
-    model.r.r0Hg   = model.r.xe;                    % r0H     [XYZϕθΨ]ᵀ
+    model.r.xe     = zeros(6,length(model.tspan));  % xe      [XYZϕθΨ]
     model.r.r0CoMg = zeros(3,length(model.tspan));  % r0CoMg  [XYZ]ᵀ
  % Pendulum
     model.p.x      = zeros(6,length(model.tspan));  % Xcom      [x x' x"]ᵀ
@@ -60,9 +57,7 @@ clc
     model.p.pREF   = model.p.y;                     % pₓ₂REF  [REFx REFz]ᵀ
     model.p.u      = model.p.y;                     % Uₓ₂         [Ux Uz]        
 
-%% Initial Position & Orientation
-    model.r.r0Lg(:,1) = [0; 0;  params.HipWidth/2;0;0;0];
-    model.r.r0Rg(:,1) = [0; 0; -params.HipWidth/2;0;0;0];
+% ---> Initial Position & Orientation
     model.r.q0        = [0;    % θ₁    
                     -pi/12;    % θ₂    ->  2D θ₁ Ankle
                    2*pi/12;    % θ₃    ->  2D θ₂ Knee
@@ -76,11 +71,8 @@ clc
                      pi/12;    % θ₁₁   ->  2D θ₆ Ankle
                          0];   % θ₁₂
     model.r.q(:,1) = model.r.q0;
-   [model.r.xe(:,1),   model.r.r0Lg(:,1), ...% F
-    model.r.r0Rg(:,1), model.r.r0Hg(:,1)] ...% K
-        = k(model.r.q0, 1, model, params);   % M
-
-    model.r.r0CoMg(:,1) = rCoM(model.r.q0,1,model,params);
+    model.r.xe(:,1) = k(model.r.q0, params);
+    model.r.r0CoMg(:,1) = rCoM(model.r.q0,1,model,params);      % <- DUPLICATE
     model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
                       model.r.r0CoMg(3,1); 0; 0]; % Position Z
 

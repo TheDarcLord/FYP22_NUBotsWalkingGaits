@@ -1,36 +1,16 @@
-function [xe, r0EL, r0ER, r0H] = k(q, index, model, params)
+function [xe, TAE] = k(q, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
 %       xe:         End Effector Pose [X Y Z ϕ θ Ψ]'
 %       TAA:        Transform from ANKLE to END EFFECTOR
 %       Transforms: All other Homogenous Transforms
-    
-    %% HELPER VARS
-    Rzyx   = @(Rz,Ry,Rx) ...
-        [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
-                    sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
-          sin(Rz)*cos(Ry),  cos(Rz)*cos(Rx)+sin(Rz)*sin(Ry)*sin(Rx),...
-                   -cos(Rz)*sin(Rx)+sin(Rz)*sin(Ry)*cos(Rx);
-                 -sin(Ry),  cos(Ry)*sin(Rx)                        ,...
-                    cos(Ry)*cos(Rx)];
 
     %% LINK VARIABLES
     Ll     = params.fibula;     % Lower Leg
     Lu     = params.femur;      % Upper Leg
     H      = params.HipWidth;
     S      = params.ServoSize;  % SERVO DIST
-    
-    ABEL    = [Rzyx(model.r.r0Lg(6,index), ...
-                    model.r.r0Lg(5,index), ...
-                    model.r.r0Lg(4,index)),... 
-                    model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
-              zeros(1,3),           1]; %           0rigin in Global
-    ABER    = [Rzyx(model.r.r0Rg(6,index), ...
-                    model.r.r0Rg(5,index), ...
-                    model.r.r0Rg(4,index)),... 
-                    model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
-              zeros(1,3),           1]; %           0rigin in Global
     
     %% JOINT VARIABLES
     c1   = cos(q(1));
@@ -92,13 +72,8 @@ function [xe, r0EL, r0ER, r0H] = k(q, index, model, params)
         % INVERTIBLE !!!
         T12B  = [0,0,-1,0; 0,1,0,0;
                  1,0, 0,0; 0,0,0,1];
-        
-        AB6  = ABEL*TB0*A04*A46;
 
-        ABH  = AB6*[eye(3),[-H/2;0;0];
-                     0,0,0,        1];
-
-        ABER = AB6*A68*A812*T12B;
+        ABER = TB0*A04*A46*A68*A812*T12B;
         TAE  = ABER;
     
     elseif params.mode == -1     % RIGHT FIXED
@@ -125,10 +100,7 @@ function [xe, r0EL, r0ER, r0H] = k(q, index, model, params)
         TB0   = [0,0,1,0; 0,1,0,0;
                 -1,0,0,0; 0,0,0,1];
         
-        AB6  = ABER*TB0*A128*A86;
-        ABH  = AB6*[eye(3),[-H/2;0;0];
-                     0,0,0,        1];
-        ABEL = AB6*A64*A40*T12B;
+        ABEL = TB0*A128*A86*A64*A40*T12B;
         TAE  = ABEL;
     end
     
@@ -145,7 +117,4 @@ function [xe, r0EL, r0ER, r0H] = k(q, index, model, params)
          atan2(-A(3,1), sqrt(A(3,2)^2 + A(3,3)^2)); % θ R(y) 
          atan2( A(2,1), A(1,1))];                   % Ψ R(z)
     xe   = parameteriseXYZ(TAE);
-    r0EL = parameteriseXYZ(ABEL);
-    r0ER = parameteriseXYZ(ABER);
-    r0H  = parameteriseXYZ(ABH);
 end
