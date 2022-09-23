@@ -49,7 +49,7 @@ function [xe, TAE] = k(q, params)
     c12  = cos(q(12));
     s12  = sin(q(12));
     %% HOMOGENOUS TRANSFORM
-    if params.mode ==  1        % LEFT FIXED
+    if params.mode ==  1        % RIGHT FIXED
         TB0   = [0,0,1,0; 0,1,0,0;
                 -1,0,0,0; 0,0,0,1];
         % INVERTIBLE !!!
@@ -76,7 +76,7 @@ function [xe, TAE] = k(q, params)
         ABER = TB0*A04*A46*A68*A812*T12B;
         TAE  = ABER;
     
-    elseif params.mode == -1     % RIGHT FIXED
+    elseif params.mode == -1     % LEFT FIXED
         T12B  = [0,0,-1,0; 0,1,0,0;
                  1,0, 0,0; 0,0,0,1];
         % INVERTIBLE !!!

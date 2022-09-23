@@ -35,6 +35,7 @@ clc
     params.ServoSize = 0.05;     % m    - Approximation/Spacing
     params.StepSize  = 0.15;     % m    - 15 cm Step forward
  % Masses
+    params.mass.foot   = 0.25;   % foot
     params.mass.fibula = 1.5;    % Paired with `tibia`
     params.mass.femur  = 1.5;    % Thigh Bone
     params.mass.joint  = 0.5;    % Knee Bone / Joints
@@ -71,8 +72,8 @@ clc
                      pi/12;    % θ₁₁   ->  2D θ₆ Ankle
                          0];   % θ₁₂
     model.r.q(:,1) = model.r.q0;
-    model.r.xe(:,1) = k(model.r.q0, params);
-    model.r.r0CoMg(:,1) = rCoM(model.r.q0,1,model,params);      % <- DUPLICATE
+   [model.r.xe(:,1), TAE] = k(model.r.q0, params);
+    model.r.r0CoMg(:,1) = rCoM(model.r.q0,params);      % <- DUPLICATE
     model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
                       model.r.r0CoMg(3,1); 0; 0]; % Position Z
 
@@ -89,29 +90,28 @@ clc
         [~] = plotRobot(1,model,params);
     % +-+-+-+-+-+-+-+-+-+-+-+
 
-%% Generate Trajectory
-   [model.glbTrj,~,~] = trajGenGlobal(model.tspan, ...     % Time Span
-                                      model.r.r0Rg(1:3,1));% Init Position
-
-%% Generate ZMP Reference
+% ---> Generate Trajectory
+    midpoint = TAE(1:3,4)./2;
+   [model.glbTrj,~,~] = trajGenGlobal(model.tspan, ...  % Time Span
+                                      midpoint);        % Init Position
+        
+% ---> Generate ZMP Reference
    [model.p.pREF, model.p.sTM] = pREF(model,params);
-
+        [~] = plotSteps(model);
 %% STEPPING
     Q   = [];
     t_p = 1;
     for i=1:length(model.p.sTM)-1
-        tic
         t_c = model.p.sTM(1,i);         % Time Index CURRENT
         t_n = model.p.sTM(1,i+1);       % Time Index NEXT
         params.mode = model.p.sTM(2,i); % Mode
         Q = [Q ...
-             trajGenStep(model.p.pREF(:,t_n),   ...
-                         t_c:(t_n-1),           ...
-                         t_p,                   ...
-                         model,params)];
+             trajGenStep(model.r.xe(:,t_p), ...
+                       model.p.pREF(:,t_n), ...
+                               t_c:(t_n-1), ...
+                                    model);];
         
         for j=t_c:(t_n-1)
-            
             jn = j - 1;
             if jn < 1
                 jn = 1;
@@ -121,14 +121,28 @@ clc
             [ZMPk, CoMk, model] = LIPM3D(model,j,params);
             model.r.r0CoMg(:,j) = [CoMk(1); params.zc; CoMk(2)];
             
-            model.r.xe(:,j)   = [Q(:,j)];
-            model.r.q(:,j)    = k_Inv(model.r.q(:,jn), model.r.xe(:,j), j, model, params);
-           [model.r.xe(:,j),   model.r.r0Lg(:,j),  ...  % F
-            model.r.r0Rg(:,j), model.r.r0Hg(:,j)]  ...  % K 
-                = k(model.r.q(:,j), jn, model, params); % M
+            xeSTAR = Q(:,j);
+            model.r.q(:,j)  = k_Inv(model.r.q(:,jn), ...
+                                    xeSTAR, j, model, params);
+            model.r.xe(:,j) = k(model.r.q(:,j), params); % M
         end
         t_p = t_n - 1;
-        toc
+        % +-+-+-+-+-+-+-+-+-+-+-+
+        ROBOT_FRAME = figure(1);
+        
+        hold on
+        grid on
+        set(gca,'Color','#CCCCCC');
+        title("3D Model - ZMP Walking",'FontSize',12);
+        xlabel('{\bfZ} (metres)');
+        ylabel('{\bfX} (metres)');
+        zlabel('{\bfY} (metres)');
+        view(-165,50);
+        cla(ROBOT_FRAME);
+        [~] = plotRobot(j,model,params);
+        plot3(Q(3,:), Q(1,:), Q(2,:),'b');
+        pause
+        % +-+-+-+-+-+-+-+-+-+-+-+
     end
 
 %% Animation

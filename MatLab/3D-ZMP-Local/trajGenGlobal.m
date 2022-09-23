@@ -1,37 +1,37 @@
-function [Q,V,A] = trajGenGlobal(t,initialPosition)
+function [Q,V,A] = trajGenGlobal(t,mp)
     %% SPECIAL MATRICES
         % Special D - Diag Matrix   Qunitic!
         D  = diag(1:5,-1);                      
         % [1;t;t²;t³;t⁴;t⁵] (t) Quintic!
         TT = t.^((0:5).'); 
     %% TRAJECTORY WAYPOINTS
-        q0 = [initialPosition,zeros(3,2)]; 
+        q0 = [mp,zeros(3,2)]; 
         t0 = 0;
         tt0 = t0.^(0:5).';
         T0 = [tt0, D*tt0, D^2*tt0];
         %---------------------------------------------
-        q1 = [0.75, 0, 0;  %  X  Ẋ  Ẍ 
+        q1 = q0+[0.75, 0, 0;  %  X  Ẋ  Ẍ 
               0,   0, 0;  % qY vY aY
               0.5, 0, 0]; % qZ vZ aZ
         t1 = 5;
         tt1 = t1.^(0:5).';
         T1 = [tt1, D*tt1, D^2*tt1];
         %---------------------------------------------
-        q2 = [1.5, 0, 0;  %  X  Ẋ  Ẍ 
+        q2 = q0+[1.5, 0, 0;  %  X  Ẋ  Ẍ 
               0, 0, 0;  % qY vY aY
               0, 0, 0]; % qZ vZ aZ
         t2 = 10;
         tt2 = t2.^(0:5).';
         T2 = [tt2, D*tt2, D^2*tt2];
         %---------------------------------------------
-        q3 = [2.25, 0, 0;  %  X  Ẋ  Ẍ 
+        q3 = q0+[2.25, 0, 0;  %  X  Ẋ  Ẍ 
                 0, 0, 0;  % qY vY aY
              -0.5, 0, 0]; % qZ vZ aZ
         t3 = 15;
         tt3 = t3.^(0:5).';
         T3 = [tt3, D*tt3, D^2*tt3];
         %---------------------------------------------
-        q4 = [3, 0, 0;  %  X  Ẋ  Ẍ 
+        q4 = q0+[3, 0, 0;  %  X  Ẋ  Ẍ 
               0, 0, 0;  % qY vY aY
               0, 0, 0]; % qZ vZ aZ
         t4 = 20;

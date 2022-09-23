@@ -9,7 +9,7 @@ function pass = plotRobot(index,model,params)
     HTs   = kSLOW( model.r.q(:,index), params);
     
 %% OTHER JOINTS & LINKS
-    rRB0 = HTs.ARB0(1:3,4);                     % BASE RIGHT
+    rRB0 = HTs.ARB0(1:3,4);                     % ZERO RIGHT
     plot3(rRB0(3),rRB0(1),rRB0(2),'bx','LineWidth',1,'markersize',5);
     rGEL = HTs.ARB0(1:3,4);                     % END EFFECTOR
     AGFL = HTs.ARB0*AFOOT;                      % + FOOT
@@ -21,7 +21,7 @@ function pass = plotRobot(index,model,params)
     plot3([rGEL(3),rGFL(3)],[rGEL(1),rGFL(1)],[rGEL(2),rGFL(2)],...
           'k','LineWidth',2);
 
-    rLB0 = HTs.ALB0(1:3,4);                     % BASE LEFT
+    rLB0 = HTs.ALB0(1:3,4);                     % ZERO LEFT
     plot3(rLB0(3),rLB0(1),rLB0(2),'rx','LineWidth',1,'markersize',5);
     rGER = HTs.ALB0(1:3,4);                     % END EFFECTOR
     AGFR = HTs.ALB0*AFOOT;                      % + FOOT
@@ -32,9 +32,6 @@ function pass = plotRobot(index,model,params)
           'rx','LineWidth',1,'MarkerSize',5);
     plot3([rGER(3),rGFR(3)],[rGER(1),rGFR(1)],[rGER(2),rGFR(2)],...
           'k','LineWidth',2);
-
-
-    
 
     r01 = HTs.A01(1:3,4);                       % ONE
     plot3(r01(3),r01(1),r01(2),...              % -> Joint

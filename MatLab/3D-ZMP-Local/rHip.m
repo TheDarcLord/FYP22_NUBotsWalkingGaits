@@ -1,4 +1,4 @@
-function [vHW] = rHip(q, index, model, params)
+function [vHW] = rHip(q, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -6,39 +6,14 @@ function [vHW] = rHip(q, index, model, params)
 %       TAA:        Transform from ANKLE to END EFFECTOR
 %       Transforms: All other Homogenous Transforms
     
-    %% HELPER VARS
-    Rzyx   = @(Rz,Ry,Rx) ...
-        [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
-                    sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
-          sin(Rz)*cos(Ry),  cos(Rz)*cos(Rx)+sin(Rz)*sin(Ry)*sin(Rx),...
-                   -cos(Rz)*sin(Rx)+sin(Rz)*sin(Ry)*cos(Rx);
-                 -sin(Ry),  cos(Ry)*sin(Rx)                        ,...
-                    cos(Ry)*cos(Rx)];
-
     %% LINK VARIABLES
     Ll     = params.fibula;     % Lower Leg
     Lu     = params.femur;      % Upper Leg
     H      = params.HipWidth;
     S      = params.ServoSize;  % SERVO DIST
     
-    A0EL    = [Rzyx(model.r.r0Lg(6,index), ...
-                    model.r.r0Lg(5,index), ...
-                    model.r.r0Lg(4,index)),... 
-                    model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
-              zeros(1,3),           1]; %           0rigin in Global
-    A0ER    = [Rzyx(model.r.r0Rg(6,index), ...
-                    model.r.r0Rg(5,index), ...
-                    model.r.r0Rg(4,index)),... 
-                    model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
-              zeros(1,3),           1]; %           0rigin in Global
-    
     %% HOMOGENOUS TRANSFORM
     if params.mode ==  1        % LEFT FIXED
-        ABEL = [Rzyx(model.r.r0Lg(6,index), ...
-                     model.r.r0Lg(5,index), ...
-                     model.r.r0Lg(4,index)),... 
-                     model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
-               zeros(1,3),           1]; %           0rigin in Global
         % JOINT VARIABLES
         c1   = cos(q(1));
         s1   = sin(q(1));
@@ -66,13 +41,8 @@ function [vHW] = rHip(q, index, model, params)
                    0,      0,   0, 1];
         % INVERTIBLE !!!
         
-        AB6  = ABEL*TB0*A04*A46;
+        AB6  = TB0*A04*A46;
     elseif params.mode == -1     % RIGHT FIXED
-        ABER = [Rzyx(model.r.r0Rg(6,index), ...
-                     model.r.r0Rg(5,index), ...
-                     model.r.r0Rg(4,index)),... 
-                     model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
-               zeros(1,3),           1]; %           0rigin in Global
         % JOINT VARIABLES
         s7   = sin(q(7));
         c7   = cos(q(7));
@@ -99,8 +69,7 @@ function [vHW] = rHip(q, index, model, params)
         TB0   = [0,0,1,0; 0,1,0,0;
                 -1,0,0,0; 0,0,0,1];
         
-        AB6  = ABER*TB0*A128*A86;
-        
+        AB6  = TB0*A128*A86;
     end
 
     ABH = AB6*[eye(3),[0;0;S];
