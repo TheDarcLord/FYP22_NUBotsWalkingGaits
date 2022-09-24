@@ -44,7 +44,7 @@ clc
 %% Model setup
  % Steps
     % Stepping mode... Array!? ... ?
-    model.mode     = zeros(1,length(model.tspan));
+    model.mode     = zeros(2,length(model.tspan));
     params.mode    = -1;    % LEFT  FIXED
     %                 0;    % BOTH  FIXED
     %                 1;    % RIGHT FIXED
@@ -94,19 +94,70 @@ clc
     midpoint = TAE(1:3,4)./2;
    [model.glbTrj,~,~] = trajGenGlobal(model.tspan, ...  % Time Span
                                       midpoint);        % Init Position
-        
 % ---> Generate ZMP Reference
    [model.p.pREF, model.p.sTM] = pREF(model,params);
-        [~] = plotSteps(model);
+        [~] = plotSteps(1,model);
 %% STEPPING
     Q   = [];
-    t_p = 1;
+    model.TBE = eye(4);
+    j   = 1;
     for i=1:length(model.p.sTM)-1
+        tic
         t_c = model.p.sTM(1,i);         % Time Index CURRENT
         t_n = model.p.sTM(1,i+1);       % Time Index NEXT
         params.mode = model.p.sTM(2,i); % Mode
+
+        model.r.xe(:,j) = k(model.r.q(:,j), params);    % Update Xe
+
+        % UPDATE TRAJECTORY TO END EFFECTOR COORDS
+        for u=t_c:length(model.glbTrj)
+            model.glbTrj(:,u) = ...
+                (model.TBE(1:3,1:3)' * (model.glbTrj(:,u) - model.TBE(1:3,4)));
+                % Rbe' * ( r_traj_base - r_endEff_base )
+            %model.
+        end
+        
+        % UPDATE PENDULUM REF TO END EFFECTOR COORDS
+        for u=t_c-1:length(model.p.pREF)
+            if u < 1
+                u = 1;
+            end
+            tempREF = [model.p.pREF(1,u); 0; model.p.pREF(2,u)];
+            tempREF = ...
+                (model.TBE(1:3,1:3)' * (tempREF - model.TBE(1:3,4)));
+                % Rbe' * ( r_traj_base - r_endEff_base )
+            model.p.pREF(:,u) = tempREF([1 3]);
+        end
+
+        % UPDATE PENDULUM REF TO END EFFECTOR COORDS
+        for u=t_c-1:length(model.p.x)
+            if u < 1
+                u = 1;
+            end
+            tempPOS = [model.p.x(1,u); 0; model.p.x(4,u)];
+            tempVEL = [model.p.x(2,u); 0; model.p.x(5,u)];
+            tempACC = [model.p.x(3,u); 0; model.p.x(6,u)];
+            tempOUT = [model.p.y(1,u); 0; model.p.y(2,u)];
+            tempOUT = ...
+                (model.TBE(1:3,1:3)' * (tempOUT - model.TBE(1:3,4)));
+                % Rbe' * ( r_traj_base - r_endEff_base )
+            tempPOS = ...
+                (model.TBE(1:3,1:3)' * (tempPOS - model.TBE(1:3,4)));
+                % Rbe' * ( r_traj_base - r_endEff_base )
+            tempVEL = ...
+                model.TBE(1:3,1:3)' * (tempVEL);
+                % Rbe' * ( r_traj_base - r_endEff_base )
+            tempACC = ...
+                model.TBE(1:3,1:3)' * (tempACC);
+                % Rbe' * ( r_traj_base - r_endEff_base )
+
+            model.p.x(:,u) = [tempPOS(1); tempVEL(1); tempACC(1);
+                              tempPOS(3); tempVEL(3); tempACC(3)];
+            model.p.y(:,u) = tempOUT([1 3]);
+        end
+
         Q = [Q ...
-             trajGenStep(model.r.xe(:,t_p), ...
+             trajGenStep(model.r.xe(:,j), ...
                        model.p.pREF(:,t_n), ...
                                t_c:(t_n-1), ...
                                     model);];
@@ -117,37 +168,20 @@ clc
                 jn = 1;
             end
 
-            model.mode(j)       = params.mode;
+            model.mode(:,j)       = [params.mode; t_c];
             [ZMPk, CoMk, model] = LIPM3D(model,j,params);
             model.r.r0CoMg(:,j) = [CoMk(1); params.zc; CoMk(2)];
             
             xeSTAR = Q(:,j);
             model.r.q(:,j)  = k_Inv(model.r.q(:,jn), ...
                                     xeSTAR, j, model, params);
-            model.r.xe(:,j) = k(model.r.q(:,j), params); % M
+            [model.r.xe(:,j), model.TBE] = k(model.r.q(:,j), params); % M
         end
-        t_p = t_n - 1;
-        % +-+-+-+-+-+-+-+-+-+-+-+
-        ROBOT_FRAME = figure(1);
-        
-        hold on
-        grid on
-        set(gca,'Color','#CCCCCC');
-        title("3D Model - ZMP Walking",'FontSize',12);
-        xlabel('{\bfZ} (metres)');
-        ylabel('{\bfX} (metres)');
-        zlabel('{\bfY} (metres)');
-        view(-165,50);
-        cla(ROBOT_FRAME);
-        [~] = plotRobot(j,model,params);
-        plot3(Q(3,:), Q(1,:), Q(2,:),'b');
-        pause
-        % +-+-+-+-+-+-+-+-+-+-+-+
+        toc
     end
 
 %% Animation
     ROBOT_FRAME = figure(1);
-    
     hold on
     grid on
     set(gca,'Color','#CCCCCC');
@@ -158,14 +192,14 @@ clc
     view(-165,50);
     [~] = plotRobot(i,model,params);
     
-    for i=1:length(model.tspan)-19
+    for i=1:length(Q)
+        params.mode = model.mode(1,i);
         cla(ROBOT_FRAME)
         CM = model.r.r0CoMg([1 3],i);
         axis([ CM(2)-1, CM(2)+1, CM(1)-1, CM(1)+1, 0.0, 1.0]);
         [~] = plotRobot(i,model,params);
-        [~] = plotSteps(model);
+        [~] = plotSteps(model.mode(2,i),model);
         [~] = plotPend(i,model,params);
-        
         IMAGE(i) = getframe(gcf);
     end
 

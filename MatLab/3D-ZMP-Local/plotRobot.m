@@ -1,8 +1,9 @@
 function pass = plotRobot(index,model,params)
+    a = 0.25;
     % Origin
-    quiver3(0,0,0,1,0,0,"LineWidth",2,'Color','r');         % Z Vector
-    quiver3(0,0,0,0,1,0,"LineWidth",2,'Color','#379203');   % X Vector
-    quiver3(0,0,0,0,0,1,"LineWidth",2,'Color','b');         % Y Vector
+    quiver3(0,0,0,a,0,0,"LineWidth",2,'Color','r');         % Z Vector
+    quiver3(0,0,0,0,a,0,"LineWidth",2,'Color','#379203');   % X Vector
+    quiver3(0,0,0,0,0,a,"LineWidth",2,'Color','b');         % Y Vector
 
     AFOOT = [eye(3), [0; 0; 0.05];[0,0,0,1]];    % Foot Transform
 
@@ -90,8 +91,8 @@ function pass = plotRobot(index,model,params)
           'k', 'LineWidth',2);
     
 
-    rCoM = model.r.r0CoMg(:,index);
-    plot3(rCoM(3),rCoM(1),rCoM(2),'mo','MarkerSize',10,'LineWidth',2);
+    rCoM0 = rCoM(model.r.q(:,index),params);
+    plot3(rCoM0(3),rCoM0(1),rCoM0(2),'mo','MarkerSize',10,'LineWidth',2);
     drawnow
     pass = 1;
 end
