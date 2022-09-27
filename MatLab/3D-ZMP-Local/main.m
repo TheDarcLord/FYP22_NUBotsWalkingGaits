@@ -6,7 +6,7 @@ clc
     params.framerate  = 40;                             % FPS
     model.timestp     = params.framerate^(-1);          % Seconds
     model.tspan       = 0 : model.timestp : 20;         % [ time ]
-    model.timeHrzn    = 1.5;                            % Seconds
+    model.timeHrzn    = 0;                              % Seconds
     model.Nl          = model.timeHrzn / model.timestp; % INTEGER
  % Weights for controller `Performance Index`
     % Design of an optimal controller for a discrete-time system subject
@@ -55,10 +55,10 @@ clc
  % Pendulum
     model.p.x      = zeros(6,length(model.tspan));  % Xcom      [x x' x"]ᵀ
     model.p.y      = zeros(2,length(model.tspan));  % pₓ₂     [ZMPx ZMPz]ᵀ
-    model.p.pREF   = model.p.y;                     % pₓ₂REF  [REFx REFz]ᵀ
+    model.p.pREF   = [model.p.y zeros(2,model.Nl)]; % pₓ₂REF  [REFx REFz]ᵀ
     model.p.u      = model.p.y;                     % Uₓ₂         [Ux Uz]        
 
-% ---> Initial Position & Orientation
+%% Initial Position & Orientation
     model.r.q0        = [0;    % θ₁    
                     -pi/12;    % θ₂    ->  2D θ₁ Ankle
                    2*pi/12;    % θ₃    ->  2D θ₂ Knee
@@ -72,7 +72,7 @@ clc
                      pi/12;    % θ₁₁   ->  2D θ₆ Ankle
                          0];   % θ₁₂
     model.r.q(:,1) = model.r.q0;
-   [model.r.xe(:,1), TAE] = k(model.r.q0, params);
+    model.r.xe(:,1) = k(model.r.q0, params);
     model.r.r0CoMg(:,1) = rCoM(model.r.q0,params);      % <- DUPLICATE
     model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
                       model.r.r0CoMg(3,1); 0; 0]; % Position Z
@@ -90,94 +90,124 @@ clc
         [~] = plotRobot(1,model,params);
     % +-+-+-+-+-+-+-+-+-+-+-+
 
-% ---> Generate Trajectory
-    midpoint = TAE(1:3,4)./2;
-   [model.glbTrj,~,~] = trajGenGlobal(model.tspan, ...  % Time Span
-                                      midpoint);        % Init Position
-% ---> Generate ZMP Reference
-   [model.p.pREF, model.p.sTM] = pREF(model,params);
-        [~] = plotSteps(1,model);
+%% Generate Trajectory
+   [model.glbTrj,~,~] = ...
+       trajGenGlobal(model.tspan, ...       % Time Span
+                     model.r.xe(1:3,1)./2); % Init Position
+
 %% STEPPING
-    Q   = [];
-    model.TBE = eye(4);
-    j   = 1;
-    for i=1:length(model.p.sTM)-1
-        tic
-        t_c = model.p.sTM(1,i);         % Time Index CURRENT
-        t_n = model.p.sTM(1,i+1);       % Time Index NEXT
-        params.mode = model.p.sTM(2,i); % Mode
-
-        model.r.xe(:,j) = k(model.r.q(:,j), params);    % Update Xe
-
-        % UPDATE TRAJECTORY TO END EFFECTOR COORDS
-        for u=t_c:length(model.glbTrj)
-            model.glbTrj(:,u) = ...
-                (model.TBE(1:3,1:3)' * (model.glbTrj(:,u) - model.TBE(1:3,4)));
-                % Rbe' * ( r_traj_base - r_endEff_base )
-            %model.
-        end
-        
-        % UPDATE PENDULUM REF TO END EFFECTOR COORDS
-        for u=t_c-1:length(model.p.pREF)
-            if u < 1
-                u = 1;
-            end
-            tempREF = [model.p.pREF(1,u); 0; model.p.pREF(2,u)];
-            tempREF = ...
-                (model.TBE(1:3,1:3)' * (tempREF - model.TBE(1:3,4)));
-                % Rbe' * ( r_traj_base - r_endEff_base )
-            model.p.pREF(:,u) = tempREF([1 3]);
-        end
-
-        % UPDATE PENDULUM REF TO END EFFECTOR COORDS
-        for u=t_c-1:length(model.p.x)
-            if u < 1
-                u = 1;
-            end
-            tempPOS = [model.p.x(1,u); 0; model.p.x(4,u)];
-            tempVEL = [model.p.x(2,u); 0; model.p.x(5,u)];
-            tempACC = [model.p.x(3,u); 0; model.p.x(6,u)];
-            tempOUT = [model.p.y(1,u); 0; model.p.y(2,u)];
-            tempOUT = ...
-                (model.TBE(1:3,1:3)' * (tempOUT - model.TBE(1:3,4)));
-                % Rbe' * ( r_traj_base - r_endEff_base )
-            tempPOS = ...
-                (model.TBE(1:3,1:3)' * (tempPOS - model.TBE(1:3,4)));
-                % Rbe' * ( r_traj_base - r_endEff_base )
-            tempVEL = ...
-                model.TBE(1:3,1:3)' * (tempVEL);
-                % Rbe' * ( r_traj_base - r_endEff_base )
-            tempACC = ...
-                model.TBE(1:3,1:3)' * (tempACC);
-                % Rbe' * ( r_traj_base - r_endEff_base )
-
-            model.p.x(:,u) = [tempPOS(1); tempVEL(1); tempACC(1);
-                              tempPOS(3); tempVEL(3); tempACC(3)];
-            model.p.y(:,u) = tempOUT([1 3]);
-        end
-
-        Q = [Q ...
-             trajGenStep(model.r.xe(:,j), ...
-                       model.p.pREF(:,t_n), ...
-                               t_c:(t_n-1), ...
-                                    model);];
-        
-        for j=t_c:(t_n-1)
-            jn = j - 1;
-            if jn < 1
-                jn = 1;
-            end
-
-            model.mode(:,j)       = [params.mode; t_c];
-            [ZMPk, CoMk, model] = LIPM3D(model,j,params);
-            model.r.r0CoMg(:,j) = [CoMk(1); params.zc; CoMk(2)];
+    % Helper Functions
+    gradFUNC = @(A,B) (B(2) - A(2)) ...
+                     /(B(1) - A(1));  % Gradient -> ∇
+    midpFUNC = @(A,B) (A + B) / 2;    % Midpoint
+    % Initialise variables
+    Nl       = model.Nl;              % N# INTEGER Future Indexes
+    stepSize = params.StepSize;       % Step Size:   m
+    Q        = model.glbTrj;          %         Q:  [x y z]ᵀ
+    Qstep    = zeros(6,length(model.glbTrj)); % Qstep:  [x 0 z]ᵀ
+    r        = params.HipWidth/2;     % Radius of Circle
+    STEP     = params.mode;           % DEFINE MODE:  1 RIGHT Step 
+                                      %              -1 LEFT  Step
+    accuDist = 0;                     % Accumulated Distance
+    lastREF  = Q([1 3],1);            % Last Foot Step -> Traj Start Point
+    model.p.pREF(:,1) = lastREF;      % Foot Steps:  [x 0 z]ᵀ
+    A        = model.glbTrj(:,1);     % A = [x₁ y₁ z₁]ᵀ
+    t_begin  = 1;                     % Index of Step Beginning
+    model.TBE = eye(4);         % A_Base -> End Effector
+    for i=2:length(model.glbTrj)
+        accuDist = accuDist + norm(Q(:,i-1) - Q(:,i));
+        if accuDist > stepSize
             
-            xeSTAR = Q(:,j);
-            model.r.q(:,j)  = k_Inv(model.r.q(:,jn), ...
-                                    xeSTAR, j, model, params);
-            [model.r.xe(:,j), model.TBE] = k(model.r.q(:,j), params); % M
+            % TAKING STEP
+            t_end           = i;       % Index of Step Ending
+            params.mode     = STEP;    % Mode
+            j               = t_begin; % `j` runs the step
+            model.r.xe(:,j) = k(model.r.q(:,j), params); % Update Xe
+            
+            % UPDATE -> TRAJECTORY TO END EFFECTOR COORDS
+            % Rbe' * ( r_traj_base - r_endEff_base )
+            A = model.TBE(1:3,1:3)' * (A - model.TBE(1:3,4));
+            for u=1:length(model.glbTrj)
+                model.glbTrj(:,u) = ...
+                    (model.TBE(1:3,1:3)' * ... % Rbe' 
+                    (model.glbTrj(:,u) - model.TBE(1:3,4)));
+            end
+
+            % UPDATE -> PENDULUM REF TO END EFFECTOR COORDS
+            for u=1:length(model.p.pREF)
+                if u < 1
+                    u = 1;
+                end
+                tempREF = [model.p.pREF(1,u); 0; model.p.pREF(2,u)];
+                tempREF = ...
+                    (model.TBE(1:3,1:3)' * (tempREF - model.TBE(1:3,4)));
+                model.p.pREF(:,u) = tempREF([1 3]);
+            end
+
+            % UPDATE -> PENDULUM REF TO END EFFECTOR COORDS
+            for u=1:length(model.p.x)
+                if u < 1
+                    u = 1;
+                end
+                tempPOS = [model.p.x(1,u); 0; model.p.x(4,u)];
+                tempVEL = [model.p.x(2,u); 0; model.p.x(5,u)];
+                tempACC = [model.p.x(3,u); 0; model.p.x(6,u)];
+                tempOUT = [model.p.y(1,u); 0; model.p.y(2,u)];
+                tempOUT = ...
+                    (model.TBE(1:3,1:3)' * (tempOUT - model.TBE(1:3,4)));
+                    % Rbe' * ( r_traj_base - r_endEff_base )
+                tempPOS = ...
+                    (model.TBE(1:3,1:3)' * (tempPOS - model.TBE(1:3,4)));
+                    % Rbe' * ( r_traj_base - r_endEff_base )
+                tempVEL = ...
+                    model.TBE(1:3,1:3)' * (tempVEL);
+                    % Rbe' * ( r_traj_base - r_endEff_base )
+                tempACC = ...
+                    model.TBE(1:3,1:3)' * (tempACC);
+                    % Rbe' * ( r_traj_base - r_endEff_base )
+        
+                model.p.x(:,u) = [tempPOS(1); tempVEL(1); tempACC(1);
+                                  tempPOS(3); tempVEL(3); tempACC(3)];
+                model.p.y(:,u) = tempOUT([1 3]);
+            end 
+            B = model.glbTrj(:,i);
+            M = gradFUNC(A([1 3]),B([1 3]));
+            C = midpFUNC(A([1 3]),B([1 3]));
+            % Right (+) & Left (-)
+            model.p.pREF(:,i) = C + STEP*[M*r*sqrt(1/(1+M^2)); ...
+                                           -r*sqrt(1/(1+M^2))];
+
+
+            % GENERATE STEP TRAJECTORY
+            Qstep(:,t_begin:t_end) = trajGenStep(model.r.xe(:,j), ...
+                                       model.p.pREF(:,t_end), ...
+                                       t_begin:t_end, ...
+                                        model);
+
+            for j=t_begin:t_end
+                jn = j - 1;
+                if jn < 1
+                    jn = 1;
+                end
+    
+                model.mode(:,j)     = [params.mode; t_begin];
+                [ZMPk, CoMk, model] = LIPM3D(model,j,params);
+                model.r.r0CoMg(:,j) = [CoMk(1); params.zc; CoMk(2)];
+                
+                xeSTAR = Qstep(:,j);
+                model.r.q(:,j)  = k_Inv(model.r.q(:,jn), ...
+                                        xeSTAR, j, model, params);
+                [model.r.xe(:,j), model.TBE] = k(model.r.q(:,j), params);
+            end
+
+            % CLEAN UP
+            STEP      = STEP * -1;
+            lastREF   = model.p.pREF(:,i);
+            accuDist  = 0;
+            A         = B;
+            t_begin   = t_end - 1;
         end
-        toc
+        model.p.pREF(:,i) = lastREF;
     end
 
 %% Animation
@@ -192,7 +222,7 @@ clc
     view(-165,50);
     [~] = plotRobot(i,model,params);
     
-    for i=1:length(Q)
+    for i=1:length(model.tspan)
         params.mode = model.mode(1,i);
         cla(ROBOT_FRAME)
         CM = model.r.r0CoMg([1 3],i);

@@ -1,16 +1,16 @@
-function pass = plotSteps(IND,model)
+function pass = plotSteps(t_n,model)
     Q = model.glbTrj;
-    plot3(Q(3,IND:end), ...                % Z
-          Q(1,IND:end), ...                % X
-          zeros(1,length(Q(3,IND:end))),'k--','LineWidth',1.5);   % Y
+    plot3(Q(3,1:t_n), ...                % Z
+          Q(1,1:t_n), ...                % X
+          zeros(1,length(Q(3,1:t_n))),'k:','LineWidth',1.5);   % Y
 %     % Z X Y 
-%     plot3(model.p.pREF(2,:), ...                % Z
-%           model.p.pREF(1,:), ...                % X
-%           zeros(1,length(model.p.pREF)),'rx');  % Y
+%     plot3(model.p.pREF(2,1:t_n), ...                   % Z
+%           model.p.pREF(1,1:t_n), ...                   % X
+%           zeros(1,length(model.p.pREF(1:t_n))),'rx');  % Y
 %     % Z X Y 
-%     plot3(model.p.pREF(2,:), ...                % Z
-%           model.p.pREF(1,:), ...                % X
-%           zeros(1,length(model.p.pREF)),'r:');  % Y
+%     plot3(model.p.pREF(2,1:t_n), ...                   % Z
+%           model.p.pREF(1,1:t_n), ...                   % X
+%           zeros(1,length(model.p.pREF(1:t_n))),'r:');  % Y
 
     drawnow
     pass = 1;

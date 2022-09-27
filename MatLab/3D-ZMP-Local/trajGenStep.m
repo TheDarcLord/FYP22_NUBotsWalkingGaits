@@ -7,8 +7,8 @@ function [Q, V, A] = trajGenStep(xe,ZMP,indexspan,model)
 %       A:  End Effector Acceleration as a function of Time [X" Y" Z"](t)
 
     %% SPECIAL MATRICES
-    D  = diag(1:3,-1);  % Special D - Diag Matrix   Qunitic!        
-    TT = model.tspan(indexspan).^((0:3).');  % [1;t;t²;t³;t⁴;t⁵] (t)     Quintic!
+    D  = diag(1:3,-1);  % Special D - Diag Matrix             Cubic!        
+    TT = model.tspan(indexspan).^((0:3).'); % [1;t;t²;t³] (t) Cubic!
 
     %% TIME
         t0_i = indexspan(1);
