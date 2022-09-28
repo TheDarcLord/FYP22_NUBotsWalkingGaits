@@ -1,0 +1,93 @@
+
+%% PERFORMANCE INDEX
+\begin{equation}\label{eq:PC_performanceIndex}
+    J_{u} = \sum_{i=k}^{\text{$\infty$}}                                   \:
+    \mathbf{Q}_{e}      \lVert   \mathbf{y}(k) - \mathbf{y_{d}}(k)  \rVert \: + \:
+    \mathbf{Q}_{x}      \lVert   \mathbf{x}(k) - \mathbf{x}(k-1)    \rVert \: + \:
+    \mathbf{R}          \lVert   \mathbf{u}(k) - \mathbf{u}(k-1)    \rVert
+\end{equation}
+
+%% OPTIMAL CONTROL
+\begin{equation}\label{eq:PC_optimalControl}
+    \mathbf{u^{*}}(k) =                                                 \:
+    - \mathbf{G_{e}} \sum_{i=0}^{k} [\mathbf{y}(k) - \mathbf{y_{d}}(k)] \:
+    - \mathbf{G_{x}} \mathbf{x}(k)                                      \:   
+    - \sum_{l=1}^{N_{l}} \mathbf{G_{d}}(l)\mathbf{y_{d}}(k + l) 
+\end{equation}
+
+%% DEFINED MATRICES
+\begin{equation}\label{eq:PC_define}
+    \begin{aligned}
+        \mathbf{\tilde{B}} = 
+        \begin{bmatrix}
+            \mathbf{C_{d} B_{d}}\\
+            \mathbf{B_{d}}
+        \end{bmatrix}
+    \end{aligned}, \:\:
+    \begin{aligned}
+        \mathbf{\tilde{F}} = 
+        \begin{bmatrix}
+            \mathbf{C_{d} A_{d}}\\
+            \mathbf{A_{d}}
+        \end{bmatrix}
+    \end{aligned}, \:\:
+    \begin{aligned}
+        \mathbf{\tilde{Q}} = 
+        \begin{bmatrix}
+            \mathbf{Q_{e}} & \mathbf{0} \\
+            \mathbf{0} & \mathbf{Q_{x}}
+        \end{bmatrix}
+    \end{aligned}, \:\:
+    \begin{aligned}
+        \mathbf{\tilde{I}} = 
+        \begin{bmatrix}
+            \mathbf{I}\\
+            \mathbf{0}
+        \end{bmatrix}
+    \end{aligned}, \:\:
+    \begin{aligned}
+        \mathbf{\tilde{A}} = 
+        \begin{bmatrix}
+            \mathbf{\tilde{I}} & \mathbf{\tilde{F}}
+        \end{bmatrix}
+    \end{aligned}
+\end{equation}
+
+... where the gains, $\mathbf{G_{e}}$, $\mathbf{G_{x}}$ and $\mathbf{G_{d}}(l)$ are given by;
+
+%% Gains
+\begin{equation}\label{eq:PC_gains}
+    \begin{split}
+        \mathbf{G_{e}} &= [\mathbf{R} + \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
+        \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{I}} \\
+        \mathbf{G_{x}} &= [\mathbf{R} + \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
+        \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{F}} \\
+        \mathbf{G_{d}}(l) &= -[\mathbf{R} + \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
+        \mathbf{\tilde{B}}^{\intercal} (\mathbf{\tilde{A}_{c}}^{\intercal})^{(l - 1)} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{I}}
+    \end{split}
+\end{equation}
+... where;
+\begin{equation}\label{eq:PC_closedMatrix}
+    \mathbf{\tilde{A}_{c}} = \mathbf{\tilde{A}} 
+   -\mathbf{\tilde{B}} [\mathbf{R} + \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
+    \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{A}} 
+\end{equation}
+... and $\mathbf{\tilde{K}_{d}}$ is a solution to the Discrete Time Algebraic Riccati Equation.
+
+%% MATLAB DRAWN LIPM MODEL
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_figures/LIPM_trajectory.png}
+        \caption{3D LIPM with Preview Control.}
+        \label{fig:LIPM_traj}
+    \end{center}
+\end{figure}
+
+%% MATLAB DRAWN LIPM MODEL 2
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_figures/LIPM_separate.png}
+        \caption{3D LIPM X Y components.}
+        \label{fig:LIPM_sep}
+    \end{center}
+\end{figure}

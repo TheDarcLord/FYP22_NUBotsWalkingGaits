@@ -1,0 +1,64 @@
+\begin{equation}\label{eq:LIPM_stateCT}
+    \begin{split}
+        \frac{\delta}{\delta t}
+        \begin{bmatrix}
+            x           \\
+            \dot{x}     \\ 
+            \ddot{x} 
+        \end{bmatrix}&=
+        \begin{bmatrix}
+            0 & 1 & 0   \\
+            0 & 0 & 1   \\ 
+            0 & 0 & 0
+        \end{bmatrix}
+        \begin{bmatrix}
+            x           \\
+            \dot{x}     \\ 
+            \ddot{x} 
+        \end{bmatrix} + 
+        \begin{bmatrix}
+            0   \\
+            0   \\ 
+            1 
+        \end{bmatrix} u_{(x,y)}\\
+        \mathbf{p}_{(x,y)}&= 
+        \begin{bmatrix}
+            1 & 0 & \frac{-z_{c}}{g}
+        \end{bmatrix}
+        \begin{bmatrix}
+            x           \\
+            \dot{x}     \\ 
+            \ddot{x} 
+        \end{bmatrix}
+    \end{split}
+\end{equation}
+
+\begin{equation}\label{eq:LIPM_stateDT}
+    \begin{split}
+        \mathbf{x}_{(k+1)} &= \mathbf{A_d}\mathbf{x}_k+\mathbf{B_d}\mathbf{u}_k\\
+        \mathbf{p}_k &= \mathbf{C_d}\mathbf{x}_k \\
+    \end{split}
+\end{equation}
+... where:
+\begin{equation}\label{eq:LIPM_discrete}
+    \begin{aligned}
+        \mathbf{A_d} =
+        \begin{bmatrix}
+            1 & T & \frac{T^{2}}{2} \\
+            0 & 1 & T               \\ 
+            0 & 0 & 1
+        \end{bmatrix}
+    \end{aligned} \:\:
+    \begin{aligned}
+        \mathbf{B_d} =
+        \begin{bmatrix}
+            \frac{T^{3}}{6} \\ \frac{T^{2}}{2} \\ T
+        \end{bmatrix}
+    \end{aligned} \:\:
+    \begin{aligned}
+        \mathbf{C_d} =
+        \begin{bmatrix}
+            1 & 0 & \frac{-z_{c}}{g}
+        \end{bmatrix}
+    \end{aligned}
+\end{equation}

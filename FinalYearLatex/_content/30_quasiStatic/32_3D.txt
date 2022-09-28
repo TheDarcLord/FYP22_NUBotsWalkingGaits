@@ -1,0 +1,8 @@
+%% MATLAB DRAWN QUASI MODEL
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_figures/3D_Quasi.png}
+        \caption{3D model Quasi-Static walk sequence.}
+        \label{fig:3D_Quasi}
+    \end{center}
+\end{figure}

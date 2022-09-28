@@ -1,0 +1,106 @@
+%% HAND DRAWN 2D MODEL
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.4\linewidth]{_figures/2D_1.png}
+        \caption{Sketch defining coordinate systems \textbf{0} to \textbf{6}.}
+        \label{fig:2D_1}
+    \end{center}
+\end{figure}
+
+Beginning with a sketch, seen in Figure \ref{fig:2D_1}, the following series of Homogenous
+Transforms, equation(\ref{eq:KCtoRightAnkle}) forms a kinematic chain that describes the position of the 
+right ankle, the end effector, with respect to the left ankle.
+\begin{equation}\label{eq:KCtoRightAnkle}
+    \mathbf{T}^{1}_6 = 
+    \mathbf{A}^{1}_2(\phi_1,+L_1)
+    \mathbf{A}^{2}_3(\phi_2,+L_2)
+    \mathbf{A}^{3}_4(\phi_3,-H)
+    \mathbf{A}^{4}_5(\phi_4,-L_2)
+    \mathbf{A}^{5}_6(\phi_5,-L_1)
+    \mathbf{A}^{6}(\phi_6)
+\end{equation}
+Subsequently, the kinematic chain from the right ankle to the postion of the left ankle, the end effector 
+when the right ankle is fixed, is equation(\ref{eq:KCtoLeftAnkle}):
+\begin{equation}\label{eq:KCtoLeftAnkle}
+    \mathbf{T}^{6}_1 = (\mathbf{T}^{1}_6)^{-1}
+\end{equation}
+An additonal homogenous transform was applied to each equation to express the end effectors in
+global coordinates.
+\begin{equation}\label{eq:worldHT2D}
+    \begin{split}
+        \mathbf{T}^{Global}_6 &= \mathbf{A}^{0}_{1} \mathbf{T}^{1}_6 \\
+        \mathbf{T}^{Global}_1 &= \mathbf{A}^{0}_{6} \mathbf{T}^{6}_1
+    \end{split}
+\end{equation}
+...where;
+\begin{equation}\label{eq:worldHT2D_L}
+    \mathbf{A}^{0}_{1} =
+    \begin{bmatrix}
+        \mathbf{I} & \dots  & \dots  & \text{LeftAnkle}_{x} \\
+        \vdots     & \ddots & \dots  & \text{LeftAnkle}_{y} \\
+        \vdots     & \vdots & \ddots & \text{LeftAnkle}_{z} \\
+        0          & 0      & 0      & 1
+    \end{bmatrix}
+\end{equation}
+... and;
+\begin{equation}\label{eq:worldHT2D_R}
+    \mathbf{A}^{0}_{6} =
+    \begin{bmatrix}
+        \mathbf{I} & \dots  & \dots  & \text{RightAnkle}_{x} \\
+        \vdots     & \ddots & \dots  & \text{RightAnkle}_{y} \\
+        \vdots     & \vdots & \ddots & \text{RightAnkle}_{z} \\
+        0          & 0      & 0      & 1
+    \end{bmatrix}
+\end{equation}
+\\
+Equations(\ref{eq:worldHT2D}) are the Foward kinematic Model (FKM) which were then
+written in Matlab, with the joint angles found in table \ref{tab:JointAngles} and 
+the parameters found in table \ref{tab:LinkLengths}.
+
+%% TABLES OF JOINT ANGLES AND LINK LENGTHS
+\begin{table}[h!]\centering
+    \begin{center}
+        \caption{Joint Angles for 2D model}\label{tab:JointAngles}
+        {\footnotesize
+            \begin{tabular}{c r l}
+            \hline\hline\textbf{Joint Angles} & & \\
+            {Joint} & {Angle (\emph{rads})} & {Variable Name} \\\hline 
+            1 & \small{$-\frac{\pi}{6}$} & $\phi_1$ \\[1.5ex]
+            2 & \small{$+\frac{2\pi}{6}$} & $\phi_2$ \\[1.5ex]
+            3 & \small{$-\frac{\pi}{6}$} & $\phi_3$ \\[1.5ex]
+            4 & \small{$+\frac{\pi}{6}$} & $\phi_4$ \\[1.5ex]
+            5 & \small{$-\frac{2\pi}{6}$} & $\phi_5$ \\[1.5ex]
+            6 & \small{$+\frac{\pi}{6}$} & $\phi_6$
+            \end{tabular}
+        }
+    \end{center}
+\end{table}
+\begin{table}[h!]\centering
+    \begin{center}
+        \caption{Link Lengths for 2D model}\label{tab:LinkLengths}
+        {\footnotesize
+            \begin{tabular}{c l l l}
+            \hline\hline\textbf{Link Lengths} & & &\\
+            {Link} & {Length (\emph{m})} & {Variable Name} & {Joints} \\\hline
+            2 & $0.4$ & $L_1$ & 1 to 2 \\
+            3 & $0.4$ & $L_2$ & 2 to 3 \\
+            4 & $0.0$, however, $\approx 0.2 $ & $H$ & 3 to 4 \\
+            5 & $0.4$ & $L_2$ & 4 to 5 \\
+            6 & $0.4$ & $L_1$ & 5 to 6 \\
+            \end{tabular}
+        }
+    \end{center}
+\end{table}
+The model was then plotted in both 2D and 3D (figure \ref{fig:2D_2}). Although 2D, plotting the model in 3D with an 
+arbitrary distance between the hip joints, $3$ and $4$, provided more context regarding the
+location and orientation of the right side (blue crosses). Additonally, plotting the 2D model in 3D reduced the workload for developing the 3D model as 
+a vast proportion of the matlab script code be reused.
+%% MATLAB DRAWN 2D MODEL
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.85\linewidth]{_figures/2D_2.png}
+        \caption{2D model plotted in 3D (left) and 2D (right).}
+        \label{fig:2D_2}
+    \end{center}
+\end{figure}
+\newpage
