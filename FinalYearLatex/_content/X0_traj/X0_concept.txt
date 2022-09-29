@@ -4,8 +4,8 @@ As such, it would be useful to have a method for guiding the robot from its curr
 to another in cartesian space. For most mobile robots the easiest method is the use of trajectory
 planning, as described by [Siclliano  161-168]. However, an arbitrary trajectory is not a convenient 
 method for guiding a bipedal robot. Here, [Kajita] initially turned to pattern generation using the period 
-of an inverted pendulum to define the proceeding step. Later he turned to Preview Control of the ZMP. 
-However, neither method adequately caters to trajectory tracking.
+of an inverted pendulum to define the proceeding step. Later he turned to Preview Control of the ZMP to generate
+subsequent steps. However, neither method adequately caters to trajectory tracking.
 
 CONCEPT
 Considering an arbitrary planar trajectory through a series of waypoints, as seen in [FIGURE] in [RED].
