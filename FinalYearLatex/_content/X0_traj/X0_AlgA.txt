@@ -1,4 +1,4 @@
-\begin{algorithm}
+\begin{algorithm}[h!]
     \caption{Global Trajectory to Footsteps}\label{alg:Glb2Fts}
         \begin{algorithmic}
             \State $    r                       \gets \frac{1}{2} \cdot HipWidth    $
