@@ -29,15 +29,41 @@ The accumulated distance was then reset, before returning to iterating along the
 the magnitude of footstep was reached. The aforementioned process was then repeated to yield a second pair of
 footstep positions, before again iterating along the trajectory.
 
-|| END OF TRAJECTORY ... If statement ... repeat process twice ? || 
-|| Come to standing ideally ... ||
-
+Upon reaching the last element of the trajectory, the process is repeated once more with [B](x,y) = Q(end).
+ 
 IMPLEMENTATION - GLOBAL COORDINATES - PRE CALCULATED FOOTSTEPS
 
 Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory, a path to an location is 
 defined. 
 
 ALGORITHM 1:
+    s    = StepSize
+    Q    = Trajectory
+    pREF = zeros(2,length(Q));   % [x z]ᵀ
+    r    = params.HipWidth/2;       % Radius of Circle 
+    STEP = params.mode;
+
+    gradFUNC = @(A,B) (B(2) - A(2)) ...
+                     /(B(1) - A(1));    % Gradient -> `m`
+
+    accuDist = 0;       % Accumulated Distance   
+    A        = Q(:,1);  % A: Trajectory Start point
+
+    for i = 2:length(Q)
+        accuDist = accuDist + norm(Q(:,i-1) - Q(:,i));
+        pREF(:,i) = pREF(:,i-1);
+        if accuDist > stepSize || i == length(Q)
+            B = Q(:,i);
+            M = gradFUNC(A([1 3]),B([1 3]));
+            pREF(:,i)   = B([1 3]) + (STEP*[M*r*sqrt(1/(1+M^2)); ...
+                                             -r*sqrt(1/(1+M^2))]);
+            accuDist    = 0;
+            STEP        =  -1 * STEP;
+            A = B;
+        end
+    end
+
+
 
 IMPLEMENTATION - LOCAL COORDINATES - `LIVE` CALCULATED FOOTSTEPS
 - BORROWING KAJITA's IDEA
