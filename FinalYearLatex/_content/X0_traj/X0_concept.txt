@@ -1,27 +1,47 @@
-Considering an arbitrary planar trajectory through a series of waypoints, as seen in [FIGURE] in [RED].
-Starting from point [A], displacements between elements were summed along the path until the 
-desired footstep magnitude was reached at point [B].
+Consider an arbitrary planar trajectory, $\mathbf{Q}_{2 \times N}$, through a series of waypoints, seen in red in figure 
+\ref{fig:TRJ_TrajGen}. Starting from point $A$, displacements between elements were summed along 
+the path until the desired footstep magnitude was reached at point $B$.
 
-At [B] a circle [C] with a diameter equal to the hip width of the robot was constructed. The circle
-was then bisected circle by a line normal to AB; DE.
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.5\linewidth]{_content/X0_traj/X0_fig_geo.png}
+        \caption{Geometric}
+        \label{fig:TRJ_TrajGen}
+    \end{center}
+\end{figure}
 
-Given the equations for line DE and circle [C] [equations] the two intersections between C and DE, were 
-determined by setting [equation 1] = [equation 2]
+At $B$ a circle, $C$, with a diameter equal to the hip width of the robot was constructed. The circle
+was then bisected by a line normal to $AB$; $DE$. The equations for line $DE$ and circle $C$, 
 
-This simplified to following quadratic, where the roots of the equation define the X components of D and E.
+\begin{align}\label{eq:TRJ_LineCircle}  
+    y = (\nabla_{AB})^{-1} \cdot (x - x_{B}) + y_{B} \\
+    r^{2} = (x - x_{B})^{2} + (y - y_{B})^{2}
+\end{align}
 
-The y components of D and E can found by substituting the X components back into the equation 
-for line DE.
+can solved for $y$ and equated to form the quadratic equation:
 
-This resulted in two possible footstep positions differing only in the sign of the component added to [B].
+\begin{align}\label{eq:TRJ_Quad}
+    \alpha x^{2} - 2x \cdot x_{B} \alpha + \alpha x^{2}_{B} - r^{2} \\
+    \alpha = 1 + (\nabla_{AB})^{-2}
+\end{align}
 
-The accumulated distance was then reset, before returning to iterating along the trajectory again until
-the magnitude of footstep was reached. The aforementioned process was then repeated to yield a second pair of
-footstep positions, before again iterating along the trajectory.
+The quadratic formula was then used to find the roots of equation \ref{eq:TRJ_QUAD}, which
+are the %x% components of the intersections between $DE$ and $C$. At this point, $\alpha$ was 
+substituted back into the equation to yield:
 
-Upon reaching the last element of the trajectory, the process is repeated once more with [B](x,y) = Q(end).
- 
-IMPLEMENTATION - GLOBAL COORDINATES - PRE CALCULATED FOOTSTEPS
+\begin{align}\label{eq:TRJ_Step}
+    X_{DE \cap C} = x_{B} \pm r \cdot (\nabla_{AB}) sqrt{(\nabla^{2}_{AB} + 1)^{-1}} \\
+    Y_{DE \cap C} = y_{B} \mp r \cdot sqrt{(\nabla^{2}_{AB} + 1)^{-1}}
+\end{align}
+
+The coordinates $(x_{DE \cap C},y_{DE \cap C})$ form two possible footstep positions differing only 
+in the sign of the component added to $B_{x,y}$. 
+\newline
+The accumulated distance was then reset, and $A$ set to $B$, before returning to iterating along the 
+trajectory until the magnitude of footstep was reached. Equation \ref{eq:TRJ_Step} was then applied
+at a new value of $B$ to yield a second pair of footstep positions. This process of iterating along
+the trajectory continued 
+trajectory, the process was repeated once more with $B_{x,y} = \mathbf{Q}_(:,n)$.
 
 Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory, a path to an location is 
 defined. 
