@@ -80,4 +80,4 @@ entire trajectory. This idea is borrowed directly from Kajita \citep{kajita_2003
     \end{center}
 \end{figure}
 
-\input{_content/X0_traj/X0_AlgB.txt
+\input{_content/X0_traj/X0_AlgB.txt}
