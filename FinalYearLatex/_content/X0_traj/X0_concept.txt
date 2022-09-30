@@ -18,7 +18,7 @@ was then bisected by a line normal to $AB$; $DE$.
     r^{2} = (x - x_{B})^{2} + (y - y_{B})^{2}           \label{eq:TRJ_Circ}
 \end{align}
 The equations for line $DE$ and circle $C$, \ref{eq:TRJ_Line} and \ref{eq:TRJ_Circ} respectively, 
-can solved for $Y$ and equated to form the quadratic equation:
+were solved for $Y$ and equated to form the quadratic equation:
 
 \begin{align}
     \alpha x^{2} - 2x \cdot x_{B} \alpha + \alpha x^{2}_{B} - r^{2} \label{eq:TRJ_Quad} \\
@@ -26,7 +26,7 @@ can solved for $Y$ and equated to form the quadratic equation:
 \end{align}
 
 The quadratic formula was then used to find the roots of equation \ref{eq:TRJ_Quad}, which
-are the %X% components of the intersections between $DE$ and $C$. At this point, $\alpha$ was 
+are the $X$ components of the intersections between $DE$ and $C$. At this point, $\alpha$ was 
 substituted back into the equation to yield:
 
 \begin{align}
@@ -37,20 +37,13 @@ substituted back into the equation to yield:
 The coordinates $(X_{DE \cap C},Y_{DE \cap C})$ form two possible footstep positions differing only 
 in the sign of the component added to $B_{(x,y)}$. 
 \newline
-The accumulated distance was then reset, and $A$ set to $B$, before returning to iterating along the 
-trajectory until the magnitude of footstep was reached. Equations \ref{eq:TRJ_X} and \ref{eq:TRJ_Y} were
-then applied at a new value of $B_{(x,y)}$ to yield a second pair of footstep positions. This process of 
+Accumulated distance was then reset, $A$ was set to $B$, before then returning to iterating along the 
+trajectory until, again, the magnitude of footstep was reached. Equations \ref{eq:TRJ_X} and \ref{eq:TRJ_Y} were
+then applied to a new value of $B_{(x,y)}$ to yield a second pair of footstep positions. This process of 
 iterating along the trajectory, and generating footsteps, continued until the trajectory's end, where 
-the process was repeated once more with $B_{(x,y)} = \mathbf{Q}_{(:,n)}$.
-
-Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory, a path to an location is 
-defined. 
+the process was repeated once more with $B_{(x,y)} = \mathbf{Q}_{(:,n)}$. This procedure is described below in 
+\ref{alg:Glb2Fts}.
 
 \input{_content/X0_traj/X0_AlgA.txt}
 
-
-IMPLEMENTATION - LOCAL COORDINATES - `LIVE` CALCULATED FOOTSTEPS
-- BORROWING KAJITA's IDEA
-
-ALGORITHM 2:
-
+Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory, 
