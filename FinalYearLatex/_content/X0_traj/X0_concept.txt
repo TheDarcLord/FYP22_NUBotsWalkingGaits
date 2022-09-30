@@ -41,9 +41,18 @@ Accumulated distance was then reset, $A$ was set to $B$, before then returning t
 trajectory until, again, the magnitude of footstep was reached. Equations \ref{eq:TRJ_X} and \ref{eq:TRJ_Y} were
 then applied to a new value of $B_{(x,y)}$ to yield a second pair of footstep positions. This process of 
 iterating along the trajectory, and generating footsteps, continued until the trajectory's end, where 
-the process was repeated once more with $B_{(x,y)} = \mathbf{Q}_{(:,n)}$. This procedure is described below in 
-\ref{alg:Glb2Fts}.
+the process was repeated once more with $B_{(x,y)} = \mathbf{Q}_{(:,n)}$. This procedure is described below in
+algorithm \ref{alg:Glb2Fts}.
 
 \input{_content/X0_traj/X0_AlgA.txt}
 
-Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory, 
+Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory and following
+algorithm \ref{alg:Glb2Fts} produces the series of footsteps seen in figure \ref{fig:TRJ_Sign} below.
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.9\linewidth]{_content/X0_traj/X0_fig_sign.png}
+        \caption{Geometric}
+        \label{fig:TRJ_Sign}
+    \end{center}
+\end{figure}
