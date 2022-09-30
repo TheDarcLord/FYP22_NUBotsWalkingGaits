@@ -34,7 +34,7 @@ substituted back into the equation to yield:
     Y_{DE \cap C} = y_{B} \mp r \cdot sqrt{(\nabla^{2}_{AB} + 1)^{-1}}                  \label{eq:TRJ_Y}
 \end{align}
 
-The coordinates $(x_{DE \cap C},y_{DE \cap C})$ form two possible footstep positions differing only 
+The coordinates $(X_{DE \cap C},Y_{DE \cap C})$ form two possible footstep positions differing only 
 in the sign of the component added to $B_{(x,y)}$. 
 \newline
 The accumulated distance was then reset, and $A$ set to $B$, before returning to iterating along the 
