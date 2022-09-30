@@ -25,7 +25,7 @@ can solved for $Y$ and equated to form the quadratic equation:
     \alpha = 1 + (\nabla_{AB})^{-2}
 \end{align}
 
-The quadratic formula was then used to find the roots of equation \ref{eq:TRJ_QUAD}, which
+The quadratic formula was then used to find the roots of equation \ref{eq:TRJ_Quad}, which
 are the %X% components of the intersections between $DE$ and $C$. At this point, $\alpha$ was 
 substituted back into the equation to yield:
 
