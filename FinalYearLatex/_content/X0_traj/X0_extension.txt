@@ -10,3 +10,8 @@ figure \ref{fig:TRJ_ZMP}.
         \label{fig:TRJ_ZMP}
     \end{center}
 \end{figure}
+
+With this in mind both algorithms were updated to extend $\mathbf{REF}$ by the number 
+of timesteps the preview controller was operating on ahead of the current timestep.
+
+moar algo !
