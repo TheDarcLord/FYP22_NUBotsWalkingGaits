@@ -49,7 +49,7 @@ algorithm \ref{alg:Glb2Fts}.
 Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory and following
 algorithm \ref{alg:Glb2Fts} produces the series of footsteps seen in figure \ref{fig:TRJ_Sign}. Notice 
 the impact of the $STEP$ variable. On the left $STEP$ was initialised with $1$, while on the right $STEP$ was
-initialised with $-1$. Thus, on the left, the first step the robot took would be with the left foot, while on the 
+initialised with $-1$. Thus, on the left, the first step the robot took was be with the left foot, while on the 
 right the opposite was true. Additionally each subsequent step, on either side, is with the formerly planted foot.
 As such, both the FKM and the decision as to which foot is in motion are driven by the sign of a single variable.
 
