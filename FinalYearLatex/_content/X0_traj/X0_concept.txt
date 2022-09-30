@@ -11,37 +11,37 @@ the path until the desired footstep magnitude was reached at point $B$.
 \end{figure}
 
 At $B$ a circle, $C$, with a diameter equal to the hip width of the robot was constructed. The circle
-was then bisected by a line normal to $AB$; $DE$. The equations for line $DE$ and circle $C$, 
+was then bisected by a line normal to $AB$; $DE$.
 
-\begin{align}\label{eq:TRJ_LineCircle}  
-    y = (\nabla_{AB})^{-1} \cdot (x - x_{B}) + y_{B} \\
-    r^{2} = (x - x_{B})^{2} + (y - y_{B})^{2}
+\begin{align}
+    y = (\nabla_{AB})^{-1} \cdot (x - x_{B}) + y_{B}    \label{eq:TRJ_Line}   \\
+    r^{2} = (x - x_{B})^{2} + (y - y_{B})^{2}           \label{eq:TRJ_Circ}
 \end{align}
-
+The equations for line $DE$ and circle $C$, \ref{eq:TRJ_Line} and \ref{eq:TRJ_Circ} respectively, 
 can solved for $y$ and equated to form the quadratic equation:
 
-\begin{align}\label{eq:TRJ_Quad}
-    \alpha x^{2} - 2x \cdot x_{B} \alpha + \alpha x^{2}_{B} - r^{2} \\
+\begin{align}
+    \alpha x^{2} - 2x \cdot x_{B} \alpha + \alpha x^{2}_{B} - r^{2} \label{eq:TRJ_Quad} \\
     \alpha = 1 + (\nabla_{AB})^{-2}
 \end{align}
 
 The quadratic formula was then used to find the roots of equation \ref{eq:TRJ_QUAD}, which
-are the %x% components of the intersections between $DE$ and $C$. At this point, $\alpha$ was 
+are the %X% components of the intersections between $DE$ and $C$. At this point, $\alpha$ was 
 substituted back into the equation to yield:
 
-\begin{align}\label{eq:TRJ_Step}
-    X_{DE \cap C} = x_{B} \pm r \cdot (\nabla_{AB}) sqrt{(\nabla^{2}_{AB} + 1)^{-1}} \\
-    Y_{DE \cap C} = y_{B} \mp r \cdot sqrt{(\nabla^{2}_{AB} + 1)^{-1}}
+\begin{align}
+    X_{DE \cap C} = x_{B} \pm r \cdot (\nabla_{AB}) sqrt{(\nabla^{2}_{AB} + 1)^{-1}}    \label{eq:TRJ_X} \\
+    Y_{DE \cap C} = y_{B} \mp r \cdot sqrt{(\nabla^{2}_{AB} + 1)^{-1}}                  \label{eq:TRJ_Y}
 \end{align}
 
 The coordinates $(x_{DE \cap C},y_{DE \cap C})$ form two possible footstep positions differing only 
-in the sign of the component added to $B_{x,y}$. 
+in the sign of the component added to $B_{(x,y)}$. 
 \newline
 The accumulated distance was then reset, and $A$ set to $B$, before returning to iterating along the 
-trajectory until the magnitude of footstep was reached. Equation \ref{eq:TRJ_Step} was then applied
-at a new value of $B$ to yield a second pair of footstep positions. This process of iterating along
-the trajectory continued 
-trajectory, the process was repeated once more with $B_{x,y} = \mathbf{Q}_(:,n)$.
+trajectory until the magnitude of footstep was reached. Equations \ref{eq:TRJ_X} and \ref{eq:TRJ_Y} were
+then applied at a new value of $B_{(x,y)}$ to yield a second pair of footstep positions. This process of 
+iterating along the trajectory, and generating footsteps, continued until the trajectory's end, where 
+the process was repeated once more with $B_{(x,y)} = \mathbf{Q}_{(:,n)}$.
 
 Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory, a path to an location is 
 defined. 
