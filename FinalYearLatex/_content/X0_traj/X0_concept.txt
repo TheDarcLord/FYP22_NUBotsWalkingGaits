@@ -18,7 +18,7 @@ was then bisected by a line normal to $AB$; $DE$.
     r^{2} = (x - x_{B})^{2} + (y - y_{B})^{2}           \label{eq:TRJ_Circ}
 \end{align}
 The equations for line $DE$ and circle $C$, \ref{eq:TRJ_Line} and \ref{eq:TRJ_Circ} respectively, 
-can solved for $y$ and equated to form the quadratic equation:
+can solved for $Y$ and equated to form the quadratic equation:
 
 \begin{align}
     \alpha x^{2} - 2x \cdot x_{B} \alpha + \alpha x^{2}_{B} - r^{2} \label{eq:TRJ_Quad} \\
@@ -30,8 +30,8 @@ are the %X% components of the intersections between $DE$ and $C$. At this point,
 substituted back into the equation to yield:
 
 \begin{align}
-    X_{DE \cap C} = x_{B} \pm r \cdot (\nabla_{AB}) sqrt{(\nabla^{2}_{AB} + 1)^{-1}}    \label{eq:TRJ_X} \\
-    Y_{DE \cap C} = y_{B} \mp r \cdot sqrt{(\nabla^{2}_{AB} + 1)^{-1}}                  \label{eq:TRJ_Y}
+    X_{DE \cap C} = x_{B} \pm r \cdot (\nabla_{AB}) \sqrt{(\nabla^{2}_{AB} + 1)^{-1}}    \label{eq:TRJ_X} \\
+    Y_{DE \cap C} = y_{B} \mp r \cdot \sqrt{(\nabla^{2}_{AB} + 1)^{-1}}                  \label{eq:TRJ_Y}
 \end{align}
 
 The coordinates $(X_{DE \cap C},Y_{DE \cap C})$ form two possible footstep positions differing only 
