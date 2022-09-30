@@ -65,6 +65,12 @@ However, this method breaks down if the trajectory rotates more than $\pm \frac{
 $Z$ axis. Figure \ref{fig:TRJ_Fail} demonstrates breakdown which culminated in a double step on a 
 particular side, depending on the inital value of $STEP$. This appears to be caused by the change 
 in sign of the roots of equation \ref{eq:TRJ_Quad}.
+\newline
+To resolve this, rather than tracking and updating the location of the base of the FKM with a global variable,
+it is assumed that the base of fixed foot is the origin of coordinate system. As such, the robot is now defined
+in some form of local coordinates. Additionally, algorithm \ref{alg:Glb2Fts} was modified to apply the 
+homogeneous transform, that describes the location of the end effector with respect to the origin, to the 
+entire trajectory. This idea is borrowed directly from Kajita \citep{kajita_2003_biped}. 
 
 \begin{figure}[!h]
     \begin{center}
@@ -74,8 +80,4 @@ in sign of the roots of equation \ref{eq:TRJ_Quad}.
     \end{center}
 \end{figure}
 
-To resolve this, rather than tracking and updating the location of the base of the FKM with a global variable,
-it is assumed that the base of fixed foot is the origin of coordinate system. As such, the robot is now defined
-in some form of local coordinates. Additionally algorithm \ref{alg:Glb2Fts} was modified to apply the 
-homogeneous transform, that describes the location of the end effector with respect to the origin, to the 
-entire trajectory. This idea is borrowed directly from Kajita \citep{kajita_2003_biped}.
+\input{_content/X0_traj/X0_AlgB.txt
