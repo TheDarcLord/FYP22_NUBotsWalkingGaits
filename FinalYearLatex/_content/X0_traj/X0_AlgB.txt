@@ -11,14 +11,15 @@
 
             \For {$ i \gets 2$  $\mathbf{to}$ $N$}
 
-                \State $    Sum \gets Sum + \| \mathbf{Q}_{(:,i-1)} - \mathbf{Q}_{(:,i)} \| $
-
+                \State $    Sum \gets Sum + \| \mathbf{Q}_{(:,i-1)} - \mathbf{Q}_{(:,i)} \|     $
                 \If {$Sum \geq StepSize$ $\mathbf{OR}$ $i = N$}
                     \State $    \vec{B}                 \gets \mathbf{Q}_{(:,i)}                                               $
                     \State $    \mathbf{REF}_{(:,i)}    \gets \vec{B} + STEP \cdot \begin{pmatrix} \nabla_{AB} \cdot r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \\ -r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \end{pmatrix} $
                     \State $    Sum 	\gets 0		$
                     \State $    STEP 	\gets -STEP	$
                     \State $    \vec{A} \gets \vec{B}	$
+                \Else
+                    \State $    \mathbf{REF}_{(:,i)} \gets \mathbf{REF}_{(:,i - 1)}                 $
                 \EndIf
 
             \EndFor
