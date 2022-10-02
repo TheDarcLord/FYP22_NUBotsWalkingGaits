@@ -99,7 +99,6 @@ clc
     % Helper Functions
     gradFUNC = @(A,B) (B(2) - A(2)) ...
                      /(B(1) - A(1));  % Gradient -> ∇
-    midpFUNC = @(A,B) (A + B) / 2;    % Midpoint
     % Initialise variables
     Nl       = model.Nl;              % N# INTEGER Future Indexes
     stepSize = params.StepSize;       % Step Size:   m
@@ -109,15 +108,13 @@ clc
     STEP     = params.mode;           % DEFINE MODE:  1 RIGHT Step 
                                       %              -1 LEFT  Step
     accuDist = 0;                     % Accumulated Distance
-    lastREF  = Q([1 3],1);            % Last Foot Step -> Traj Start Point
-    model.p.pREF(:,1) = lastREF;      % Foot Steps:  [x 0 z]ᵀ
+    model.p.pREF(:,1) = Q([1 3],1);   % Last Foot Step -> Traj Start Point
     A        = model.glbTrj(:,1);     % A = [x₁ y₁ z₁]ᵀ
     t_begin  = 1;                     % Index of Step Beginning
     model.TBE = eye(4);         % A_Base -> End Effector
     for i=2:length(model.glbTrj)
         accuDist = accuDist + norm(Q(:,i-1) - Q(:,i));
         if accuDist > stepSize
-            
             % TAKING STEP
             t_end           = i;       % Index of Step Ending
             params.mode     = STEP;    % Mode
@@ -135,9 +132,6 @@ clc
 
             % UPDATE -> PENDULUM REF TO END EFFECTOR COORDS
             for u=1:length(model.p.pREF)
-                if u < 1
-                    u = 1;
-                end
                 tempREF = [model.p.pREF(1,u); 0; model.p.pREF(2,u)];
                 tempREF = ...
                     (model.TBE(1:3,1:3)' * (tempREF - model.TBE(1:3,4)));
@@ -146,9 +140,6 @@ clc
 
             % UPDATE -> PENDULUM REF TO END EFFECTOR COORDS
             for u=1:length(model.p.x)
-                if u < 1
-                    u = 1;
-                end
                 tempPOS = [model.p.x(1,u); 0; model.p.x(4,u)];
                 tempVEL = [model.p.x(2,u); 0; model.p.x(5,u)];
                 tempACC = [model.p.x(3,u); 0; model.p.x(6,u)];
@@ -172,10 +163,9 @@ clc
             end 
             B = model.glbTrj(:,i);
             M = gradFUNC(A([1 3]),B([1 3]));
-            C = midpFUNC(A([1 3]),B([1 3]));
             % Right (+) & Left (-)
-            model.p.pREF(:,i) = C + STEP*[M*r*sqrt(1/(1+M^2)); ...
-                                           -r*sqrt(1/(1+M^2))];
+            model.p.pREF(:,i) = B([1 3]) + STEP*[M*r*sqrt(1/(1+M^2)); ...
+                                                  -r*sqrt(1/(1+M^2))];
 
 
             % GENERATE STEP TRAJECTORY
@@ -202,12 +192,13 @@ clc
 
             % CLEAN UP
             STEP      = STEP * -1;
-            lastREF   = model.p.pREF(:,i);
             accuDist  = 0;
             A         = B;
             t_begin   = t_end - 1;
+            toc
+        else
+            model.p.pREF(:,i) = model.p.pREF(:,i-1);
         end
-        model.p.pREF(:,i) = lastREF;
     end
 
 %% Animation
