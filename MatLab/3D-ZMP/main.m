@@ -154,6 +154,7 @@ clc
     xlabel('{\bfZ} (metres)');
     ylabel('{\bfX} (metres)');
     zlabel('{\bfY} (metres)');
+    axis equal
     view(-165,50);
     [~] = plotRobot(i,model,params);
 
