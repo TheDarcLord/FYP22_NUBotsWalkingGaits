@@ -5,30 +5,48 @@ function pass = plotRobot(index,model,params)
     quiver3(0,0,0,0,a,0,"LineWidth",1,'Color','#379203');   % X Vector
     quiver3(0,0,0,0,0,a,"LineWidth",1,'Color','b');         % Y Vector
 
-    AFOOT = [eye(3), [0.12915; 0; 0];[0,0,0,1]];    % Foot Transform
+    TOE  = [eye(3), [ 0.12915; 0; 0];[0,0,0,1]];
+    HEEL = [eye(3), [-0.08385; 0; 0];[0,0,0,1]];
+    INSIDEL = [eye(3), [0; 0; -0.054];[0,0,0,1]];
+    INSIDER = [eye(3), [0; 0;  0.054];[0,0,0,1]];
 
     HTs   = kNUslow( model.r.q(:,index),index,model,params);
             %kSLOW( model.r.q(:,index),index,model,params);
     
     rBER = HTs.ABER(1:3,4);                     % END EFFECTOR
-    AGFR = HTs.ABER*AFOOT;                      % + FOOT
-    rGFR = AGFR(1:3,4);                         % + TOE
     plot3(rBER(3),rBER(1),rBER(2), ...          %   RIGHT!
-          'bo','LineWidth',1,'MarkerSize',5);
-    plot3(rGFR(3),rGFR(1),rGFR(2), ...          %   RIGHT TOE!
-          'bx','LineWidth',1,'MarkerSize',5);
-    plot3([rBER(3),rGFR(3)],[rBER(1),rGFR(1)],[rBER(2),rGFR(2)],...
+      'bo','LineWidth',1,'MarkerSize',5);
+    ATFR = HTs.ABER*TOE;                        %
+    rTFR = ATFR(1:3,4);                         % + TOE
+    plot3([rBER(3),rTFR(3)],[rBER(1),rTFR(1)],[rBER(2),rTFR(2)],...
+          'k','LineWidth',2);
+    AHFR = HTs.ABER*HEEL;                       %
+    rHFR = AHFR(1:3,4);                         % + HEEL
+    plot3([rBER(3),rHFR(3)],[rBER(1),rHFR(1)],[rBER(2),rHFR(2)],...
+          'k','LineWidth',2);
+    AIFR = HTs.ABER*INSIDER;                    %
+    rIFR = AIFR(1:3,4);                         % + INSIDE 
+    plot3([rBER(3),rIFR(3)],[rBER(1),rIFR(1)],[rBER(2),rIFR(2)],...
           'k','LineWidth',2);
 
+
     rBEL = HTs.ABEL(1:3,4);                     % END EFFECTOR
-    AGFL = HTs.ABEL*AFOOT;                      % + FOOT
-    rGFL = AGFL(1:3,4);                         % + TOE
     plot3(rBEL(3),rBEL(1),rBEL(2), ...          %   LEFT!
           'ro','LineWidth',1,'MarkerSize',5);
-    plot3(rGFL(3),rGFL(1),rGFL(2), ...          %   LEFT TOE!
-          'rx','LineWidth',1,'MarkerSize',5);
-    plot3([rBEL(3),rGFL(3)],[rBEL(1),rGFL(1)],[rBEL(2),rGFL(2)],...
+    ATFL = HTs.ABEL*TOE;                        %
+    rTFL = ATFL(1:3,4);                         % + TOE
+    plot3([rBEL(3),rTFL(3)],[rBEL(1),rTFL(1)],[rBEL(2),rTFL(2)],...
           'k','LineWidth',2);
+    AHFL = HTs.ABEL*HEEL;                       %
+    rHFL = AHFL(1:3,4);                         % + HEEL
+    plot3([rBEL(3),rHFL(3)],[rBEL(1),rHFL(1)],[rBEL(2),rHFL(2)],...
+          'k','LineWidth',2);
+    AIFL = HTs.ABEL*INSIDEL;                    %
+    rIFL = AIFL(1:3,4);                         % + INSIDE 
+    plot3([rBEL(3),rIFL(3)],[rBEL(1),rIFL(1)],[rBEL(2),rIFL(2)],...
+          'k','LineWidth',2);
+
+
 %% OTHER JOINTS & LINKS
     rLB0 = HTs.ALB0(1:3,4);                     % BASE LEFT
     plot3(rLB0(3),rLB0(1),rLB0(2),'rx','LineWidth',1,'markersize',5);

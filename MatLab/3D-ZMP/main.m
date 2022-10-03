@@ -29,11 +29,15 @@ clc
     params.g         = 9.81;     % ms⁻² - Acceleration due to Gravity |
     params.m         = 7.4248;   % kg   - Total Mass of a NuGus       |
  % -------------------------------------------------------------------|
-    params.fibula    = 0.19942;  % m    - Lower leg NUgus
-    params.femur     = 0.19954;  % m    - Upper Leg NUgus
-    params.HipWidth  = 0.11;     % m    - Pelvis
-    params.ServoSize = 0.05;     % m    - Approximation/Spacing
-    params.StepSize  = 0.15;     % m    - 15 cm Step forward
+    params.fibula     = 0.19942;  % m    - Lower leg NUgus
+    params.femur      = 0.19954;  % m    - Upper Leg NUgus
+    params.HipWidth   = 0.11;     % m    - Pelvis
+    params.heel2ankle = 0.038;    % m    - Tarsal
+    params.ankle2knee = [0.005669; 0.19942; -0.0002];
+    params.knee2hip   = [       0; 0.19954; -0.0015];
+    params.hip2waist  = [-0.06895; 0.04625; -0.0545];
+    params.ServoSize  = 0.05;     % m    - Approximation/Spacing
+    params.StepSize   = 0.15;     % m    - 15 cm Step forward
  % Masses
     params.mass.fibula = 1.5;    % Paired with `tibia`
     params.mass.femur  = 1.5;    % Thigh Bone

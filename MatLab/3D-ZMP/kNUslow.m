@@ -29,15 +29,11 @@ function [HTs] = kNUslow(q, index, model, params)
                              0,         0,         0, 1];
     
     %% LINK VARIABLES
-    saX  = 0.00566;  % Sole to Ankle
-    saY  = 0.038;
-    h34  = 0.02835;
-    h45Y = 0.049705;
-    h45X = 0.02805; % 4805
-    Ll     = params.fibula;     % Lower Leg
-    Lu     = params.femur;      % Upper Leg
-    H      = params.HipWidth;
-    S      = params.ServoSize;  % SERVO DIST
+    H    = params.HipWidth;
+    h2a  = params.heel2ankle;
+    a2k  = params.ankle2knee;
+    k2h  = params.knee2hip;
+    h2w  = params.hip2waist;
     
     %% JOINT VARIABLES
     q1  = q(1);     % θ₁
@@ -68,55 +64,55 @@ function [HTs] = kNUslow(q, index, model, params)
     %% HOMOGENOUS TRANSFORM
     % TB_0 * [ A⁰₁(q₁)⋅A¹₂(q₂) ... Aᴶ⁻¹ⱼ  ] * T12_B
 
-    TB0   = Ry(pi/2)*Txyz(0,saY,-saX);
+    TB0   = Ry(pi/2)*Txyz(0,h2a,0);
     % INVERTIBLE !!!
-    A01   = Rz(q1)*Ry(-pi/2)*Txyz(saX,0,0);
-    A12   = Rz(q2)*Txyz(-saX,Ll,0);
-    A23   = Rz(q3)*Txyz(0,Lu,0);
-    A34   = Rz(q4)*Ry(pi/2)*Txyz(0,0,-h34);
-    A45   = Rz(q5)*Rx(pi/2)*Txyz(0,h45X,-h45Y);
-    A56   = Rz(q6)*Txyz(H,0,0);
-    A67   = Rz(q7)*Rx(-pi/2)*Txyz(0,-h45Y,-h45X);
-    A78   = Rz(q8)*Ry(-pi/2)*Txyz(h34,0,0);
-    A89   = Rz(q9)*Txyz(0,-Lu,0);
-    A910  = Rz(q10)*Txyz(saX,-Ll,0);
-    A1011 = Rz(q11)*Ry(pi/2)*Txyz(0,0,-saX);
+    A01   = Rz( q1)*Ry(-pi/2);
+    A12   = Rz( q2)*Txyz(a2k(1),a2k(2),a2k(3));
+    A23   = Rz( q3)*Txyz(k2h(1),k2h(2),k2h(3));
+    A34   = Rz( q4)*Ry(pi/2)*Txyz(0,0,h2w(1));
+    A45   = Rz( q5)*Rx(pi/2)*Txyz(0,h2w(2),h2w(3));
+    A56   = Rz( q6)*Txyz(H,0,0);
+    A67   = Rz( q7)*Rx(-pi/2)*Txyz(0,h2w(3),-h2w(2));
+    A78   = Rz( q8)*Ry(-pi/2)*Txyz(-h2w(1),0,0);
+    A89   = Rz( q9)*Txyz(-k2h(1),-k2h(2),-k2h(3));
+    A910  = Rz(q10)*Txyz(-a2k(1),-a2k(2),-a2k(3));
+    A1011 = Rz(q11)*Ry(pi/2);
     A1112 = Rz(q12);
     % INVERTIBLE !!!
-    T12B  = Ry(-pi/2)*Txyz(saX,-saY,0);
+    T12B  = Ry(-pi/2)*Txyz(0,-h2a,0);
 
     %% EXPORT
-%     HTs.ABEL = ABEL;
-%     HTs.ALB0 = HTs.ABEL*TB0;
-%     HTs.A01  = HTs.ALB0*A01;
-%     HTs.A02  = HTs.A01 *A12;
-%     HTs.A03  = HTs.A02 *A23;
-%     HTs.A04  = HTs.A03 *A34;
-%     HTs.A05  = HTs.A04 *A45;
-%     HTs.A06  = HTs.A05 *A56;
+    HTs.ABEL = ABEL;
+    HTs.ALB0 = HTs.ABEL*TB0;
+    HTs.A01  = HTs.ALB0*A01;
+    HTs.A02  = HTs.A01 *A12;
+    HTs.A03  = HTs.A02 *A23;
+    HTs.A04  = HTs.A03 *A34;
+    HTs.A05  = HTs.A04 *A45;
+    HTs.A06  = HTs.A05 *A56;
 %      
-%     HTs.A07  = HTs.A06 *A67;
-%     HTs.A08  = HTs.A07 *A78;
-%     HTs.A09  = HTs.A08 *A89;
-%     HTs.A010 = HTs.A09 *A910;
-%     HTs.A011 = HTs.A010*A1011;
-%     HTs.ARB0 = HTs.A011*A1112;
-%     HTs.ABER = HTs.ARB0*T12B;
+    HTs.A07  = HTs.A06 *A67;
+    HTs.A08  = HTs.A07 *A78;
+    HTs.A09  = HTs.A08 *A89;
+    HTs.A010 = HTs.A09 *A910;
+    HTs.A011 = HTs.A010*A1011;
+    HTs.ARB0 = HTs.A011*A1112;
+    HTs.ABER = HTs.ARB0*T12B;
 
-    HTs.ABER = ABER;
-    HTs.ARB0 = HTs.ABER * inv(T12B);
-    HTs.A011 = HTs.ARB0 * inv(A1112);
-    HTs.A010 = HTs.A011 * inv(A1011);
-    HTs.A09  = HTs.A010 * inv(A910);
-    HTs.A08  = HTs.A09  * inv(A89);
-    HTs.A07  = HTs.A08  * inv(A78);
+%     HTs.ABER = ABER;
+%     HTs.ARB0 = HTs.ABER * inv(T12B);
+%     HTs.A011 = HTs.ARB0 * inv(A1112);
+%     HTs.A010 = HTs.A011 * inv(A1011);
+%     HTs.A09  = HTs.A010 * inv(A910);
+%     HTs.A08  = HTs.A09  * inv(A89);
+%     HTs.A07  = HTs.A08  * inv(A78);
 
-    HTs.A06  = HTs.A07  * inv(A67);
-    HTs.A05  = HTs.A06  * inv(A56);
-    HTs.A04  = HTs.A05  * inv(A45);
-    HTs.A03  = HTs.A04  * inv(A34);
-    HTs.A02  = HTs.A03  * inv(A23);
-    HTs.A01  = HTs.A02  * inv(A12);
-    HTs.ALB0 = HTs.A01  * inv(A01);
-    HTs.ABEL = HTs.ALB0 * inv(TB0);
+%     HTs.A06  = HTs.A07  * inv(A67);
+%     HTs.A05  = HTs.A06  * inv(A56);
+%     HTs.A04  = HTs.A05  * inv(A45);
+%     HTs.A03  = HTs.A04  * inv(A34);
+%     HTs.A02  = HTs.A03  * inv(A23);
+%     HTs.A01  = HTs.A02  * inv(A12);
+%     HTs.ALB0 = HTs.A01  * inv(A01);
+%     HTs.ABEL = HTs.ALB0 * inv(TB0);
 end
