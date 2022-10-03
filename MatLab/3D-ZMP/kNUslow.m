@@ -27,6 +27,11 @@ function [HTs] = kNUslow(q, index, model, params)
                       sin(psi),  cos(psi),         0, 0;
                              0,         0,         1, 0;
                              0,         0,         0, 1];
+
+    RyNP2 = [0  0 -1 0;  0  1  0 0; 1  0  0 0; 0,0,0,1];
+    RyP2  = [0  0  1 0;  0  1  0 0;-1  0  0 0; 0,0,0,1];
+    RxP2  = [1  0  0 0;  0  0 -1 0; 0  1  0 0; 0,0,0,1];
+    RxNP2 = [1  0  0 0;  0  0  1 0; 0 -1  0 0; 0,0,0,1];
     
     %% LINK VARIABLES
     H    = params.HipWidth;
@@ -64,22 +69,22 @@ function [HTs] = kNUslow(q, index, model, params)
     %% HOMOGENOUS TRANSFORM
     % TB_0 * [ A⁰₁(q₁)⋅A¹₂(q₂) ... Aᴶ⁻¹ⱼ  ] * T12_B
 
-    TB0   = Ry(pi/2)*Txyz(0,h2a,0);
+    TB0   = RyP2*Txyz(0,h2a,0);
     % INVERTIBLE !!!
-    A01   = Rz( q1)*Ry(-pi/2);
+    A01   = Rz( q1)*RyNP2;
     A12   = Rz( q2)*Txyz(a2k(1),a2k(2),a2k(3));
     A23   = Rz( q3)*Txyz(k2h(1),k2h(2),k2h(3));
-    A34   = Rz( q4)*Ry(pi/2)*Txyz(0,0,h2w(1));
-    A45   = Rz( q5)*Rx(pi/2)*Txyz(0,h2w(2),h2w(3));
+    A34   = Rz( q4)*RyP2*Txyz(0,0,h2w(1));
+    A45   = Rz( q5)*RxP2*Txyz(0,h2w(2),h2w(3));
     A56   = Rz( q6)*Txyz(H,0,0);
-    A67   = Rz( q7)*Rx(-pi/2)*Txyz(0,h2w(3),-h2w(2));
-    A78   = Rz( q8)*Ry(-pi/2)*Txyz(-h2w(1),0,0);
+    A67   = Rz( q7)*RxNP2*Txyz(0,h2w(3),-h2w(2));
+    A78   = Rz( q8)*RyNP2*Txyz(-h2w(1),0,0);
     A89   = Rz( q9)*Txyz(-k2h(1),-k2h(2),-k2h(3));
     A910  = Rz(q10)*Txyz(-a2k(1),-a2k(2),-a2k(3));
-    A1011 = Rz(q11)*Ry(pi/2);
+    A1011 = Rz(q11)*RyP2;
     A1112 = Rz(q12);
     % INVERTIBLE !!!
-    T12B  = Ry(-pi/2)*Txyz(0,-h2a,0);
+    T12B  = RyNP2*Txyz(0,-h2a,0);
 
     %% EXPORT
     HTs.ABEL = ABEL;

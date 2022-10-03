@@ -82,7 +82,7 @@ clc
     model.r.q(:,1) = model.r.q0;
    [model.r.xe(:,1),   model.r.r0Lg(:,1), ...% F
     model.r.r0Rg(:,1), model.r.r0Hg(:,1)] ...% K
-        = k(model.r.q0, 1, model, params);   % M
+        = kNU(model.r.q0, 1, model, params);   % M
 
     model.r.r0CoMg(:,1) = rCoM(model.r.q0,1,model,params);
     model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
@@ -138,7 +138,7 @@ clc
             model.r.q(:,j)    = k_Inv(model.r.q(:,jn), model.r.xe(:,j), j, model, params);
            [model.r.xe(:,j),   model.r.r0Lg(:,j),  ...  % F
             model.r.r0Rg(:,j), model.r.r0Hg(:,j)]  ...  % K 
-                = k(model.r.q(:,j), jn, model, params); % M
+                = kNU(model.r.q(:,j), jn, model, params); % M
         end
         t_p = t_n - 1;
         toc
@@ -156,11 +156,12 @@ clc
     zlabel('{\bfY} (metres)');
     view(-165,50);
     [~] = plotRobot(i,model,params);
-    
+
+    a = 0.5;
     for i=1:length(model.tspan)-19
         cla(ROBOT_FRAME)
         CM = model.r.r0CoMg([1 3],i);
-        axis([ CM(2)-1, CM(2)+1, CM(1)-1, CM(1)+1, 0.0, 1.0]);
+        axis([ CM(2)-a, CM(2)+a, CM(1)-a, CM(1)+a, 0.0, 1.0]);
         [~] = plotRobot(i,model,params);
         [~] = plotSteps(model);
         [~] = plotPend(i,model,params);
