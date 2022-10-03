@@ -1,7 +1,7 @@
-%% HAND DRAWN 2D MODEL
+%% HAND DRAWN 3D MODEL
 \begin{figure}[h!]
     \begin{center}
-        \includegraphics[width=.7\linewidth]{_figures/3D_1.png}
+        \includegraphics[width=.7\linewidth]{_content/20_modelling/3D_LM.png}
         \caption{
             Sketch defining coordinate system \textbf{0}, \\ 
             and coordinate systems $\mathbf{E_{L}}$ through to $\mathbf{E_{R}}$.
