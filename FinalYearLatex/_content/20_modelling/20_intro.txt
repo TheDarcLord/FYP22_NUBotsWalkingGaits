@@ -1,5 +1,5 @@
-Each model is a simplistic representation of a bipedal robot. 
-As the focus is simulating different walking strategies, each model is comprised of the
-lower half of a humanoid, that being the feet, legs and waist. Both models were 
-constructed via a series of homogenous transforms that describe the postions of each ankle in
-global coordinates.
+This section outlines the development of a simplified 2D model, which was used to gain experience in
+implementing locomotion strategies, and a simplified 3D model. As the focus was simulating different 
+walking strategies, each model is comprised of the lower half of a humanoid, that being the feet, legs and 
+waist. Both models were constructed with a series of homogenous transforms that described the position 
+of a free foot, the end effector, with respect to a fixed foot, the base.
