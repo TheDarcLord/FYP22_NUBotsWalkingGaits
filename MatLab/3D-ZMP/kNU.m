@@ -21,9 +21,6 @@ function [xe, r0EL, r0ER, r0H] = kNU(q, index, model, params)
     a2k  = params.ankle2knee;
     k2h  = params.knee2hip;
     h2w  = params.hip2waist;
-    Ll   = params.fibula;     % Lower Leg
-    Lu   = params.femur;      % Upper Leg
-    S    = params.ServoSize;  % SERVO DIST
 
     T12B  = [0,0,-1,0; 0,1,0,-h2a;
              1,0, 0,0; 0,0,0,  1];
