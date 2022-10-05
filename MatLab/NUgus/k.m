@@ -1,4 +1,4 @@
-function [xe, r0EL, r0ER, r0H] = kNU(q, index, model, params)
+function [xe, r0EL, r0ER, r0H] = k(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'

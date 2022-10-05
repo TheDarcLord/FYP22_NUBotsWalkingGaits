@@ -1,4 +1,4 @@
-function [v6B] = rNUwaist(q, index, model, params)
+function [v6B] = rWaist(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'

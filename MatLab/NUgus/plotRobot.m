@@ -5,9 +5,12 @@ function pass = plotRobot(index,model,params)
     quiver3(0,0,0,0,a,0,"LineWidth",1,'Color','#379203');   % X Vector
     quiver3(0,0,0,0,0,a,"LineWidth",1,'Color','b');         % Y Vector
 
-    TOE  = [eye(3), [ 0.05; 0; 0];[0,0,0,1]];
+    TOE  = [eye(3), [ 0.12915; 0; 0];[0,0,0,1]];
+    HEEL = [eye(3), [-0.08385; 0; 0];[0,0,0,1]];
+    INSIDEL = [eye(3), [0; 0; -0.054];[0,0,0,1]];
+    INSIDER = [eye(3), [0; 0;  0.054];[0,0,0,1]];
 
-    HTs   = kSLOW( model.r.q(:,index),index,model,params);
+    HTs   = kSlow( model.r.q(:,index),index,model,params);
     
     rBER = HTs.ABER(1:3,4);                     % END EFFECTOR
     plot3(rBER(3),rBER(1),rBER(2), ...          %   RIGHT!
@@ -16,6 +19,15 @@ function pass = plotRobot(index,model,params)
     rTFR = ATFR(1:3,4);                         % + TOE
     plot3([rBER(3),rTFR(3)],[rBER(1),rTFR(1)],[rBER(2),rTFR(2)],...
           'k','LineWidth',2);
+    AHFR = HTs.ABER*HEEL;                       %
+    rHFR = AHFR(1:3,4);                         % + HEEL
+    plot3([rBER(3),rHFR(3)],[rBER(1),rHFR(1)],[rBER(2),rHFR(2)],...
+          'k','LineWidth',2);
+    AIFR = HTs.ABER*INSIDER;                    %
+    rIFR = AIFR(1:3,4);                         % + INSIDE 
+    plot3([rBER(3),rIFR(3)],[rBER(1),rIFR(1)],[rBER(2),rIFR(2)],...
+          'k','LineWidth',2);
+
 
     rBEL = HTs.ABEL(1:3,4);                     % END EFFECTOR
     plot3(rBEL(3),rBEL(1),rBEL(2), ...          %   LEFT!
@@ -24,6 +36,15 @@ function pass = plotRobot(index,model,params)
     rTFL = ATFL(1:3,4);                         % + TOE
     plot3([rBEL(3),rTFL(3)],[rBEL(1),rTFL(1)],[rBEL(2),rTFL(2)],...
           'k','LineWidth',2);
+    AHFL = HTs.ABEL*HEEL;                       %
+    rHFL = AHFL(1:3,4);                         % + HEEL
+    plot3([rBEL(3),rHFL(3)],[rBEL(1),rHFL(1)],[rBEL(2),rHFL(2)],...
+          'k','LineWidth',2);
+    AIFL = HTs.ABEL*INSIDEL;                    %
+    rIFL = AIFL(1:3,4);                         % + INSIDE 
+    plot3([rBEL(3),rIFL(3)],[rBEL(1),rIFL(1)],[rBEL(2),rIFL(2)],...
+          'k','LineWidth',2);
+
 
 %% OTHER JOINTS & LINKS
     rLB0 = HTs.ALB0(1:3,4);                     % BASE LEFT

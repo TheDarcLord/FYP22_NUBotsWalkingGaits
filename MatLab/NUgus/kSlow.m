@@ -1,4 +1,4 @@
-function [HTs] = kNUslow(q, index, model, params)
+function [HTs] = kSlow(q, index, model, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
