@@ -25,7 +25,7 @@ clc
  % Physical Parameters - Affect CoM or FKM
     params.kx           = 0;        % These affect the plane to which    |
     params.ky           = 0;        % ... the CoM is constrained         |
-    params.zc           = 0.25;     % m    - Height of the CoM ^         |
+    params.zc           = 0.28;     % m    - Height of the CoM ^         |
     params.g            = 9.81;     % ms⁻² - Acceleration due to Gravity |
     params.m            = 7.4248;   % kg   - Total Mass of a NuGus       |
     params.StepLength   = 0.15;     % m    - 15 cm Step Forward          |
@@ -70,16 +70,16 @@ clc
     model.r.r0Lg(:,1) = [0; 0;  params.HipWidth/2;0;0;0];
     model.r.r0Rg(:,1) = [0; 0; -params.HipWidth/2;0;0;0];
     model.r.q0        = [0;    % θ₁    
-                    -pi/6;    % θ₂    ->  2D θ₁ Ankle
-                   2*pi/6;    % θ₃    ->  2D θ₂ Knee
-                    -pi/6;    % θ₄    ->  2D θ₃ Hip
+                    -pi/12;    % θ₂    ->  2D θ₁ Ankle
+                   2*pi/12;    % θ₃    ->  2D θ₂ Knee
+                    -pi/12;    % θ₄    ->  2D θ₃ Hip
                          0;    % θ₅
                          0;    % θ₆
                          0;    % θ₇
                          0;    % θ₈
-                     pi/6;    % θ₉    ->  2D θ₄ Hip
-                  -2*pi/6;    % θ₁₀   ->  2D θ₅ Knee
-                     pi/6;    % θ₁₁   ->  2D θ₆ Ankle
+                     pi/12;    % θ₉    ->  2D θ₄ Hip
+                  -2*pi/12;    % θ₁₀   ->  2D θ₅ Knee
+                     pi/12;    % θ₁₁   ->  2D θ₆ Ankle
                          0];   % θ₁₂
     model.r.q(:,1) = model.r.q0;
    [model.r.xe(:,1),   model.r.r0Lg(:,1), ...% F
