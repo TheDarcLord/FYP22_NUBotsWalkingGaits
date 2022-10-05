@@ -2,7 +2,7 @@ function [pREF, sTM] = pREF(model, params)
 %   pREF(t)   X
 %             Next Increment ...
     Nl       = model.Nl;                % N# Future Indexes
-    stepSize = params.StepSize;         % Step Size:    m
+    stepSize = params.StepLength;       % Step Size:    m
     Q        = model.glbTrj;            % Q:            (x,y,z)
     pREF     = zeros(2,length(Q)+Nl);   % [x z]ᵀ
     r        = params.HipWidth/2;       % Radius of Circle 

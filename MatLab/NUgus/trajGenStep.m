@@ -56,9 +56,9 @@ function [Q] = trajGenStep(ZMP,indexspan,index,model,params)
         end
         
         qf  = [ZMP(1); 0; ZMP(2)];
-        stepHeight = 0.1;
+        stpHght = params.StepHeight;
         
-        Ay  = 2*stepHeight / (td/2)^2;
+        Ay  = 2*stpHght / (td/2)^2;
         Vy  = Ay*(td/2);
     
         qXYZ = @(t)  [qi(1) + ((qf(1)-qi(1)) / td).*t;
