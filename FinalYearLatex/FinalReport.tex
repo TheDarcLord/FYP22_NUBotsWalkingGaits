@@ -7,6 +7,8 @@
 \usepackage{listings}
 \usepackage{subfig}
 \usepackage{hyperref}
+\usepackage{algorithm}			% >
+\usepackage{algpseudocode}		% <
 \usepackage[parfill]{parskip}   % For replacing paragraph indenting with a newline instead
 \DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf} % Fixes \bf isssues
 
@@ -28,7 +30,7 @@
 
 	\newpage\tableofcontents
 	
-	\newpage\listoffigures\listoftables
+	\newpage\listoffigures\listoftables\listofalgorithms
 	
 	
 	\newpage\section{Introduction}
@@ -60,7 +62,8 @@
 			\input{_content/30_quasiStatic/31_2D.txt}
 		\subsection{3D model implementation}
 			\input{_content/30_quasiStatic/32_3D.txt}
-	
+			
+	\clearpage
 	\newpage\section{Zero Moment Point Locomotion}\label{sec:Zero Moment Point Locomotion}
 		\subsection{Zero Moment Point concept}
 			\input{_content/40_zmp/40_concept.txt}
@@ -73,8 +76,12 @@
 					
 	\clearpage	
 	\newpage\section{Novel Method for Trajectory Tracking}\label{sec:Novel Method for Trajectory Tracking}
+		\input{_content/X0_traj/X0_background.txt}
 		\subsection{Concept}
 			\input{_content/X0_traj/X0_concept.txt}
+		\clearpage\subsection{Extension to ZMP Reference}
+			\input{_content/X0_traj/X0_extension.txt}
+			
 			
 	\newpage\section{Results}\label{sec:Results}
 		\subsection{2D Model}

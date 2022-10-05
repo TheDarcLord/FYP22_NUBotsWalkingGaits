@@ -1,0 +1,17 @@
+The method described above may seem superfluous, where it not for the fact $\mathbf{REF}$, 
+mentioned in both algorithm \ref{alg:Glb2Fts} and \ref{alg:Loc2Fts}, stores a discrete 
+time ZMP Reference which drives Kajita's proposed ZMP pattern generator, as seen in 
+figure \ref{fig:TRJ_ZMP}.
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.5\linewidth]{_content/X0_traj/X0_fig_pref.png}
+        \caption{Kajita's ZMP pattern generator, circa 2003}
+        \label{fig:TRJ_ZMP}
+    \end{center}
+\end{figure}
+
+With this in mind both algorithms were updated to extend $\mathbf{REF}$ by the number 
+of timesteps the preview controller was operating on ahead of the current timestep.
+
+moar algo !

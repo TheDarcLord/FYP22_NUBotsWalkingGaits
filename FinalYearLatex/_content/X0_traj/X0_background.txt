@@ -1,0 +1,8 @@
+Given the context of RoboCup, it was assumed that the robot will always be walking on a planar surface. 
+As such, it would be useful to have a method for guiding the robot from its current position 
+to another in cartesian space. For most mobile robots the easiest method is the use of trajectory
+planning, as prescribed in \emph{Robotics}\citep{grimble_2009_robotics}. However, simple trajectory planning 
+is not a convenient method for guiding a bipedal robot. Here, Kajita\citep{kajita_2002_a} initially 
+turned to pattern generation using the period of an inverted pendulum to define the proceeding step. 
+Later he turned to Preview Control of the ZMP\citep{kajita_2003_biped} to generate 
+subsequent steps. However, neither method adequately caters for trajectory tracking.

@@ -1,0 +1,83 @@
+Consider an arbitrary planar trajectory, $\mathbf{Q}_{2 \times N}$, through a series of waypoints, seen in red in figure 
+\ref{fig:TRJ_TrajGen}. Starting from point $A$, displacements between elements were summed along 
+the path until the desired footstep magnitude was reached at point $B$.
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.5\linewidth]{_content/X0_traj/X0_fig_geo.png}
+        \caption{Geometric}
+        \label{fig:TRJ_TrajGen}
+    \end{center}
+\end{figure}
+
+At $B$ a circle, $C$, with a diameter equal to the hip width of the robot was constructed. The circle
+was then bisected by a line normal to $AB$; $DE$.
+
+\begin{align}
+    y = (\nabla_{AB})^{-1} \cdot (x - x_{B}) + y_{B}    \label{eq:TRJ_Line}   \\
+    r^{2} = (x - x_{B})^{2} + (y - y_{B})^{2}           \label{eq:TRJ_Circ}
+\end{align}
+The equations for line $DE$ and circle $C$, \ref{eq:TRJ_Line} and \ref{eq:TRJ_Circ} respectively, 
+were solved for $Y$ and equated to form the quadratic equation:
+
+\begin{align}
+    \alpha x^{2} - 2x \cdot x_{B} \alpha + \alpha x^{2}_{B} - r^{2} \label{eq:TRJ_Quad} \\
+    \alpha = 1 + (\nabla_{AB})^{-2}
+\end{align}
+
+The quadratic formula was then used to find the roots of equation \ref{eq:TRJ_Quad}, which
+are the $X$ components of the intersections between $DE$ and $C$. At this point, $\alpha$ was 
+substituted back into the equation to yield:
+
+\begin{align}
+    X_{DE \cap C} = x_{B} \pm r \cdot (\nabla_{AB}) \sqrt{(\nabla^{2}_{AB} + 1)^{-1}}    \label{eq:TRJ_X} \\
+    Y_{DE \cap C} = y_{B} \mp r \cdot \sqrt{(\nabla^{2}_{AB} + 1)^{-1}}                  \label{eq:TRJ_Y}
+\end{align}
+
+The coordinates $(X_{DE \cap C},Y_{DE \cap C})$ form two possible footstep positions differing only 
+in the sign of the component added to $B_{(x,y)}$. 
+\newline
+Accumulated distance was then reset, $A$ was set to $B$, before then returning to iterating along the 
+trajectory until, again, the magnitude of footstep was reached. Equations \ref{eq:TRJ_X} and \ref{eq:TRJ_Y} were
+then applied to a new value of $B_{(x,y)}$ to yield a second pair of footstep positions. This process of 
+iterating along the trajectory, and generating footsteps, continued until the trajectory's end, where 
+the process was repeated once more with $B_{(x,y)} = \mathbf{Q}_{(:,n)}$. This procedure is described below in
+algorithm \ref{alg:Glb2Fts}.
+
+\input{_content/X0_traj/X0_AlgA.txt}
+
+Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory and following
+algorithm \ref{alg:Glb2Fts} produces the series of footsteps seen in figure \ref{fig:TRJ_Sign}. Notice 
+the impact of the $STEP$ variable. On the left $STEP$ was initialised with $1$, while on the right $STEP$ was
+initialised with $-1$. Thus, on the left, the first step the robot took was be with the left foot, while on the 
+right the opposite was true. Additionally each subsequent step, on either side, is with the formerly planted foot.
+As such, both the FKM and the decision as to which foot is in motion are driven by the sign of a single variable.
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.96\linewidth]{_content/X0_traj/X0_fig_sign.png}
+        \caption{Impact of the $STEP$ variable on resulting footsteps}
+        \label{fig:TRJ_Sign}
+    \end{center}
+\end{figure}
+
+However, this method breaks down if the trajectory rotates more than $\pm \frac{\pi}{2}$ about the global 
+$Z$ axis. Figure \ref{fig:TRJ_Fail} demonstrates breakdown which culminated in a double step on a 
+particular side, depending on the inital value of $STEP$. This was caused by the change 
+in sign of the roots of equation \ref{eq:TRJ_Quad}.
+\newline
+To resolve this, rather than tracking and updating the location of the base of the FKM with a global variable,
+it is assumed that the base of fixed foot is the origin of coordinate system. As such, the robot is now defined
+in some form of local coordinates. Additionally, algorithm \ref{alg:Glb2Fts} was modified to apply the 
+homogeneous transform, that describes the location of the end effector with respect to the origin, to the 
+entire trajectory. This idea is borrowed directly from Kajita \citep{kajita_2003_biped}. 
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.96\linewidth]{_content/X0_traj/X0_fig_fail.png}
+        \caption{Trajectory Decomposition breakdown}
+        \label{fig:TRJ_Fail}
+    \end{center}
+\end{figure}
+
+\input{_content/X0_traj/X0_AlgB.txt}

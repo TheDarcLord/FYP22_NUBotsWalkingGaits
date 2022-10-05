@@ -1,3 +1,29 @@
+In the western world the pursuit of creating autonomous humanoids began with the Greeks.
+\citep{truitt_2015_medieval}
+
+Social Robotics ? 
+\citep{devlin_2018_turned}
+
+Studying humanoids
+\citep{raibert_1986_legged}
+
+Robo Cup
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 %%Position:
 NuBots require more Mechatronics Students for the long march to a team of functioning robots. NuBots
 have not excelled internationally for many years, and continue to struggle with the locomotion problem.
