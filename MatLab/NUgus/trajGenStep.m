@@ -1,10 +1,10 @@
 function [Q] = trajGenStep(ZMP,indexspan,index,model,params)
-%   [3D Model] Step Trajectory Generation
-%       
-%       Returns:    [Q, V, A]
-%       Q:  End Effector Position     as a function of Time [X  Y  Z ](t) 
-%       V:  End Effector Velocity     as a function of Time [X' Y' Z'](t) 
-%       A:  End Effector Acceleration as a function of Time [X" Y" Z"](t)
+%   [3D] Step Trajectory Generation
+%       Using:
+%           Cubic Spline for "End Effector" Orientation
+%           Inital Value Problem for "End Effector" Position
+
+    
     RRY = model.r.r0Rg(5,index);
     RLY = model.r.r0Lg(5,index);
 
