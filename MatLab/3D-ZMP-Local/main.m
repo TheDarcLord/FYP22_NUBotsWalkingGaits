@@ -112,7 +112,8 @@ clc
     A        = model.glbTrj(:,1);     % A = [x₁ y₁ z₁]ᵀ
     t_begin  = 1;                     % Index of Step Beginning
     model.TBE = eye(4);         % A_Base -> End Effector
-    for i=2:length(model.glbTrj)
+    for i=2:length(model.tspan)
+        tic
         accuDist = accuDist + norm(Q(:,i-1) - Q(:,i));
         if accuDist > stepSize
             % TAKING STEP
