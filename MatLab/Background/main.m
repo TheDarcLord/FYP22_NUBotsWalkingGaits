@@ -132,16 +132,19 @@ clc
         for i=1:length(TIME_FINAL)
             ti  = 0;
             tf  = TIME_FINAL(i);
-            qi  = [  0;   0;   0];
-            qf  = [0.2; 0.2; 0.2];
+            td  = tf - ti;
+            qi  = [0.0; 0.0;   0];
+            qf  = [0.2; 0.2;   0];
             qm  = [(qi(1) + qf(1))/2;
                    (qi(2) + qf(1))/2;
                                  0.1];
-            a   = 8*qm(3) / (tf^2);
+            
+            Ay  = 2*qm(3) / (ti + (td/2))^2;
+            Vy  = Ay*(ti + (td/2));
         
-            Q = @(t)  [(0.2 / tf).*t;
-                       (0.2 / tf).*t;
-                       a*(tf/2)*t - a.*(t.^2)./2];
+            Q = @(t)  [qi(1) + ((qf(1)-qi(1)) / td).*t;
+                       qi(2) + ((qf(2)-qi(2)) / td).*t;
+                       Vy*t - Ay.*(t.^2)./2];
         
             tspan = ti:TIME_STEP:tf;
             P = Q(tspan);
