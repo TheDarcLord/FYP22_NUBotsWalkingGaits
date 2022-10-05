@@ -1,26 +1,10 @@
-function [HTs] = kSLOW(q, index, model, params)
-% k(q)  [2D Model] Forward Kinematic Model - FKM
-%       
-%       Returns:    [xe, TAA, Transforms] for an array of 'q'
-%       xe:         End Effector Pose [X Y Z ϕ θ Ψ]'
-%       TAA:        Transform from ANKLE to END EFFECTOR
-%       Transforms: All other Homogenous Transforms
-    
-    %% HELPER FUNCTIONS
-    Rzyx   = @(Rz,Ry,Rx) ...
-        [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
-                    sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
-          sin(Rz)*cos(Ry),  cos(Rz)*cos(Rx)+sin(Rz)*sin(Ry)*sin(Rx),...
-                   -cos(Rz)*sin(Rx)+sin(Rz)*sin(Ry)*cos(Rx);
-                 -sin(Ry),  cos(Ry)*sin(Rx)                        ,...
-                    cos(Ry)*cos(Rx)];
-    
-    %% LINK VARIABLES
-    Ll     = params.fibula;     % Lower Leg
-    Lu     = params.femur;      % Upper Leg
-    H      = params.HipWidth;
-    S      = params.ServoSize;  % SERVO DIST
-    
+function [r0CoM] = rCoM(q, params)
+% rCOM  [3D Model] Centre of Mass - CoM
+%       Relies on the FKM, k(q), to locate the masses
+%       r0CoM - Position[x,y,z] of CoM in ZERO/World Coordinates
+%       Equation:
+%           M = Σ mᵢ
+%           Ṟ = M⁻¹ Σ ṟᵢmᵢ
     %% JOINT VARIABLES
     q1  = q(1);     % θ₁
     q2  = q(2);     % θ₂
@@ -35,20 +19,18 @@ function [HTs] = kSLOW(q, index, model, params)
     q11 = q(11);    % θ₁₁
     q12 = q(12);    % θ₁₂
 
-    ABEL    = [Rzyx(model.r.r0Lg(6,index), ...
-                model.r.r0Lg(5,index), ...
-                model.r.r0Lg(4,index)),... 
-                model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
-                zeros(1,3),           1]; %           0rigin in Global
-
-    ABER    = [Rzyx(model.r.r0Rg(6,index), ...
-                    model.r.r0Rg(5,index), ...
-                    model.r.r0Rg(4,index)),... 
-                    model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
-                zeros(1,3),           1]; %           0rigin in Global
-
-    %% HOMOGENOUS TRANSFORM
-    % TB_0 * [ A⁰₁(q₁)⋅A¹₂(q₂) ... Aᴶ⁻¹ⱼ  ] * T12_B
+    %% Lengths
+    Ll = params.fibula;     % Lower Leg
+    Lu = params.femur;      % Upper Leg
+    H  = params.HipWidth; 
+    S  = params.ServoSize;  % SERVO DIST
+   
+    %% Masses
+    mFo = params.mass.foot;     % Foot
+    mLl = params.mass.femur;    % Upper Leg
+    mLu = params.mass.fibula;   % Lower Leg
+    mJo = params.mass.joint;    % Joints
+    mPe = params.mass.pelvis;   % Waist Mass
 
     TB0   = [0,0,1,0; 0,1,0,0;
             -1,0,0,0; 0,0,0,1];
@@ -102,41 +84,62 @@ function [HTs] = kSLOW(q, index, model, params)
                     0,         0, 1, 0;
                     0,         0, 0, 1];
     % INVERTIBLE !!!
-    T12B  = [0,0,-1,0; 0,1,0,0;
+    T12E  = [0,0,-1,0; 0,1,0,0;
              1,0, 0,0; 0,0,0,1];
 
-    %% EXPORT
-%     HTs.ABEL = ABEL;
-%     HTs.ALB0 = HTs.ABEL*TB0;
-%     HTs.A01  = HTs.ALB0*A01;
-%     HTs.A02  = HTs.A01 *A12;
-%     HTs.A03  = HTs.A02 *A23;
-%     HTs.A04  = HTs.A03 *A34;
-%     HTs.A05  = HTs.A04 *A45;
-%     HTs.A06  = HTs.A05 *A56;
-     
-%     HTs.A07  = HTs.A06 *A67;
-%     HTs.A08  = HTs.A07 *A78;
-%     HTs.A09  = HTs.A08 *A89;
-%     HTs.A010 = HTs.A09 *A910;
-%     HTs.A011 = HTs.A010*A1011;
-%     HTs.ARB0 = HTs.A011*A1112;
-%     HTs.ABER = HTs.ARB0*T12B;
+    %% TRANSFORMS
+    if params.mode ==  1        % RIGHT FIXED
+        AB0 = TB0;
+        AB1  = AB0*A01;
+        AB2  = AB1 *A12;
+        AB3  = AB2 *A23;
+        AB4  = AB3 *A34;
+        AB5  = AB4 *A45;
+        AB6  = AB5 *A56;
+         
+        AB7  = AB6 *A67;
+        AB8  = AB7 *A78;
+        AB9  = AB8 *A89;
+        AB10 = AB9 *A910;
+        AB11 = AB10*A1011;
+        AB12 = AB11*A1112;
+        ABE  = AB12*T12E;
+    elseif params.mode == -1     % LEFT FIXED
+        AE12 = inv(T12E);
+        AB11 = AE12 * inv(A1112);
+        AB10 = AB11 * inv(A1011);
+        AB9  = AB10 * inv(A910);
+        AB8  = AB9  * inv(A89);
+        AB7  = AB8  * inv(A78);
+    
+        AB6  = AB7  * inv(A67);
+        AB5  = AB6  * inv(A56);
+        AB4  = AB5  * inv(A45);
+        AB3  = AB4  * inv(A34);
+        AB2  = AB3  * inv(A23);
+        AB1  = AB2  * inv(A12);
+        AB0  = AB1  * inv(A01);
+        ABE  = AB0  * inv(TB0);
+    end
 
-    HTs.ABER = ABER;
-    HTs.ARB0 = HTs.ABER * inv(T12B);
-    HTs.A011 = HTs.ARB0 * inv(A1112);
-    HTs.A010 = HTs.A011 * inv(A1011);
-    HTs.A09  = HTs.A010 * inv(A910);
-    HTs.A08  = HTs.A09  * inv(A89);
-    HTs.A07  = HTs.A08  * inv(A78);
-
-    HTs.A06  = HTs.A07  * inv(A67);
-    HTs.A05  = HTs.A06  * inv(A56);
-    HTs.A04  = HTs.A05  * inv(A45);
-    HTs.A03  = HTs.A04  * inv(A34);
-    HTs.A02  = HTs.A03  * inv(A23);
-    HTs.A01  = HTs.A02  * inv(A12);
-    HTs.ALB0 = HTs.A01  * inv(A01);
-    HTs.ABEL = HTs.ALB0 * inv(TB0);
+    %% Position of the CoM in Global Coordinates
+    sigmaMass = (mFo * 2)  + ... Foot
+                (mJo * 12) + ... Joints (Ankle, Knee, Hip, Servos)
+                (mLu * 2)  + ... Upper Leg
+                (mLl * 2)  + ... Lower Leg
+                 mPe;
+    r0CoM = (([0;0;0]   + ABE(1:3,4)) *mFo + ... FEET
+            (AB0(1:3,4) + AB11(1:3,4)) *mJo + ...
+            (AB1(1:3,4) + AB10(1:3,4)) *mJo + ...
+            (AB2(1:3,4) + AB9(1:3,4)) *mJo + ...
+            (AB3(1:3,4) + AB8(1:3,4)) *mJo + ...
+            (AB4(1:3,4) + AB7(1:3,4)) *mJo + ...
+            (AB5(1:3,4) + AB6(1:3,4)) *mJo + ...
+            (AB5(1:3,4) + AB6(1:3,4)) *(mPe/2) + ...
+            (AB1(1:3,4) + AB2(1:3,4)) *(mLl/2) + ...
+            (AB10(1:3,4) + AB9(1:3,4)) *(mLl/2) + ...
+            (AB2(1:3,4) + AB3(1:3,4)) *(mLu/2) + ...
+            (AB9(1:3,4) + AB8(1:3,4)) *(mLu/2) ...
+            )/sigmaMass;
 end
+
