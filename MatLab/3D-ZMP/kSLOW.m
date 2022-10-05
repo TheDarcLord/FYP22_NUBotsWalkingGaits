@@ -35,13 +35,13 @@ function [HTs] = kSLOW(q, index, model, params)
     q11 = q(11);    % θ₁₁
     q12 = q(12);    % θ₁₂
 
-    AGEL    = [Rzyx(model.r.r0Lg(6,index), ...
+    ABEL    = [Rzyx(model.r.r0Lg(6,index), ...
                 model.r.r0Lg(5,index), ...
                 model.r.r0Lg(4,index)),... 
                 model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
                 zeros(1,3),           1]; %           0rigin in Global
 
-    AGER    = [Rzyx(model.r.r0Rg(6,index), ...
+    ABER    = [Rzyx(model.r.r0Rg(6,index), ...
                     model.r.r0Rg(5,index), ...
                     model.r.r0Rg(4,index)),... 
                     model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
@@ -106,8 +106,8 @@ function [HTs] = kSLOW(q, index, model, params)
              1,0, 0,0; 0,0,0,1];
 
     %% EXPORT
-%     HTs.AGEL = AGEL;
-%     HTs.ALB0 = HTs.AGEL*TB0;
+%     HTs.ABEL = ABEL;
+%     HTs.ALB0 = HTs.ABEL*TB0;
 %     HTs.A01  = HTs.ALB0*A01;
 %     HTs.A02  = HTs.A01 *A12;
 %     HTs.A03  = HTs.A02 *A23;
@@ -121,10 +121,10 @@ function [HTs] = kSLOW(q, index, model, params)
 %     HTs.A010 = HTs.A09 *A910;
 %     HTs.A011 = HTs.A010*A1011;
 %     HTs.ARB0 = HTs.A011*A1112;
-%     HTs.AGER = HTs.ARB0*T12B;
+%     HTs.ABER = HTs.ARB0*T12B;
 
-    HTs.AGER = AGER;
-    HTs.ARB0 = HTs.AGER * inv(T12B);
+    HTs.ABER = ABER;
+    HTs.ARB0 = HTs.ABER * inv(T12B);
     HTs.A011 = HTs.ARB0 * inv(A1112);
     HTs.A010 = HTs.A011 * inv(A1011);
     HTs.A09  = HTs.A010 * inv(A910);
@@ -138,5 +138,5 @@ function [HTs] = kSLOW(q, index, model, params)
     HTs.A02  = HTs.A03  * inv(A23);
     HTs.A01  = HTs.A02  * inv(A12);
     HTs.ALB0 = HTs.A01  * inv(A01);
-    HTs.AGEL = HTs.ALB0 * inv(TB0);
+    HTs.ABEL = HTs.ALB0 * inv(TB0);
 end
