@@ -66,11 +66,11 @@ function [Q] = trajGenStep(ZMP,indexspan,index,model,params)
         qf  = [ZMP(1); 0; ZMP(2)];
         stepHeight = 0.1;
         
-        Ay  = 2*stepHeight / (ti + (td/2))^2;
-        Vy  = Ay*(ti + (td/2));
+        Ay  = 2*stepHeight / (td/2)^2;
+        Vy  = Ay*(td/2);
     
         qXYZ = @(t)  [qi(1) + ((qf(1)-qi(1)) / td).*t;
-                      Vy*t - Ay.*(t.^2)./2
+                      Vy*t - Ay.*(t.^2)./2           ;
                       qi(3) + ((qf(3)-qi(3)) / td).*t];
         tspan = 0:model.timestp:td;
         
