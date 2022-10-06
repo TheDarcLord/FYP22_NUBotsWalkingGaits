@@ -10,7 +10,7 @@ function pass = plotRobot(index,model,params)
     INSIDEL = [eye(3), [0; 0; -0.054];[0,0,0,1]];
     INSIDER = [eye(3), [0; 0;  0.054];[0,0,0,1]];
 
-    HTs   = kSlow( model.r.q(:,index), params);
+    HTs   = kSlow( model.q(:,index), params);
     
     rBER = HTs.ABER(1:3,4);                     % END EFFECTOR
     plot3(rBER(3),rBER(1),rBER(2), ...          %   RIGHT!
@@ -115,7 +115,7 @@ function pass = plotRobot(index,model,params)
           'k', 'LineWidth',2);
     
 
-    rCoM = model.r.r0CoMg(:,index);
+    rCoM = model.r0CoMg(:,index);
     plot3(rCoM(3),rCoM(1),rCoM(2),'mo','MarkerSize',10,'LineWidth',2);
     drawnow
     pass = 1;

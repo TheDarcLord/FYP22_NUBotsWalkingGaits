@@ -8,25 +8,8 @@ clc
     model.tspan       = 0 : model.timestp : 20;         % [ time ]
     model.timeHrzn    = 0;                            % Seconds
     model.Nl          = model.timeHrzn / model.timestp; % INTEGER
- % Weights for controller `Performance Index`
-    % Design of an optimal controller for a discrete-time system subject
-    % to previewable demand
-    %   1985 - KATAYAMA et al.
-    %      ∞     
-    % Jᵤ = Σ [ e(i)ᵀ⋅Qₑ⋅e(i) + Δx(i)ᵀ⋅Qₓ⋅Δx(i) + Δu(i)ᵀ⋅R⋅u(i) ]
-    %     i=k
-    % where:
-    %        e(i): ZMPₓ(i) - Yₓ     aka Tracking Error 
-    %       Δx(i): x(i) - x(i-1)    aka Incremental State Vector
-    %       Δu(i): u(i) - u(i-1)    aka Incremental Control Vector
-    params.weights.Qe   =        eye(2,2);     
-    params.weights.Qx   = 0    * eye(6,6);
-    params.weights.R    = 1e-3 * eye(2,2);
- % Physical Parameters - Affect CoM or FKM
-    params.kx           = 0;        % These affect the plane to which    |
-    params.ky           = 0;        % ... the CoM is constrained         |
+ % Physical Parameters - Affect CoM or FKM   |
     params.zc           = 0.35;     % m    - Height of the CoM ^         |
-    params.g            = 9.81;     % ms⁻² - Acceleration due to Gravity |
     params.m            = 7.4248;   % kg   - Total Mass of a NuGus       |
     params.StepLength   = 0.15;     % m    - 15 cm Step Forward          |
     params.StepHeight   = 0.05;     % m    - 10 cm Step Height           |
@@ -41,11 +24,11 @@ clc
     params.hip2waist  = [-0.06895; 0.04625; -0.0545];
     params.ServoSize  = 0.05;     % m    - Approximation/Spacing
  % Masses
-    params.mass.fibula = 0.1298;    % Paired with `tibia`
-    params.mass.femur  = 0.3423;    % Thigh Bone
-    params.mass.joint  = 0.2000;    % Knee Bone / Joints
+    params.mass.fibula = 0.1298;        % Paired with `tibia`
+    params.mass.femur  = 0.3423;        % Thigh Bone
+    params.mass.joint  = 0.2000;        % Knee Bone / Joints
     params.mass.pelvis = 2.9549 + 4;    % Waist
-    params.mass.foot   = 0.2023;    % Foot
+    params.mass.foot   = 0.2023;        % Foot
 
 %% Model setup
  % Steps
@@ -55,34 +38,28 @@ clc
     %                 0;       % BOTH  FIXED - FKM T1H T6H
     %                 1;       % RIGHT FIXED - FKM T61
  % Robot
-    model.r.q      = zeros(12,length(model.tspan)); % q   [θ₁θ₂θ₃ ...]ᵀ
-    model.r.xe     = zeros(6,length(model.tspan));  % xe      [XYZϕθΨ]ᵀ
-    model.r.r0CoMg = zeros(3,length(model.tspan));  % r0CoMg  [XYZ]ᵀ
- % Pendulum
-    model.p.x      = zeros(6,length(model.tspan));  % Xcom      [x x' x"]ᵀ
-    model.p.y      = zeros(2,length(model.tspan));  % pₓ₂     [ZMPx ZMPz]ᵀ
-    model.p.pREF   = model.p.y;                     % pₓ₂REF  [REFx REFz]ᵀ
-    model.p.u      = model.p.y;                     % Uₓ₂         [Ux Uz]        
+    model.q      = zeros(12,length(model.tspan)); % q        [θ₁θ₂θ₃ ...]ᵀ
+    model.xe     = zeros(6,length(model.tspan));  % xe           [XYZϕθΨ]ᵀ
+    model.r0CoMg = zeros(3,length(model.tspan));  % r0CoMg          [XYZ]ᵀ
+    model.pREF   = zeros(3,length(model.tspan));  % pREF [REFx REFy REFz]ᵀ      
 
 %% Initial Position & Orientation
-    model.r.q0        = [0;    % θ₁    
-                    -pi/10;    % θ₂    ->  2D θ₁ Ankle
-                   2*pi/10;    % θ₃    ->  2D θ₂ Knee
-                    -pi/10;    % θ₄    ->  2D θ₃ Hip
-                         0;    % θ₅
-                         0;    % θ₆
-                         0;    % θ₇
-                         0;    % θ₈
-                     pi/10;    % θ₉    ->  2D θ₄ Hip
-                  -2*pi/10;    % θ₁₀   ->  2D θ₅ Knee
-                     pi/10;    % θ₁₁   ->  2D θ₆ Ankle
-                         0];   % θ₁₂
+    model.q0      = [0;    % θ₁    
+                -pi/10;    % θ₂    ->  2D θ₁ Ankle
+               2*pi/10;    % θ₃    ->  2D θ₂ Knee
+                -pi/10;    % θ₄    ->  2D θ₃ Hip
+                     0;    % θ₅
+                     0;    % θ₆
+                     0;    % θ₇
+                     0;    % θ₈
+                 pi/10;    % θ₉    ->  2D θ₄ Hip
+              -2*pi/10;    % θ₁₀   ->  2D θ₅ Knee
+                 pi/10;    % θ₁₁   ->  2D θ₆ Ankle
+                     0];   % θ₁₂
 
-    model.r.q(:,1) = model.r.q0;
-    model.r.xe(:,1) = k(model.r.q0, params);
-    model.r.r0CoMg(:,1) = rCoM(model.r.q0,params);      % <- DUPLICATE
-    model.p.x(:,1) = [model.r.r0CoMg(1,1); 0; 0;  % Position X
-                      model.r.r0CoMg(3,1); 0; 0]; % Position Z
+    model.q(:,1)      = model.q0;
+    model.xe(:,1)     = k(model.q0, params);
+    model.r0CoMg(:,1) = rCoM(model.q0,params);
 
     % +-+-+-+-+-+-+-+-+-+-+-+
     ROBOT_FRAME = figure(1);
@@ -100,7 +77,7 @@ clc
 %% Generate Trajectory
    [model.glbTrj,~,~] = ...
        trajGenGlobal(model.tspan, ...       % Time Span
-                     model.r.xe(1:3,1)./2); % Init Position
+                     model.xe(1:3,1)./2); % Init Position
 
 %% STEPPING
     % Helper Functions
@@ -115,7 +92,7 @@ clc
     STEP     = params.mode;           % DEFINE MODE:  1 RIGHT Step 
                                       %              -1 LEFT  Step
     accuDist = 0;                     % Accumulated Distance
-    model.p.pREF(:,1) = Q([1 3],1);   % Last Foot Step -> Traj Start Point
+    model.pREF(:,1) = Q([1 3],1);   % Last Foot Step -> Traj Start Point
     A        = model.glbTrj(:,1);     % A = [x₁ y₁ z₁]ᵀ
     t_begin  = 1;                     % Index of Step Beginning
     model.TBE = eye(4);               % HomoTrans: Base -> End Effector
@@ -127,7 +104,7 @@ clc
             t_end           = i;       % Index of Step Ending
             params.mode     = STEP;    % Mode
             j               = t_begin; % `j` runs the step
-            model.r.xe(:,j) = k(model.r.q(:,j), params); % Update Xe
+            model.xe(:,j) = k(model.q(:,j), params); % Update Xe
             
             A = updateCoord(model.TBE, A);
 
@@ -135,46 +112,19 @@ clc
                 % UPDATE: Global Trajectory to End Effector Coords
                 model.glbTrj(:,u) = ...
                     updateCoord(model.TBE, model.glbTrj(:,u));
-                % UPDATE: Pendulum Model to End Effector Coords
-                tempOUT = ...
-                    updateCoord(model.TBE, [model.p.y(1,u); ...
-                                                         0; ...
-                                            model.p.y(2,u)]);
-                tempPOS = ...
-                    updateCoord(model.TBE, [model.p.x(1,u); ...
-                                                         0; ...
-                                           model.p.x(4,u)]);
-                tempVEL = ...
-                    model.TBE(1:3,1:3)' * [model.p.x(2,u);
-                                                        0; 
-                                           model.p.x(5,u)];
-                tempACC = ...
-                    model.TBE(1:3,1:3)' * [model.p.x(3,u); 
-                                                        0; 
-                                           model.p.x(6,u)];
-        
-                model.p.x(:,u) = [tempPOS(1); tempVEL(1); tempACC(1);
-                                  tempPOS(3); tempVEL(3); tempACC(3)];
-                model.p.y(:,u) = tempOUT([1 3]);
-            end
-
-            
-            for u=t_begin:length(model.p.pREF)
-                % UPDATE: Pendulum REF to End Effector Coords
-                tempREF = [model.p.pREF(1,u); 0; model.p.pREF(2,u)];
-                tempREF = updateCoord(model.TBE, tempREF);
-                model.p.pREF(:,u) = tempREF([1 3]);
+                model.pREF(:,u) = ...
+                    updateCoord(model.TBE, model.pREF(:,u));
             end
 
             B = model.glbTrj(:,i);
             M = gradFUNC(A([1 3]),B([1 3]));
             % Right (+) & Left (-)
-            model.p.pREF(:,i) = B([1 3]) + STEP*[M*r*sqrt(1/(1+M^2)); ...
+            model.pREF(:,i) = B([1 3]) + STEP*[M*r*sqrt(1/(1+M^2)); ...
                                                   -r*sqrt(1/(1+M^2))];
 
             % GENERATE STEP TRAJECTORY
-            Qstep(:,t_begin:t_end) = trajGenStep(model.r.xe(:,j), ...
-                                       model.p.pREF(:,t_end), ...
+            Qstep(:,t_begin:t_end) = trajGenStep(model.xe(:,j), ...
+                                       model.pREF(:,t_end), ...
                                        t_begin:t_end, ...
                                        model,params);
 
@@ -185,13 +135,12 @@ clc
                 end
     
                 model.mode(:,j)     = params.mode;
-                [ZMPk, CoMk, model] = LIPM3D(model,j,params);
-                model.r.r0CoMg(:,j) = [CoMk(1); params.zc; CoMk(2)];
+                model.r0CoMg(:,j) = [CoMk(1); params.zc; CoMk(2)];
                 
                 xeSTAR = Qstep(:,j);
-                model.r.q(:,j)  = k_Inv(model.r.q(:,jn), ...
+                model.q(:,j)  = k_Inv(model.q(:,jn), ...
                                         xeSTAR, j, model, params);
-                [model.r.xe(:,j), model.TBE] = k(model.r.q(:,j), params);
+                [model.xe(:,j), model.TBE] = k(model.q(:,j), params);
             end
 
             % CLEAN UP
@@ -201,7 +150,7 @@ clc
             t_begin   = t_end - 1;
             toc
         else
-            model.p.pREF(:,i) = model.p.pREF(:,i-1);
+            model.pREF(:,i) = model.pREF(:,i-1);
         end
     end
 
@@ -224,7 +173,7 @@ clc
     for i=1:length(model.tspan)
         cla(ROBOT_FRAME)
         params.mode = model.mode(i);
-        CM = model.r.r0CoMg([1 3],i);
+        CM = model.r0CoMg([1 3],i);
         
         axis([ CM(2)-a, CM(2)+a, CM(1)-a, CM(1)+a, 0.0, a]);
         [~] = plotRobot(i,model,params);
