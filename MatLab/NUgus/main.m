@@ -25,11 +25,11 @@ clc
  % Physical Parameters - Affect CoM or FKM
     params.kx           = 0;        % These affect the plane to which    |
     params.ky           = 0;        % ... the CoM is constrained         |
-    params.zc           = 0.26;     % m    - Height of the CoM ^         |
+    params.zc           = 0.35;     % m    - Height of the CoM ^         |
     params.g            = 9.81;     % ms⁻² - Acceleration due to Gravity |
     params.m            = 7.4248;   % kg   - Total Mass of a NuGus       |
     params.StepLength   = 0.15;     % m    - 15 cm Step Forward          |
-    params.StepHeight   = 0.10;     % m    - 10 cm Step Height           |
+    params.StepHeight   = 0.05;     % m    - 10 cm Step Height           |
  % ----------------------------------------------------------------------|
  % Displacements
     params.fibula     = 0.19942;  % m    - Lower leg NUgus
@@ -44,7 +44,7 @@ clc
     params.mass.fibula = 0.1298;    % Paired with `tibia`
     params.mass.femur  = 0.3423;    % Thigh Bone
     params.mass.joint  = 0.2000;    % Knee Bone / Joints
-    params.mass.pelvis = 2.9549;    % Waist
+    params.mass.pelvis = 2.9549 + 4;    % Waist
     params.mass.foot   = 0.2023;    % Foot
 
 %% Model setup
