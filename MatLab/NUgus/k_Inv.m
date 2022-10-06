@@ -6,18 +6,16 @@ function [qStar] = k_Inv(q0, xe, index, model, params)
 %
 % SOLUTION: qˣ = ARG MIN (q): qᵀ W q + (k(q) - xeˣ)ᵀ K (k(q) - xeˣ)
     Kxe = 1e9*eye(length(xe),length(xe));
-    Kq  = 1e3*eye(length(q0),length(q0));
+    Kq  = 1e6*eye(length(q0),length(q0));
     Km  = 1e9*eye(length(xe(1:3)),length(xe(1:3)));
     Kwh = 1e9;
-    vTGg = model.glbTrj(:,index+1)-model.glbTrj(:,index);
+    if index == length(model.tspan)
+        vTGg = model.glbTrj(:,index)-model.glbTrj(:,index-1);
+    else
+        vTGg = model.glbTrj(:,index+1)-model.glbTrj(:,index);
+    end
     vXGg = [1; 0; 0];
     vZGg = [0; 0; 1];
-
-    kN  = index - 1;
-    if kN < 1
-        kN = 1;
-    end
-    kP  = index;
     
     A       = [];
     b       = [];
@@ -30,18 +28,18 @@ function [qStar] = k_Inv(q0, xe, index, model, params)
         'Display','notify',...
         'MaxFunctionEvaluations',1e5,...
         'MaxIterations',1e5);
-    argmin = @(q)          (k(q,kN,model,params) - xe)'* Kxe * ... Xe
-                           (k(q,kN,model,params) - xe) +       ...
-      (rCoM(q,kN,model,params) - model.r.r0CoMg(:,kP))'* Km  * ... CoM
-      (rCoM(q,kN,model,params) - model.r.r0CoMg(:,kP)) +       ... 
-                                              (q0 - q)'* Kq  * ... q-diff
-                                              (q0 - q) +       ...
-                       vTGg'*rWaist(q,kN,model,params) * Kwh * ... Traj
-                       rWaist(q,kN,model,params)'*vTGg +       ...
-                         vXGg'*rHip(q,kN,model,params) * Kwh * ... X
-                         rHip(q,kN,model,params)'*vXGg +       ...
-                         vZGg'*rHip(q,kN,model,params) * Kwh * ... Z
-                         rHip(q,kN,model,params)'*vZGg;
+    argmin = @(q)                (k(q,params) - xe)'* Kxe * ... Xe
+                                 (k(q,params) - xe) +       ...
+            (rCoM(q,params) - model.r.r0CoMg(:,index))'* Km  * ... CoM
+            (rCoM(q,params) - model.r.r0CoMg(:,index)) +       ... 
+                                           (q0 - q)'* Kq  * ... q-diff
+                                           (q0 - q) +       ...
+                             vTGg'*rWaist(q,params) * Kwh * ... Traj
+                                   rWaist(q,params)'*vTGg + ...
+                               vXGg'*rHip(q,params) * Kwh * ... XuVec
+                                     rHip(q,params)'*vXGg + ...
+                               vZGg'*rHip(q,params) * Kwh * ... ZuVec
+                                     rHip(q,params)'*vZGg;
                              
     qStar = fmincon(argmin,q0,A,b,Aeq,beq,lb,ub,nonlcon,options);
 end

@@ -10,7 +10,7 @@ function pass = plotRobot(index,model,params)
     INSIDEL = [eye(3), [0; 0; -0.054];[0,0,0,1]];
     INSIDER = [eye(3), [0; 0;  0.054];[0,0,0,1]];
 
-    HTs   = kSlow( model.r.q(:,index),index,model,params);
+    HTs   = kSlow( model.r.q(:,index), params);
     
     rBER = HTs.ABER(1:3,4);                     % END EFFECTOR
     plot3(rBER(3),rBER(1),rBER(2), ...          %   RIGHT!

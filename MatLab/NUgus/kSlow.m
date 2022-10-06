@@ -1,4 +1,4 @@
-function [HTs] = kSlow(q, index, model, params)
+function [HTs] = kSlow(q, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -7,22 +7,7 @@ function [HTs] = kSlow(q, index, model, params)
 %       Transforms: All other Homogenous Transforms
     
     %% HELPER FUNCTIONS
-    Rzyx = @(Rz,Ry,Rx) ...
-        [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
-                    sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
-          sin(Rz)*cos(Ry),  cos(Rz)*cos(Rx)+sin(Rz)*sin(Ry)*sin(Rx),...
-                   -cos(Rz)*sin(Rx)+sin(Rz)*sin(Ry)*cos(Rx);
-                 -sin(Ry),  cos(Ry)*sin(Rx)                        ,...
-                    cos(Ry)*cos(Rx)];
     Txyz    = @(x,y,z) [eye(3),[x,y,z]'; 0,0,0,1];
-    Rx   = @(phi)   [        1,         0,         0, 0; 
-                             0,  cos(phi), -sin(phi), 0;
-                             0,  sin(phi),  cos(phi), 0;
-                             0,         0,         0, 1];
-    Ry   = @(tht)   [ cos(tht),         0,  sin(tht), 0; 
-                             0,         1,         0, 0;
-                     -sin(tht),         0,  cos(tht), 0;
-                             0,         0,         0, 1];
     Rz   = @(psi)   [ cos(psi), -sin(psi),         0, 0;
                       sin(psi),  cos(psi),         0, 0;
                              0,         0,         1, 0;
@@ -54,18 +39,6 @@ function [HTs] = kSlow(q, index, model, params)
     q11 = q(11);    % θ₁₁
     q12 = q(12);    % θ₁₂
 
-    ABEL    = [Rzyx(model.r.r0Lg(6,index), ...
-                model.r.r0Lg(5,index), ...
-                model.r.r0Lg(4,index)),... 
-                model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
-                zeros(1,3),           1]; %           0rigin in Global
-
-    ABER    = [Rzyx(model.r.r0Rg(6,index), ...
-                    model.r.r0Rg(5,index), ...
-                    model.r.r0Rg(4,index)),... 
-                    model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
-                zeros(1,3),           1]; %           0rigin in Global
-
     %% HOMOGENOUS TRANSFORM
     % TB_0 * [ A⁰₁(q₁)⋅A¹₂(q₂) ... Aᴶ⁻¹ⱼ  ] * T12_B
 
@@ -87,37 +60,39 @@ function [HTs] = kSlow(q, index, model, params)
     T12B  = RyNP2*Txyz(0,-h2a,0);
 
     %% EXPORT
-    HTs.ABEL = ABEL;
-    HTs.ALB0 = HTs.ABEL*TB0;
-    HTs.A01  = HTs.ALB0*A01;
-    HTs.A02  = HTs.A01 *A12;
-    HTs.A03  = HTs.A02 *A23;
-    HTs.A04  = HTs.A03 *A34;
-    HTs.A05  = HTs.A04 *A45;
-    HTs.A06  = HTs.A05 *A56;
-%      
-    HTs.A07  = HTs.A06 *A67;
-    HTs.A08  = HTs.A07 *A78;
-    HTs.A09  = HTs.A08 *A89;
-    HTs.A010 = HTs.A09 *A910;
-    HTs.A011 = HTs.A010*A1011;
-    HTs.ARB0 = HTs.A011*A1112;
-    HTs.ABER = HTs.ARB0*T12B;
-
-%     HTs.ABER = ABER;
-%     HTs.ARB0 = HTs.ABER * inv(T12B);
-%     HTs.A011 = HTs.ARB0 * inv(A1112);
-%     HTs.A010 = HTs.A011 * inv(A1011);
-%     HTs.A09  = HTs.A010 * inv(A910);
-%     HTs.A08  = HTs.A09  * inv(A89);
-%     HTs.A07  = HTs.A08  * inv(A78);
-
-%     HTs.A06  = HTs.A07  * inv(A67);
-%     HTs.A05  = HTs.A06  * inv(A56);
-%     HTs.A04  = HTs.A05  * inv(A45);
-%     HTs.A03  = HTs.A04  * inv(A34);
-%     HTs.A02  = HTs.A03  * inv(A23);
-%     HTs.A01  = HTs.A02  * inv(A12);
-%     HTs.ALB0 = HTs.A01  * inv(A01);
-%     HTs.ABEL = HTs.ALB0 * inv(TB0);
+    if params.mode ==  1        % LEFT FIXED
+        HTs.ABEL = eye(4);
+        HTs.ALB0 = HTs.ABEL*TB0;
+        HTs.A01  = HTs.ALB0*A01;
+        HTs.A02  = HTs.A01 *A12;
+        HTs.A03  = HTs.A02 *A23;
+        HTs.A04  = HTs.A03 *A34;
+        HTs.A05  = HTs.A04 *A45;
+        HTs.A06  = HTs.A05 *A56;
+         
+        HTs.A07  = HTs.A06 *A67;
+        HTs.A08  = HTs.A07 *A78;
+        HTs.A09  = HTs.A08 *A89;
+        HTs.A010 = HTs.A09 *A910;
+        HTs.A011 = HTs.A010*A1011;
+        HTs.ARB0 = HTs.A011*A1112;
+        HTs.ABER = HTs.ARB0*T12B;
+    elseif params.mode == -1     % RIGHT FIXED
+        HTs.ABER = eye(4);
+        HTs.ARB0 = HTs.ABER * inv(T12B);
+        HTs.A011 = HTs.ARB0 * inv(A1112);
+        HTs.A010 = HTs.A011 * inv(A1011);
+        HTs.A09  = HTs.A010 * inv(A910);
+        HTs.A08  = HTs.A09  * inv(A89);
+        HTs.A07  = HTs.A08  * inv(A78);
+    
+        HTs.A06  = HTs.A07  * inv(A67);
+        HTs.A05  = HTs.A06  * inv(A56);
+        HTs.A04  = HTs.A05  * inv(A45);
+        HTs.A03  = HTs.A04  * inv(A34);
+        HTs.A02  = HTs.A03  * inv(A23);
+        HTs.A01  = HTs.A02  * inv(A12);
+        HTs.ALB0 = HTs.A01  * inv(A01);
+        HTs.ABEL = HTs.ALB0 * inv(TB0);
+    end
 end

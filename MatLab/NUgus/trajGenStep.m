@@ -1,12 +1,8 @@
-function [Q] = trajGenStep(ZMP,indexspan,index,model,params)
+function [Q] = trajGenStep(xe,ZMP,indexspan,model,params)
 %   [3D] Step Trajectory Generation
 %       Using:
 %           Cubic Spline for "End Effector" Orientation
 %           Inital Value Problem for "End Effector" Position
-
-    
-    RRY = model.r.r0Rg(5,index);
-    RLY = model.r.r0Lg(5,index);
 
     %% SPECIAL MATRICES
     D  = diag(1:3,-1);  % Special D - Diag Matrix   Qunitic!        
@@ -22,22 +18,14 @@ function [Q] = trajGenStep(ZMP,indexspan,index,model,params)
         vZec1  = [0 0 1]; % X Y Z
         dotAng =  acos( (vZec1 * vTraj)/norm(vTraj) ) - (pi/2);
 
-    %% TRAJECTORY - CUBIC SPLINE
-        if params.mode == 1                    
-            q0 = [0 0; % qR(x)
-                RRY 0; % qR(y)
-                  0 0];% qR(z)
-            ti = model.tspan(ti);
-            tt0 = ti.^(0:3).';
-            T0 = [tt0, D*tt0];
-        elseif params.mode == -1
-            q0 = [0 0; % qR(x)
-                RLY 0; % qR(y)
-                  0 0];% qR(z)
-            ti = model.tspan(ti);
-            tt0 = ti.^(0:3).';
-            T0 = [tt0, D*tt0];
-        end
+    %% TRAJECTORY - CUBIC SPLINE            
+        q0 = [xe(4) 0; % qR(x)
+              xe(5) 0; % qR(y)
+              xe(6) 0];% qR(z)
+        ti = model.tspan(ti);
+        tt0 = ti.^(0:3).';
+        T0 = [tt0, D*tt0];
+
         q2 = [0      0; % qR(x)
               dotAng 0; % qR(y)
               0      0];% qR(z)
@@ -49,12 +37,7 @@ function [Q] = trajGenStep(ZMP,indexspan,index,model,params)
         
     %% TRAJECTORY - CONTINUOUS TIME
         td  = tf - ti;
-        if params.mode == 1
-            qi  = model.r.r0Rg(1:3,index);
-        elseif params.mode == -1
-            qi  = model.r.r0Lg(1:3,index);
-        end
-        
+        qi  = xe(1:3);
         qf  = [ZMP(1); 0; ZMP(2)];
         stpHght = params.StepHeight;
         
