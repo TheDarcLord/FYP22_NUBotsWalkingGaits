@@ -29,11 +29,12 @@ clc
     params.g         = 9.81;     % ms⁻² - Acceleration due to Gravity |
     params.m         = 7.4248;   % kg   - Total Mass of a NuGus       |
  % -------------------------------------------------------------------|
-    params.fibula    = 0.4;      % m    - Lower leg
-    params.femur     = 0.4;      % m    - Upper Leg
-    params.HipWidth  = 0.2;      % m    - Pelvis
-    params.ServoSize = 0.05;     % m    - Approximation/Spacing
-    params.StepSize  = 0.15;     % m    - 15 cm Step forward
+    params.fibula       = 0.4;      % m    - Lower leg
+    params.femur        = 0.4;      % m    - Upper Leg
+    params.HipWidth     = 0.2;      % m    - Pelvis
+    params.ServoSize    = 0.05;     % m    - Approximation/Spacing
+    params.StepLength   = 0.15;     % m    - 15 cm Step Forwards
+    params.StepHeight   = 0.08;     % m    - 8 cm Step Upwards
  % Masses
     params.mass.foot   = 0.25;   % foot
     params.mass.fibula = 1.5;    % Paired with `tibia`
@@ -101,7 +102,7 @@ clc
                      /(B(1) - A(1));  % Gradient -> ∇
     % Initialise variables
     Nl       = model.Nl;              % N# INTEGER Future Indexes
-    stepSize = params.StepSize;       % Step Size:   m
+    stpLngth = params.StepLength;     % Step Size:   m
     Q        = model.glbTrj;          %         Q:  [x y z]ᵀ
     Qstep    = zeros(6,length(model.glbTrj)); % Qstep:  [x 0 z]ᵀ
     r        = params.HipWidth/2;     % Radius of Circle
@@ -115,7 +116,7 @@ clc
     for i=2:length(model.tspan)
         tic
         accuDist = accuDist + norm(Q(:,i-1) - Q(:,i));
-        if accuDist > stepSize
+        if accuDist > stpLngth || i == length(Q)
             % TAKING STEP
             t_end           = i;       % Index of Step Ending
             params.mode     = STEP;    % Mode
@@ -169,7 +170,7 @@ clc
             Qstep(:,t_begin:t_end) = trajGenStep(model.r.xe(:,j), ...
                                        model.p.pREF(:,t_end), ...
                                        t_begin:t_end, ...
-                                        model);
+                                       model,params);
 
             for j=t_begin:t_end
                 jn = j - 1;
@@ -216,8 +217,8 @@ clc
         CM = model.r.r0CoMg([1 3],i);
         axis([ CM(2)-1, CM(2)+1, CM(1)-1, CM(1)+1, 0.0, 1.0]);
         [~] = plotRobot(i,model,params);
-        [~] = plotSteps(model.mode(2,i),model);
-        [~] = plotPend(i,model,params);
+        %[~] = plotSteps(model);
+        %[~] = plotPend(i,model,params);
         IMAGE(i) = getframe(gcf);
     end
 

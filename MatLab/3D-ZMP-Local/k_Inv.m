@@ -9,7 +9,11 @@ function [qStar] = k_Inv(q0, xe, index, model, params)
     Kq  = 1e6*eye(length(q0),length(q0));
     Km  = 1e9*eye(length(xe(1:3)),length(xe(1:3)));
     Kwh = 1e9;
-    vTGg = model.glbTrj(:,index+1)-model.glbTrj(:,index);
+    if index == length(model.tspan)
+        vTGg = model.glbTrj(:,index)-model.glbTrj(:,index-1);
+    else
+        vTGg = model.glbTrj(:,index+1)-model.glbTrj(:,index);
+    end
     vXGg = [1; 0; 0];
     vZGg = [0; 0; 1];
     
