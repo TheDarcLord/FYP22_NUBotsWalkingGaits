@@ -20,10 +20,11 @@ function [r0CoM] = rCoM(q, params)
     q12 = q(12);    % θ₁₂
 
     %% Lengths
-    Ll = params.fibula;     % Lower Leg
-    Lu = params.femur;      % Upper Leg
-    H  = params.HipWidth; 
-    S  = params.ServoSize;  % SERVO DIST
+    H    = params.HipWidth;
+    h2a  = params.heel2ankle;
+    a2k  = params.ankle2knee;
+    k2h  = params.knee2hip;
+    h2w  = params.hip2waist;
    
     %% Masses
     mFo = params.mass.foot;     % Foot
@@ -32,60 +33,60 @@ function [r0CoM] = rCoM(q, params)
     mJo = params.mass.joint;    % Joints
     mPe = params.mass.pelvis;   % Waist Mass
 
-    TB0   = [0,0,1,0; 0,1,0,0;
-            -1,0,0,0; 0,0,0,1];
+    TB0   = [0,0, 1,0; 0,1,0, h2a;
+            -1,0, 0,0; 0,0,0,  1];
     % INVERTIBLE !!!
-    A01   = [0, -sin(q1), -cos(q1), -S*sin(q1);
-             0,  cos(q1), -sin(q1),  S*cos(q1);
-             1,        0,        0,          0;
-             0,        0,        0,          1];
-    A12   = [cos(q2), -sin(q2), 0, -Ll*sin(q2);
-             sin(q2),  cos(q2), 0,  Ll*cos(q2);
-                   0,        0, 1,           0;
-                   0,        0, 0,           1];
-    A23   = [cos(q3), -sin(q3), 0, -Lu*sin(q3);
-             sin(q3),  cos(q3), 0,  Lu*cos(q3);
-                   0,        0, 1,           0;
-                   0,        0, 0,           1];
-    A34   = [0, -sin(q4), cos(q4), -S*sin(q4);
-             0,  cos(q4), sin(q4),  S*cos(q4);
-            -1,        0,       0,          0;
-             0,        0,       0,          1];
-    A45   = [cos(q5), 0,  sin(q5), -S*sin(q5);
-             sin(q5), 0, -cos(q5),  S*cos(q5);
-                   0, 1,        0,          0;
-                   0, 0,        0,          1];
-    A56   = [cos(q6), -sin(q6), 0, H*cos(q6);
-             sin(q6),  cos(q6), 0, H*sin(q6);
-                   0,        0, 1,         0;
-                   0,        0, 0,         1];
-    A67   = [cos(q7),  0, -sin(q7), 0;
-             sin(q7),  0,  cos(q7), 0;
-                   0, -1,        0, S;
-                   0,  0,        0, 1];
-    A78   = [0, -sin(q8), -cos(q8),  S*sin(q8);
-             0,  cos(q8), -sin(q8), -S*cos(q8);
-             1,        0,        0,          0;
-             0,        0,        0,          1];
-    A89   = [cos(q9), -sin(q9), 0,  Lu*sin(q9);
-             sin(q9),  cos(q9), 0, -Lu*cos(q9);
-                   0,        0, 1,           0;
-                   0,        0, 0,           1];
-    A910  = [cos(q10), -sin(q10), 0,  Ll*sin(q10);
-             sin(q10),  cos(q10), 0, -Ll*cos(q10);
-                    0,         0, 1,            0;
-                    0,         0, 0,            1];
-    A1011 = [ 0, -sin(q11), cos(q11),  S*sin(q11);
-              0,  cos(q11), sin(q11), -S*cos(q11);
-             -1,         0,        0,           0;
-              0,         0,        0,           1];
-    A1112 = [cos(q12), -sin(q12), 0, 0;
-             sin(q12),  cos(q12), 0, 0;
-                    0,         0, 1, 0;
-                    0,         0, 0, 1];
+    A01   = [0, -sin(q1), -cos(q1), 0;
+             0,  cos(q1), -sin(q1), 0;
+             1,        0,        0, 0;
+             0,        0,        0, 1];
+    A12   = [cos(q2), -sin(q2),  0, a2k(1)*cos(q2)-a2k(2)*sin(q2);
+             sin(q2),  cos(q2),  0, a2k(2)*cos(q2)+a2k(1)*sin(q2);
+                   0,        0,  1,                        a2k(3);
+                   0,        0,  0,                            1];
+    A23   = [cos(q3), -sin(q3),  0, k2h(1)*cos(q3)-k2h(2)*sin(q3);
+             sin(q3),  cos(q3),  0, k2h(2)*cos(q3)+k2h(1)*sin(q3);
+                   0,        0,  1,                        k2h(3);
+                   0,        0,  0,                            1];
+    A34   = [ 0, -sin(q4), cos(q4), h2w(1)*cos(q4);
+              0,  cos(q4), sin(q4), h2w(1)*sin(q4);
+             -1,        0,       0,              0;
+              0,        0,       0,             1];
+    A45   = [cos(q5),  0,  sin(q5),  h2w(3)*sin(q5);
+             sin(q5),  0, -cos(q5), -h2w(3)*cos(q5);
+                   0,  1,        0,          h2w(2);
+                   0,  0,        0,              1];
+    A56   = [cos(q6), -sin(q6),  0, H*cos(q6);
+             sin(q6),  cos(q6),  0, H*sin(q6);
+                   0,        0,  1,         0;
+                   0,        0,  0,         1];
+    A67   = [cos(q7),  0, -sin(q7),  h2w(2)*sin(q7);
+             sin(q7),  0,  cos(q7), -h2w(2)*cos(q7);
+                   0, -1,        0,         -h2w(3);
+                   0,  0,        0,              1];
+    A78   = [0, -sin(q8), -cos(q8),     0;
+             0,  cos(q8), -sin(q8),     0;
+             1,        0,        0, -h2w(1);
+             0,        0,        0,     1];
+    A89   = [cos(q9), -sin(q9),  0,  k2h(2)*sin(q9)-k2h(1)*cos(q9);
+             sin(q9),  cos(q9),  0, -k2h(2)*cos(q9)-k2h(1)*sin(q9);
+                   0,        0,  1,                        -k2h(3);
+                   0,        0,  0,                             1];
+    A910  = [cos(q10), -sin(q10),  0,  a2k(2)*sin(q10)-a2k(1)*cos(q10);
+             sin(q10),  cos(q10),  0, -a2k(2)*cos(q10)-a2k(1)*sin(q10);
+                    0,         0,  1,                          -a2k(3);
+                    0,         0,  0,                               1];
+    A1011 = [ 0, -sin(q11), cos(q11), 0;
+              0,  cos(q11), sin(q11), 0;
+             -1,         0,        0, 0;
+              0,         0,        0, 1];
+    A1112 = [cos(q12), -sin(q12),  0, 0;
+             sin(q12),  cos(q12),  0, 0;
+                    0,         0,  1, 0;
+                    0,         0,  0, 1];
     % INVERTIBLE !!!
-    T12E  = [0,0,-1,0; 0,1,0,0;
-             1,0, 0,0; 0,0,0,1];
+    T12B  = [0,0,-1,0; 0,1,0,-h2a;
+             1,0, 0,0; 0,0,0,  1];
 
     %% TRANSFORMS
     if params.mode ==  1        % RIGHT FIXED
@@ -103,9 +104,9 @@ function [r0CoM] = rCoM(q, params)
         AB10 = AB9 *A910;
         AB11 = AB10*A1011;
         AB12 = AB11*A1112;
-        ABE  = AB12*T12E;
+        ABE  = AB12*T12B;
     elseif params.mode == -1     % LEFT FIXED
-        AE12 = inv(T12E);
+        AE12 = inv(T12B);
         AB11 = AE12 * inv(A1112);
         AB10 = AB11 * inv(A1011);
         AB9  = AB10 * inv(A910);

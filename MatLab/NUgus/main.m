@@ -25,7 +25,7 @@ clc
  % Physical Parameters - Affect CoM or FKM
     params.kx           = 0;        % These affect the plane to which    |
     params.ky           = 0;        % ... the CoM is constrained         |
-    params.zc           = 0.25;     % m    - Height of the CoM ^         |
+    params.zc           = 0.26;     % m    - Height of the CoM ^         |
     params.g            = 9.81;     % ms⁻² - Acceleration due to Gravity |
     params.m            = 7.4248;   % kg   - Total Mass of a NuGus       |
     params.StepLength   = 0.15;     % m    - 15 cm Step Forward          |
@@ -41,11 +41,11 @@ clc
     params.hip2waist  = [-0.06895; 0.04625; -0.0545];
     params.ServoSize  = 0.05;     % m    - Approximation/Spacing
  % Masses
-    params.mass.fibula = 1.5;    % Paired with `tibia`
-    params.mass.femur  = 1.5;    % Thigh Bone
-    params.mass.joint  = 0.5;    % Knee Bone / Joints
-    params.mass.pelvis = 1.5;    % Waist
-    params.mass.foot   = 0.5;    % Foot
+    params.mass.fibula = 0.1298;    % Paired with `tibia`
+    params.mass.femur  = 0.3423;    % Thigh Bone
+    params.mass.joint  = 0.2000;    % Knee Bone / Joints
+    params.mass.pelvis = 2.9549;    % Waist
+    params.mass.foot   = 0.2023;    % Foot
 
 %% Model setup
  % Steps
@@ -66,16 +66,16 @@ clc
 
 %% Initial Position & Orientation
     model.r.q0        = [0;    % θ₁    
-                    -pi/6;    % θ₂    ->  2D θ₁ Ankle
-                   2*pi/6;    % θ₃    ->  2D θ₂ Knee
-                    -pi/6;    % θ₄    ->  2D θ₃ Hip
+                    -pi/10;    % θ₂    ->  2D θ₁ Ankle
+                   2*pi/10;    % θ₃    ->  2D θ₂ Knee
+                    -pi/10;    % θ₄    ->  2D θ₃ Hip
                          0;    % θ₅
                          0;    % θ₆
                          0;    % θ₇
                          0;    % θ₈
-                     pi/6;    % θ₉    ->  2D θ₄ Hip
-                  -2*pi/6;    % θ₁₀   ->  2D θ₅ Knee
-                     pi/6;    % θ₁₁   ->  2D θ₆ Ankle
+                     pi/10;    % θ₉    ->  2D θ₄ Hip
+                  -2*pi/10;    % θ₁₀   ->  2D θ₅ Knee
+                     pi/10;    % θ₁₁   ->  2D θ₆ Ankle
                          0];   % θ₁₂
 
     model.r.q(:,1) = model.r.q0;
