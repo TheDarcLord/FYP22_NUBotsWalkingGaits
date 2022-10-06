@@ -9,7 +9,7 @@ clc
     model.timeHrzn    = 0;                            % Seconds
     model.Nl          = model.timeHrzn / model.timestp; % INTEGER
  % Physical Parameters - Affect CoM or FKM   |
-    params.zc           = 0.35;     % m    - Height of the CoM ^         |
+    params.zc           = 0.328;    % m    - Height of the CoM ^         |
     params.m            = 7.4248;   % kg   - Total Mass of a NuGus       |
     params.StepLength   = 0.15;     % m    - 15 cm Step Forward          |
     params.StepHeight   = 0.05;     % m    - 10 cm Step Height           |
@@ -27,7 +27,7 @@ clc
     params.mass.fibula = 0.1298;        % Paired with `tibia`
     params.mass.femur  = 0.3423;        % Thigh Bone
     params.mass.joint  = 0.2000;        % Knee Bone / Joints
-    params.mass.pelvis = 2.9549 + 4;    % Waist
+    params.mass.pelvis = 2.9549;    % Waist
     params.mass.foot   = 0.2023;        % Foot
 
 %% Model setup
@@ -41,7 +41,7 @@ clc
     model.q      = zeros(12,length(model.tspan)); % q        [θ₁θ₂θ₃ ...]ᵀ
     model.xe     = zeros(6,length(model.tspan));  % xe           [XYZϕθΨ]ᵀ
     model.r0CoMg = zeros(3,length(model.tspan));  % r0CoMg          [XYZ]ᵀ
-    model.pREF   = zeros(3,length(model.tspan));  % pREF [REFx REFy REFz]ᵀ      
+    model.pREF   = zeros(2,length(model.tspan));  % pREF [REFx REFy REFz]ᵀ      
 
 %% Initial Position & Orientation
     model.q0      = [0;    % θ₁    
@@ -92,7 +92,7 @@ clc
     STEP     = params.mode;           % DEFINE MODE:  1 RIGHT Step 
                                       %              -1 LEFT  Step
     accuDist = 0;                     % Accumulated Distance
-    model.pREF(:,1) = Q([1 3],1);   % Last Foot Step -> Traj Start Point
+    model.pREF(:,1) = Q([1 3],1);     % Last Foot Step -> Traj Start Point
     A        = model.glbTrj(:,1);     % A = [x₁ y₁ z₁]ᵀ
     t_begin  = 1;                     % Index of Step Beginning
     model.TBE = eye(4);               % HomoTrans: Base -> End Effector
@@ -112,21 +112,35 @@ clc
                 % UPDATE: Global Trajectory to End Effector Coords
                 model.glbTrj(:,u) = ...
                     updateCoord(model.TBE, model.glbTrj(:,u));
-                model.pREF(:,u) = ...
-                    updateCoord(model.TBE, model.pREF(:,u));
+                tmpREF = [model.pREF(1,u); 0; model.pREF(2,u)];
+                tmpREF = ...
+                    updateCoord(model.TBE, tmpREF);
+                model.pREF(:,u) = tmpREF([1 3]);
             end
 
             B = model.glbTrj(:,i);
             M = gradFUNC(A([1 3]),B([1 3]));
             % Right (+) & Left (-)
             model.pREF(:,i) = B([1 3]) + STEP*[M*r*sqrt(1/(1+M^2)); ...
-                                                  -r*sqrt(1/(1+M^2))];
+                                                -r*sqrt(1/(1+M^2))];
 
             % GENERATE STEP TRAJECTORY
             Qstep(:,t_begin:t_end) = trajGenStep(model.xe(:,j), ...
                                        model.pREF(:,t_end), ...
                                        t_begin:t_end, ...
                                        model,params);
+
+%             ROBOT_FRAME = figure(1);
+%             hold on
+%             grid on
+%             set(gca,'Color','#CCCCCC');
+%             title("3D Model - ZMP Walking",'FontSize',12);
+%             xlabel('{\bfZ} (metres)');
+%             ylabel('{\bfX} (metres)');
+%             zlabel('{\bfY} (metres)');
+%             view(-165,50);
+%             [~] = plotSteps(model);
+%             plot3(Qstep(3,:),Qstep(1,:),Qstep(2,:),'b-','LineWidth',2)
 
             for j=t_begin:t_end
                 jn = j - 1;
@@ -135,8 +149,6 @@ clc
                 end
     
                 model.mode(:,j)     = params.mode;
-                model.r0CoMg(:,j) = [CoMk(1); params.zc; CoMk(2)];
-                
                 xeSTAR = Qstep(:,j);
                 model.q(:,j)  = k_Inv(model.q(:,jn), ...
                                         xeSTAR, j, model, params);
@@ -166,19 +178,13 @@ clc
     ylabel('{\bfX} (metres)');
     zlabel('{\bfY} (metres)');
     axis equal
-    view(-165,30);
-    [~] = plotRobot(i,model,params);
+    view(-165,45);
 
-    a = 0.5;
     for i=1:length(model.tspan)
         cla(ROBOT_FRAME)
         params.mode = model.mode(i);
-        CM = model.r0CoMg([1 3],i);
-        
-        axis([ CM(2)-a, CM(2)+a, CM(1)-a, CM(1)+a, 0.0, a]);
         [~] = plotRobot(i,model,params);
         [~] = plotSteps(model);
-        [~] = plotPend(i,model,params);
         
         IMAGE(i) = getframe(gcf);
     end

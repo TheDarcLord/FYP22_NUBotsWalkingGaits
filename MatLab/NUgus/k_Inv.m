@@ -7,7 +7,7 @@ function [qStar] = k_Inv(q0, xe, index, model, params)
 % SOLUTION: qˣ = ARG MIN (q): qᵀ W q + (k(q) - xeˣ)ᵀ K (k(q) - xeˣ)
     Kxe = 1e9*eye(length(xe),length(xe));
     Kq  = 1e6*eye(length(q0),length(q0));
-    Km  = 1e9*eye(length(xe(1:3)),length(xe(1:3)));
+    Km  = 1e7*eye(length(xe(1:3)),length(xe(1:3)));
     Kwh = 1e9;
     if index == length(model.tspan)
         vTGg = model.glbTrj(:,index)-model.glbTrj(:,index-1);
@@ -30,8 +30,8 @@ function [qStar] = k_Inv(q0, xe, index, model, params)
         'MaxIterations',1e5);
     argmin = @(q)                (k(q,params) - xe)'* Kxe * ... Xe
                                  (k(q,params) - xe) +       ...
-           (rCoM(q,params) - model.r0CoMg(:,index))'* Km  * ... CoM
-           (rCoM(q,params) - model.r0CoMg(:,index)) +       ... 
+                 (rCoM(q,params) - [0;params.zc;0])'* Km  * ... CoM
+                 (rCoM(q,params) - [0;params.zc;0]) +       ... 
                                            (q0 - q)'* Kq  * ... q-diff
                                            (q0 - q) +       ...
                              vTGg'*rWaist(q,params) * Kwh * ... Traj
