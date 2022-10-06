@@ -111,7 +111,7 @@ clc
     model.p.pREF(:,1) = Q([1 3],1);   % Last Foot Step -> Traj Start Point
     A        = model.glbTrj(:,1);     % A = [x₁ y₁ z₁]ᵀ
     t_begin  = 1;                     % Index of Step Beginning
-    model.TBE = eye(4);         % A_Base -> End Effector
+    model.TBE = eye(4);               % HomoTrans: Base -> End Effector
     for i=2:length(model.tspan)
         tic
         accuDist = accuDist + norm(Q(:,i-1) - Q(:,i));
@@ -122,52 +122,48 @@ clc
             j               = t_begin; % `j` runs the step
             model.r.xe(:,j) = k(model.r.q(:,j), params); % Update Xe
             
-            % UPDATE -> TRAJECTORY TO END EFFECTOR COORDS
-            % Rbe' * ( r_traj_base - r_endEff_base )
-            A = model.TBE(1:3,1:3)' * (A - model.TBE(1:3,4));
-            for u=1:length(model.glbTrj)
+            A = updateCoord(model.TBE, A);
+
+            for u=t_begin:length(model.tspan)
+                % UPDATE: Global Trajectory to End Effector Coords
                 model.glbTrj(:,u) = ...
-                    (model.TBE(1:3,1:3)' * ... % Rbe' 
-                    (model.glbTrj(:,u) - model.TBE(1:3,4)));
-            end
-
-            % UPDATE -> PENDULUM REF TO END EFFECTOR COORDS
-            for u=1:length(model.p.pREF)
-                tempREF = [model.p.pREF(1,u); 0; model.p.pREF(2,u)];
-                tempREF = ...
-                    (model.TBE(1:3,1:3)' * (tempREF - model.TBE(1:3,4)));
-                model.p.pREF(:,u) = tempREF([1 3]);
-            end
-
-            % UPDATE -> PENDULUM REF TO END EFFECTOR COORDS
-            for u=1:length(model.p.x)
-                tempPOS = [model.p.x(1,u); 0; model.p.x(4,u)];
-                tempVEL = [model.p.x(2,u); 0; model.p.x(5,u)];
-                tempACC = [model.p.x(3,u); 0; model.p.x(6,u)];
-                tempOUT = [model.p.y(1,u); 0; model.p.y(2,u)];
+                    updateCoord(model.TBE, model.glbTrj(:,u));
+                % UPDATE: Pendulum Model to End Effector Coords
                 tempOUT = ...
-                    (model.TBE(1:3,1:3)' * (tempOUT - model.TBE(1:3,4)));
-                    % Rbe' * ( r_traj_base - r_endEff_base )
+                    updateCoord(model.TBE, [model.p.y(1,u); ...
+                                                         0; ...
+                                            model.p.y(2,u)]);
                 tempPOS = ...
-                    (model.TBE(1:3,1:3)' * (tempPOS - model.TBE(1:3,4)));
-                    % Rbe' * ( r_traj_base - r_endEff_base )
+                    updateCoord(model.TBE, [model.p.x(1,u); ...
+                                                         0; ...
+                                           model.p.x(4,u)]);
                 tempVEL = ...
-                    model.TBE(1:3,1:3)' * (tempVEL);
-                    % Rbe' * ( r_traj_base - r_endEff_base )
+                    model.TBE(1:3,1:3)' * [model.p.x(2,u);
+                                                        0; 
+                                           model.p.x(5,u)];
                 tempACC = ...
-                    model.TBE(1:3,1:3)' * (tempACC);
-                    % Rbe' * ( r_traj_base - r_endEff_base )
+                    model.TBE(1:3,1:3)' * [model.p.x(3,u); 
+                                                        0; 
+                                           model.p.x(6,u)];
         
                 model.p.x(:,u) = [tempPOS(1); tempVEL(1); tempACC(1);
                                   tempPOS(3); tempVEL(3); tempACC(3)];
                 model.p.y(:,u) = tempOUT([1 3]);
-            end 
+            end
+
+            
+            for u=t_begin:length(model.p.pREF)
+                % UPDATE: Pendulum REF to End Effector Coords
+                tempREF = [model.p.pREF(1,u); 0; model.p.pREF(2,u)];
+                tempREF = updateCoord(model.TBE, tempREF);
+                model.p.pREF(:,u) = tempREF([1 3]);
+            end
+
             B = model.glbTrj(:,i);
             M = gradFUNC(A([1 3]),B([1 3]));
             % Right (+) & Left (-)
             model.p.pREF(:,i) = B([1 3]) + STEP*[M*r*sqrt(1/(1+M^2)); ...
                                                   -r*sqrt(1/(1+M^2))];
-
 
             % GENERATE STEP TRAJECTORY
             Qstep(:,t_begin:t_end) = trajGenStep(model.r.xe(:,j), ...
