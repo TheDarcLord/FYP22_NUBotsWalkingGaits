@@ -65,6 +65,7 @@ clc
     ROBOT_FRAME = figure(1);
         hold on
         grid on
+        axis equal
         set(gca,'Color','#CCCCCC');
         title("3D Model - ZMP Walking",'FontSize',12);
         xlabel('{\bfZ} (metres)');

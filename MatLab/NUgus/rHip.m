@@ -19,7 +19,7 @@ function [vHW] = rHip(q, params)
 
     %% HOMOGENOUS TRANSFORM
     if params.mode ==  1        % LEFT FIXED
-         % JOINT VARIABLES
+        % JOINT VARIABLES
         c1   = cos(q(1));
         s1   = sin(q(1));
         c2   = cos(q(2));

@@ -133,6 +133,7 @@ function [xe, TAE] = k(q, params)
         % INVERTIBLE !!!
 
         TAE = TB0*A128*A86*A64*A40*T12B;
+
     end
     
     %% End Effector Parameterisation X Y Z R₂Ψ Rᵧθ Rₓϕ

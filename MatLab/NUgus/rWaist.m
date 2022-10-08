@@ -95,7 +95,7 @@ function [v6B] = rWaist(q, params)
                      c901,     s901,    0, z128;
                         0,        0,    0, 1];
         % INVERTIBLE !!!
-        
+       
         AB6  = TB0*A128*A86;
     end
 
