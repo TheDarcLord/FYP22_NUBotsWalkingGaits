@@ -1,29 +1,23 @@
-function [Q, V, A] = trajGenStep(ZMP,indexspan,index,model,params)
-%   [3D Model] Step Trajectory Generation
-%       
-%       Returns:    [Q, V, A]
-%       Q:  End Effector Position     as a function of Time [X  Y  Z ](t) 
-%       V:  End Effector Velocity     as a function of Time [X' Y' Z'](t) 
-%       A:  End Effector Acceleration as a function of Time [X" Y" Z"](t)
-    
-    rRX = model.r.r0Rg(1,index);
-    rRY = model.r.r0Rg(2,index);
-    rRZ = model.r.r0Rg(3,index);
-    RRY = model.r.r0Rg(5,index);
+function [Q] = trajGenStep(xe,ZMP,indexspan,model,params)
+%   [3D] Step Trajectory Generation
+%       Using:
+%           Cubic Spline for "End Effector" Orientation
+%           Inital Value Problem for "End Effector" Position
 
-    rLX = model.r.r0Lg(1,index);
-    rLY = model.r.r0Lg(2,index);
-    rLZ = model.r.r0Lg(3,index);
-    RLY = model.r.r0Lg(5,index);
-
-    %% SPECIAL MATRICES
+    %% SPECIAL MATRIX
     D  = diag(1:3,-1);  % Special D - Diag Matrix   Qunitic!        
-    TT = model.tspan(indexspan).^((0:3).');  % [1;t;t²;t³;t⁴;t⁵] (t)     Quintic!
 
     %% TIME
-        t0_i = indexspan(1);
-        %t1_i = indexspan(floor(length(indexspan)/2));
-        t2_i = indexspan(end);
+        ti_i = indexspan(1);
+        tm_i = indexspan(1) + floor((indexspan(end) - indexspan(1))/3);
+        tf_i = indexspan(end);
+
+        shftSpan = ti_i:tm_i-1;
+        stepSpan = tm_i:tf_i;
+
+        TT = model.tspan(stepSpan).^((0:3).');  % [1;t;t²;t³] (t) Cubic!
+
+        Q_shift = xe * ones(1,length(shftSpan));
 
     %% TANGENTS 
         vTraj = model.glbTrj(:,indexspan(end)) - ...
@@ -31,59 +25,37 @@ function [Q, V, A] = trajGenStep(ZMP,indexspan,index,model,params)
         vZec1  = [0 0 1]; % X Y Z
         dotAng =  acos( (vZec1 * vTraj)/norm(vTraj) ) - (pi/2);
 
-    %% TRAJECTORY OPTIONS
-    if params.mode == 1                    
-        q0 = [rRX 0; %  X  Ẋ
-              rRY 0; % qY vY
-              rRZ 0; % qZ vZ
-                0 0; % qR(x)
-              RRY 0; % qR(y)
-                0 0];% qR(z)
-        t0 = model.tspan(t0_i);
-        tt0 = t0.^(0:3).';
+    %% TRAJECTORY - CUBIC SPLINE            
+        q0 = [xe(4) 0; % qR(x)
+              xe(5) 0; % qR(y)
+              xe(6) 0];% qR(z)
+        tm = model.tspan(tm_i);
+        tt0 = tm.^(0:3).';
         T0 = [tt0, D*tt0];
-        %---------------------------------------------
-%         q1 = [(rRX+ZMP(1))/2  0; %  X  Ẋ
-%               0               0;  % qY vY
-%               (rRZ+ZMP(2))/2  0]; % qZ vZ
-%         t1 =  model.tspan(t1_i);
-%         tt1 = t1.^(0:3).';
-%         T1 = [tt1, D*tt1];
 
-    elseif params.mode == -1
-        q0 = [rLX 0; %  X  Ẋ
-              rLY 0; % qY vY
-              rLZ 0; % qZ vZ
-                0 0; % qR(x)
-              RLY 0; % qR(y)
-                0 0];% qR(z)
-        t0 = model.tspan(t0_i);
-        tt0 = t0.^(0:3).';
-        T0 = [tt0, D*tt0];
-        %---------------------------------------------
-%         q1 = [(rLX+ZMP(1))/2  0;  %  X  Ẋ
-%               0               0;  % qY vY
-%               (rLZ+ZMP(2))/2  0]; % qZ vZ
-%         t1 = model.tspan(t1_i);
-%         tt1 = t1.^(0:3).';
-%         T1 = [tt1, D*tt1];
-    end
+        q2 = [0      0; % qR(x)
+              dotAng 0; % qR(y)
+              0      0];% qR(z)
+        tf = model.tspan(tf_i);
+        tt2 = tf.^(0:3).';
+        T2 = [tt2, D*tt2];
 
-    %---------------------------------------------
-    q2 = [ZMP(1) 0; %  X  Ẋ
-          0      0; % qY vY
-          ZMP(2) 0; % qZ vZ
-          0      0; % qR(x)
-          dotAng 0; % qR(y)
-          0      0];% qR(z)
-    t2 = model.tspan(t2_i);
-    tt2 = t2.^(0:3).';
-    T2 = [tt2, D*tt2];
+        C = [q0 q2]/[T0 T2];
+    %% TRAJECTORY - CONTINUOUS TIME
+        td  = tf - tm;
+        qi  = xe(1:3);
+        qf  = [ZMP(1); 0; ZMP(2)];
+        stpHght = params.StepHeight;
+        
+        Ay  = 2*stpHght / (td/2)^2;
+        Vy  = Ay*(td/2);
+    
+        qXYZ = @(t)  [qi(1) + ((qf(1)-qi(1)) / td).*t;
+                      Vy*t - Ay.*(t.^2)./2           ;
+                      qi(3) + ((qf(3)-qi(3)) / td).*t];
+        stepTime = model.tspan(stepSpan) - tm*ones(size(stepSpan));
+        Q_step = [qXYZ(stepTime);
+                   C*TT];
 
-    C = [q0 q2]/[T0 T2];
-
-    Q = C*TT;
-    V = C*D*TT;
-    A = C*D^2*TT;
-
+        Q = [Q_shift, Q_step];
 end

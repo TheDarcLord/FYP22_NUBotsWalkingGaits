@@ -1,4 +1,4 @@
-function [r0CoM] = rCoM(q, index, model, params)
+function [r0CoM] = rCoM(q, params)
 % rCOM  [3D Model] Centre of Mass - CoM
 %       Relies on the FKM, k(q), to locate the masses
 %       r0CoM - Position[x,y,z] of CoM in ZERO/World Coordinates
@@ -11,167 +11,136 @@ function [r0CoM] = rCoM(q, index, model, params)
     q3  = q(3);     % θ₃
     q4  = q(4);     % θ₄
     q5  = q(5);     % θ₅
+    q6  = q(6);     % θ₆
+    q7  = q(7);     % θ₇
     q8  = q(8);     % θ₈
     q9  = q(9);     % θ₉
     q10 = q(10);    % θ₁₀
     q11 = q(11);    % θ₁₁
     q12 = q(12);    % θ₁₂
 
-    %% HELPER VARS
-    AE1  = [0  0  1  0;   %
-            0  1  0  0;   %
-           -1  0  0  0;   %
-            0  0  0  1];  %
-    AE12 = [0  0  1  0;   %
-            0  1  0  0;   %
-           -1  0  0  0;   %
-            0  0  0  1];  %
-    ROW4 = [0  0  0  1];
-
-    Rzyx   = @(Rz,Ry,Rx) ...
-        [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
-                    sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
-          sin(Rz)*cos(Ry),  cos(Rz)*cos(Rx)+sin(Rz)*sin(Ry)*sin(Rx),...
-                   -cos(Rz)*sin(Rx)+sin(Rz)*sin(Ry)*cos(Rx);
-                 -sin(Ry),  cos(Ry)*sin(Rx)                        ,...
-                    cos(Ry)*cos(Rx)];
-
     %% Lengths
-    Ll = params.fibula;     % Lower Leg
-    Lu = params.femur;      % Upper Leg
-    S  = params.ServoSize;  % SERVO DIST
+    H    = params.HipWidth;
+    h2a  = params.heel2ankle;
+    a2k  = params.ankle2knee;
+    k2h  = params.knee2hip;
+    h2w  = params.hip2waist;
    
     %% Masses
-    mLl = params.mass.femur;    % Thigh Bone
-    mLu = params.mass.fibula;   % Paired with `tibia`
-    mJo = params.mass.joint;    % Knee Bone / Joints
+    mFo = params.mass.foot;     % Foot
+    mLl = params.mass.femur;    % Upper Leg
+    mLu = params.mass.fibula;   % Lower Leg
+    mJo = params.mass.joint;    % Joints
     mPe = params.mass.pelvis;   % Waist Mass
-    
-    %% JOINT POSITIONS
-    A0H    = [eye(3), model.r.r0Hg(1:3,index);  % PELVIS Mid  Position from 
-              zeros(1,3),       1]; %       0rigin in Global
 
-    A0Sl    = [Rzyx(model.r.r0Lg(6,index), ...
-                model.r.r0Lg(5,index), ...
-                model.r.r0Lg(4,index)),... 
-                model.r.r0Lg(1:3,index);  % LEFT Ankle Position from 
-          zeros(1,3),           1]; %           0rigin in Global
-    A0Sr    = [Rzyx(model.r.r0Rg(6,index), ...
-                    model.r.r0Rg(5,index), ...
-                    model.r.r0Rg(4,index)),... 
-                    model.r.r0Rg(1:3,index);  % RIGHT Ankle Position from 
-              zeros(1,3),           1]; %           0rigin in Global
+    TB0   = [0,0, 1,0; 0,1,0, h2a;
+            -1,0, 0,0; 0,0,0,  1];
+    % INVERTIBLE !!!
+    A01   = [0, -sin(q1), -cos(q1), 0;
+             0,  cos(q1), -sin(q1), 0;
+             1,        0,        0, 0;
+             0,        0,        0, 1];
+    A12   = [cos(q2), -sin(q2),  0, a2k(1)*cos(q2)-a2k(2)*sin(q2);
+             sin(q2),  cos(q2),  0, a2k(2)*cos(q2)+a2k(1)*sin(q2);
+                   0,        0,  1,                        a2k(3);
+                   0,        0,  0,                            1];
+    A23   = [cos(q3), -sin(q3),  0, k2h(1)*cos(q3)-k2h(2)*sin(q3);
+             sin(q3),  cos(q3),  0, k2h(2)*cos(q3)+k2h(1)*sin(q3);
+                   0,        0,  1,                        k2h(3);
+                   0,        0,  0,                            1];
+    A34   = [ 0, -sin(q4), cos(q4), h2w(1)*cos(q4);
+              0,  cos(q4), sin(q4), h2w(1)*sin(q4);
+             -1,        0,       0,              0;
+              0,        0,       0,             1];
+    A45   = [cos(q5),  0,  sin(q5),  h2w(3)*sin(q5);
+             sin(q5),  0, -cos(q5), -h2w(3)*cos(q5);
+                   0,  1,        0,          h2w(2);
+                   0,  0,        0,              1];
+    A56   = [cos(q6), -sin(q6),  0, H*cos(q6);
+             sin(q6),  cos(q6),  0, H*sin(q6);
+                   0,        0,  1,         0;
+                   0,        0,  0,         1];
+    A67   = [cos(q7),  0, -sin(q7),  h2w(2)*sin(q7);
+             sin(q7),  0,  cos(q7), -h2w(2)*cos(q7);
+                   0, -1,        0,         -h2w(3);
+                   0,  0,        0,              1];
+    A78   = [0, -sin(q8), -cos(q8),     0;
+             0,  cos(q8), -sin(q8),     0;
+             1,        0,        0, -h2w(1);
+             0,        0,        0,     1];
+    A89   = [cos(q9), -sin(q9),  0,  k2h(2)*sin(q9)-k2h(1)*cos(q9);
+             sin(q9),  cos(q9),  0, -k2h(2)*cos(q9)-k2h(1)*sin(q9);
+                   0,        0,  1,                        -k2h(3);
+                   0,        0,  0,                             1];
+    A910  = [cos(q10), -sin(q10),  0,  a2k(2)*sin(q10)-a2k(1)*cos(q10);
+             sin(q10),  cos(q10),  0, -a2k(2)*cos(q10)-a2k(1)*sin(q10);
+                    0,         0,  1,                          -a2k(3);
+                    0,         0,  0,                               1];
+    A1011 = [ 0, -sin(q11), cos(q11), 0;
+              0,  cos(q11), sin(q11), 0;
+             -1,         0,        0, 0;
+              0,         0,        0, 1];
+    A1112 = [cos(q12), -sin(q12),  0, 0;
+             sin(q12),  cos(q12),  0, 0;
+                    0,         0,  1, 0;
+                    0,         0,  0, 1];
+    % INVERTIBLE !!!
+    T12B  = [0,0,-1,0; 0,1,0,-h2a;
+             1,0, 0,0; 0,0,0,  1];
+
+    %% TRANSFORMS
+    if params.mode ==  1        % RIGHT FIXED
+        AB0 = TB0;
+        AB1  = AB0*A01;
+        AB2  = AB1 *A12;
+        AB3  = AB2 *A23;
+        AB4  = AB3 *A34;
+        AB5  = AB4 *A45;
+        AB6  = AB5 *A56;
+         
+        AB7  = AB6 *A67;
+        AB8  = AB7 *A78;
+        AB9  = AB8 *A89;
+        AB10 = AB9 *A910;
+        AB11 = AB10*A1011;
+        AB12 = AB11*A1112;
+        ABE  = AB12*T12B;
+    elseif params.mode == -1     % LEFT FIXED
+        AE12 = inv(T12B);
+        AB11 = AE12 * inv(A1112);
+        AB10 = AB11 * inv(A1011);
+        AB9  = AB10 * inv(A910);
+        AB8  = AB9  * inv(A89);
+        AB7  = AB8  * inv(A78);
     
-%% LEFT
-    % LEFT ANKLE
-    A01 = A0Sl * AE1;
-        A12x = -S*sin(q1);
-        A12y =  S*cos(q1);
-        A12z =  0;
-        A12R = [0, -sin(q1), -cos(q1);
-                0,  cos(q1), -sin(q1);
-                1,        0,        0];
-        A12  = [A12R, [A12x A12y A12z]'; ROW4];
-    A0Al = A01 * A12;
-    % LEFT KNEE: A0Kl = A02 * A23
-        A23x = -Ll*sin(q2);
-        A23y =  Ll*cos(q2);
-        A23z =  0;
-        A23R = [cos(q2), -sin(q2), 0;
-                sin(q2),  cos(q2), 0;
-                      0,        0, 1];
-        A23  = [A23R, [A23x A23y A23z]'; ROW4];
-    A0Kl = A0Al * A23;
-    % LEFT HIP: A0Hl = A0Kl * A34 * A45 * A56
-        A34x = -Lu*sin(q3);
-        A34y =  Lu*cos(q3);
-        A34z =  0;
-        A34R = [cos(q3), -sin(q3), 0;
-                sin(q3),  cos(q3), 0;
-                      0,        0, 1];
-        A34  = [A34R, [A34x A34y A34z]'; ROW4];
-    A04 = A0Kl * A34;
-        A45x = -S*sin(q4);
-        A45y =  S*cos(q4);
-        A45z =  0;
-        A45R = [0, -sin(q4),  cos(q4);
-                0,  cos(q4),  sin(q4);
-               -1,        0,        0];
-        A45  = [A45R, [A45x A45y A45z]'; ROW4];
-    A05 = A04 * A45;
-        A56x = -S*sin(q5);
-        A56y =  S*cos(q5);
-        A56z =  0;
-        A56R = [cos(q5), 0,  sin(q5);
-                sin(q5), 0, -cos(q5);
-                      0, 1,        0];
-        A56  = [A56R, [A56x A56y A56z]'; ROW4];
-    A0Hl = A05 * A56;
-%% RIGHT
-    % RIGHT ANKLE
-    A012 = A0Sr * AE12;
-        A1211x =  S*sin(q12);
-        A1211y =  S*cos(q12);
-        A1211z =  0;
-        A1211R = [0, sin(q12), -cos(q12);
-                  0, cos(q12),  sin(q12);
-                  1,        0,         0];
-        A1211  = [A1211R, [A1211x A1211y A1211z]'; ROW4];
-    A0Ar = A012 * A1211;
-    % RIGHT KNEE: A0Kr = A011 * A1110
-        A1110x =  Ll*sin(q11);
-        A1110y =  Ll*cos(q11);
-        A1110z =  0;
-        A1110R = [cos(q11), sin(q11), 0;
-                 -sin(q11), cos(q11), 0;
-                         0,        0, 1];
-        A1110  = [A1110R, [A1110x A1110y A1110z]'; ROW4];
-    A0Kr = A0Ar * A1110;
-    
-    % RIGHT HIP:  A0Hr = A0Kr * A109 * A98 * A87
-        A109x =  Lu*sin(q10);
-        A109y =  Lu*cos(q10);
-        A109z =  0;
-        A109R = [cos(q10), sin(q10), 0;
-                -sin(q10), cos(q10), 0;
-                       0,       0,   1];
-        A109  = [A109R, [A109x A109y A109z]'; ROW4];
-    A09  = A0Kr * A109;
-        A98x = S*sin(q9);
-        A98y = S*cos(q9);
-        A98z = 0;
-        A98R = [0, sin(q9),  cos(q9);
-                0, cos(q9), -sin(q9);
-               -1,       0,       0];
-        A98  = [A98R, [A98x A98y A98z]'; ROW4];
-    A08  = A09 * A98;
-        A87x =  S*sin(q8);
-        A87y =  S*cos(q8);
-        A87z =  0;
-        A87R = [cos(q8), 0, -sin(q8);
-               -sin(q8), 0, -cos(q8);
-                      0, 1,        0];
-        A87  = [A87R, [A87x A87y A87z]'; ROW4];
-    A0Hr = A08 * A87;
-    
-    %% LINK POSITIONS
-    A0Ul = (A0Hl(1:3,4) + A0Kl(1:3,4)) * 0.5; % Estimate of rCoM of UL L
-    A0Ll = (A0Kl(1:3,4) + A0Al(1:3,4)) * 0.5; % Estimate of rCoM of LL L
-    A0Ur = (A0Hr(1:3,4) + A0Kr(1:3,4)) * 0.5; % Estimate of rCoM of UL R
-    A0Lr = (A0Kr(1:3,4) + A0Ar(1:3,4)) * 0.5; % Estimate of rCoM of LL R
+        AB6  = AB7  * inv(A67);
+        AB5  = AB6  * inv(A56);
+        AB4  = AB5  * inv(A45);
+        AB3  = AB4  * inv(A34);
+        AB2  = AB3  * inv(A23);
+        AB1  = AB2  * inv(A12);
+        AB0  = AB1  * inv(A01);
+        ABE  = AB0  * inv(TB0);
+    end
 
     %% Position of the CoM in Global Coordinates
-    sigmaMass = (mJo * 14) + ... Joints (Sole, Ankle, Knee, Hip, Servos)
+    sigmaMass = (mFo * 2)  + ... Foot
+                (mJo * 12) + ... Joints (Ankle, Knee, Hip, Servos)
                 (mLu * 2)  + ... Upper Leg
                 (mLl * 2)  + ... Lower Leg
                  mPe;
-    r0CoM = ((A0Sl(1:3,4) + A0Al(1:3,4) + A0Kl(1:3,4) + A0Hl(1:3,4)) * mJo + ...
-             (A0Sr(1:3,4) + A0Ar(1:3,4) + A0Kr(1:3,4) + A0Hr(1:3,4)) * mJo + ...
-             (A01(1:3,4)  + A04(1:3,4)  + A05(1:3,4)) * mJo + ...
-             (A012(1:3,4) + A09(1:3,4)  + A08(1:3,4)) * mJo + ...
-             (A0H(1:3,4))  * mPe + ...
-             (A0Ul + A0Ur) * mLu + ...
-             (A0Ll + A0Lr) * mLl ) ...
-             / sigmaMass;
+    r0CoM = (([0;0;0]   + ABE(1:3,4)) *mFo + ... FEET
+            (AB0(1:3,4) + AB11(1:3,4)) *mJo + ...
+            (AB1(1:3,4) + AB10(1:3,4)) *mJo + ...
+            (AB2(1:3,4) + AB9(1:3,4)) *mJo + ...
+            (AB3(1:3,4) + AB8(1:3,4)) *mJo + ...
+            (AB4(1:3,4) + AB7(1:3,4)) *mJo + ...
+            (AB5(1:3,4) + AB6(1:3,4)) *mJo + ...
+            (AB5(1:3,4) + AB6(1:3,4)) *(mPe/2) + ...
+            (AB1(1:3,4) + AB2(1:3,4)) *(mLl/2) + ...
+            (AB10(1:3,4) + AB9(1:3,4)) *(mLl/2) + ...
+            (AB2(1:3,4) + AB3(1:3,4)) *(mLu/2) + ...
+            (AB9(1:3,4) + AB8(1:3,4)) *(mLu/2) ...
+            )/sigmaMass;
 end
 
