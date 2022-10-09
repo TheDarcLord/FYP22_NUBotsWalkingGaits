@@ -58,7 +58,7 @@ of homogenous transforms that are functions of the elements of $\mathbf{q}$.
 
 \begin{figure}[h!]
     \begin{center}
-        \includegraphics[width=.8\linewidth]{_content/10_background/fig_emp.png}
+        \includegraphics[width=.6\linewidth]{_content/10_background/fig_emp.png}
         \caption{
             Example system
         }
@@ -85,5 +85,18 @@ with respect to that same base coordinate system.
     \end{bmatrix} 
 \end{equation}
 
-$\mathbf{\Theta}$
-
+$\mathbf{\Theta}$ is the parameterisation of the rotation matrix contained within the 
+DKM, that being $\mathbf{R}_{E}^{B}$. For the purpose of this report, Euler Angles were 
+chosen to parameterise $\mathbf{\Theta}$ as;
+\begin{equation}
+    \mathbf{\Theta} = \begin{bmatrix}
+        \phi    \\
+        \theta  \\
+        \psi
+    \end{bmatrix} =
+    \begin{bmatrix}
+        atan2( \mathbf{R}_{32},\mathbf{R}_{33})                                 \\
+        atan2(-\mathbf{R}_{31},\sqrt{ \mathbf{R}_{32}^2 + \mathbf{R}_{33}^2 }   \\
+        atan2( \mathbf{R}_{21},\mathbf{R}_{11})
+    \end{bmatrix}
+\end{equation}
