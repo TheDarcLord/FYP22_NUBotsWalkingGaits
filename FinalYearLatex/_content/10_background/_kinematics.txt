@@ -103,5 +103,5 @@ chosen to parameterise $\mathbf{\Theta}$ as;
 
 The FKM is thus parameterised as;
 \begin{equation}
-    \mathbf{X_{e}} = [ x, y, z, \phi, \theta, \psi ]^{T} = \mathbf{k}(\mathbf{q})
+    \mathbf{x_{e}} = [ x, y, z, \phi, \theta, \psi ]^{T} = \mathbf{k}(\mathbf{q})
 \end{equation}
