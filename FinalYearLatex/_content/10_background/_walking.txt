@@ -1,0 +1,9 @@
+Elements of the walking problem include:
+- Walking Stages
+- Stability Criterion
+    - CoM
+    - Support Polygon
+
+Approaches covered by this thesis are 
+- Quasi Static          - Statically stable gait
+- Zero Moment Point     - Dynamically stable gait
