@@ -13,7 +13,7 @@ matrix that minimises $f(\mathbf{x})$. The objective function can also be subjec
 inequality constraints of the form;
 
 \begin{align}
-         c(\mathbf{x})      \leq    0         \\
+    c(\mathbf{x})           \leq    0         \\
     c_{eq}(\mathbf{x})      =       0         \\
     A       \mathbf{x}      \leq    b         \\
     A_{eq}  \mathbf{x}      =       b_{eq}    \\
@@ -26,5 +26,11 @@ column matrix that forms the lower bound of $\mathbf{x}$, while $ub$ is the colu
 that forms the upper bound of $\mathbf{x}$.
 
 Numerical optimisation is used to solve the inverse kinematics problem, where, given 
-an end effector's position and orientation, the pose, the column matrix of joint variables 
-that achieve the desired pose of the end effector, is returned.
+a desired end effector pose, the column matrix of joint variables that achieve the desired pose 
+is returned.
+
+\begin{equation}
+    \mathbf{q^{*}} = \mathbf{k}^{-1}(\mathbf{x_e})
+\end{equation}
+
+
