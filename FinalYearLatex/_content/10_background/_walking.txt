@@ -4,6 +4,20 @@ Elements of the walking problem include:
     - CoM
     - Support Polygon
 
+
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=.8\linewidth]{_content/10_background/fig_cycle_anno.png}
+        \caption{
+            Example system
+        }
+        \label{fig:3D_1}
+    \end{center}
+\end{figure}
+
+
+
+
 Approaches covered by this thesis are 
 - Quasi Static          - Statically stable gait
 - Zero Moment Point     - Dynamically stable gait
