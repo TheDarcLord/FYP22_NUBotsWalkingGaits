@@ -7,11 +7,11 @@ Elements of the walking problem include:
 
 \begin{figure}[h!]
     \begin{center}
-        \includegraphics[width=.8\linewidth]{_content/10_background/fig_cycle_anno.png}
+        \includegraphics[width=.8\linewidth]{_content/10_background/fig_cycle_bot.png}
         \caption{
-            Example system
+            Walking cycle
         }
-        \label{fig:3D_1}
+        \label{fig:WC}
     \end{center}
 \end{figure}
 
