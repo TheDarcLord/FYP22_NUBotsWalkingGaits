@@ -6,7 +6,7 @@ clc
     params.framerate  = 40;                             % FPS
     model.timestp     = params.framerate^(-1);          % Seconds
     model.tspan       = 0 : model.timestp : 20;         % [ time ]
-    model.timeHrzn    = 0;                              % Seconds
+    model.timeHrzn    = 2;                              % Seconds
     model.Nl          = model.timeHrzn / model.timestp; % INTEGER
  % Weights for controller `Performance Index`
     % Design of an optimal controller for a discrete-time system subject
@@ -98,7 +98,7 @@ clc
    [model.glbTrj,~,~] = ...
        trajGenGlobal(model.tspan, ...       % Time Span
                      model.r.xe(1:3,1)./2); % Init Position
-        [~] = plotSteps(model,1:length(model.tspan));
+        %[~] = plotSteps(model,1:length(model.tspan));
 %% STEPPING
     % Helper Functions
     gradFUNC = @(A,B) (B(2) - A(2)) ...
@@ -107,31 +107,59 @@ clc
     Nl       = model.Nl;              % N# INTEGER Future Indexes
     stpLngth = params.StepLength;     % Step Size:   m
     Q        = model.glbTrj;          %         Q:  [x y z]ᵀ
-    Qstep    = zeros(6,length(model.glbTrj)); % Qstep:  [x 0 z]ᵀ
+    Qstep    = zeros(6,length(Q)); % Qstep:  [x 0 z]ᵀ
     r        = params.HipWidth/2;     % Radius of Circle
     STEP     = params.mode;           % DEFINE MODE:  1 RIGHT Step 
                                       %              -1 LEFT  Step
-    accuDist = 0;                     % Accumulated Distance
-    model.p.pREF(:,1) = Q([1 3],1);   % Last Foot Step -> Traj Start Point
+    current_Dist = 0;                 % Accumulated Current Distance
+    preview_Dist = 0;                 % Accumulated Preview Distance
+    model.p.pREF(:,1) = model.glbTrj([1 3],1);   % Last Foot Step -> Traj Start Point
     A        = model.glbTrj(:,1);     % A = [x₁ y₁ z₁]ᵀ
     t_begin  = 1;                     % Index of Step Beginning
     model.TBE = eye(4);               % HomoTrans: Base -> End Effector
     for i=2:length(model.tspan)
         tic
-        accuDist = accuDist + norm(Q(:,i-1) - Q(:,i));
-        if accuDist > stpLngth || i == length(Q)
-            % TAKING STEP
+        current_Dist = current_Dist + ...
+            norm(model.glbTrj(:,i-1) - model.glbTrj(:,i));
+
+        % PREVIEW FORWARD
+        preview_A    = updateCoord(model.TBE, A);
+        preview_STEP = STEP;
+        preview_init = i + 1;
+        preview_end  = i + Nl;
+        preview_Dist = current_Dist;
+        for p = preview_init:preview_end
+            if p > length(Q)
+                model.p.pREF(:,p) = model.p.pREF(:,p-1);
+            else
+                preview_Dist = preview_Dist + ...
+                    norm(model.glbTrj(:,p-1) - model.glbTrj(:,p));
+
+                if preview_Dist > stpLngth || p == length(Q)
+                    preview_B = model.glbTrj(:,p);
+                    M = gradFUNC(preview_A([1 3]),preview_B([1 3]));
+                    model.p.pREF(:,p) = preview_B([1 3]) + ...
+                                        preview_STEP*[M*r*sqrt(1/(1+M^2)); ...
+                                                       -r*sqrt(1/(1+M^2))];
+                    preview_STEP  = preview_STEP * -1;
+                    preview_A     = preview_B;
+                    preview_Dist  = 0;
+                else
+                    model.p.pREF(:,p) = model.p.pREF(:,p-1);
+                end
+            end
+        end
+        
+        if current_Dist > stpLngth || i == length(Q)
+            % TAKE STEP
             t_end           = i;       % Index of Step Ending
             params.mode     = STEP;    % Mode
             j               = t_begin; % `j` runs the step
             model.r.xe(:,j) = k(model.r.q(:,j), params); % Update Xe
             
-            
-
             for u=t_begin:length(model.tspan)
                 % UPDATE: Global Trajectory to End Effector Coords
-                model.glbTrj(:,u) = ...
-                    updateCoord(model.TBE, model.glbTrj(:,u));
+                model.glbTrj(:,u) = updateCoord(model.TBE, model.glbTrj(:,u));
                 % UPDATE: Pendulum Model to End Effector Coords
                 tempOUT = ...
                     updateCoord(model.TBE, [model.p.y(1,u); ...
@@ -140,7 +168,7 @@ clc
                 tempPOS = ...
                     updateCoord(model.TBE, [model.p.x(1,u); ...
                                                          0; ...
-                                           model.p.x(4,u)]);
+                                            model.p.x(4,u)]);
                 tempVEL = ...
                     model.TBE(1:3,1:3)' * [model.p.x(2,u);
                                                         0; 
@@ -155,7 +183,6 @@ clc
                 model.p.y(:,u) = tempOUT([1 3]);
             end
 
-            
             for u=t_begin:length(model.p.pREF)
                 % UPDATE: Pendulum REF to End Effector Coords
                 tempREF = [model.p.pREF(1,u); 0; model.p.pREF(2,u)];
@@ -163,18 +190,29 @@ clc
                 model.p.pREF(:,u) = tempREF([1 3]);
             end
 
-            A = updateCoord(model.TBE, A);
-            B = model.glbTrj(:,i);
-            M = gradFUNC(A([1 3]),B([1 3]));
-            % Right (+) & Left (-)
-            model.p.pREF(:,i) = B([1 3]) + STEP*[M*r*sqrt(1/(1+M^2)); ...
-                                                  -r*sqrt(1/(1+M^2))];
-
             % GENERATE STEP TRAJECTORY
             Qstep(:,t_begin:t_end) = trajGenStep(model.r.xe(:,j), ...
                                        model.p.pREF(:,t_end), ...
                                        t_begin:t_end, ...
                                        model,params);
+
+%             % +-+-+-+-+-+-+-+-+-+-+-+
+%             ROBOT_FRAME = figure(1);
+%                 hold on
+%                 grid on
+%                 axis equal
+%                 set(gca,'Color','#CCCCCC');
+%                 title("3D Model - ZMP Walking",'FontSize',12);
+%                 xlabel('{\bfZ} (metres)');
+%                 ylabel('{\bfX} (metres)');
+%                 zlabel('{\bfY} (metres)');
+%                 view(-165,50);
+%                 [~] = plotRobot(t_begin,model,params);
+%                 [~] = plotSteps(model,t_begin:(t_end+Nl));
+%                 t = t_begin:t_end;
+%                 plot3(Qstep(3,t),Qstep(1,t),Qstep(2,t),'b-','LineWidth',2)
+%                 pause(0.01)
+%             % +-+-+-+-+-+-+-+-+-+-+-+
 
             for j=t_begin:t_end
                 jn = j - 1;
@@ -193,13 +231,10 @@ clc
             end
 
             % CLEAN UP
-            STEP      = STEP * -1;
-            accuDist  = 0;
-            A         = B;
-            t_begin   = t_end - 1;
+            current_Dist    = 0;
+            STEP            = STEP * -1;
+            t_begin         = t_end - 1;
             toc
-        else
-            model.p.pREF(:,i) = model.p.pREF(:,i-1);
         end
     end
 
@@ -207,6 +242,7 @@ clc
     ROBOT_FRAME = figure(1);
     hold on
     grid on
+    grid("minor")
     set(gca,'Color','#CCCCCC');
     title("3D Model - ZMP Walking",'FontSize',12);
     xlabel('{\bfZ} (metres)');
@@ -219,7 +255,8 @@ clc
         params.mode = model.mode(1,i);
         cla(ROBOT_FRAME)
         CM = model.r.r0CoMg([1 3],i);
-        axis([ CM(2)-1, CM(2)+1, CM(1)-1, CM(1)+1, 0.0, 1.0]);
+        axis([ CM(2)-0.5, CM(2)+0.5, CM(1)-0.5, CM(1)+0.5, 0.0, 1.0]);
+        plot3(CM(2), CM(1), 0, 'mx','LineWidth',2,'MarkerSize',5)
         [~] = plotRobot(i,model,params);
         %[~] = plotSteps(model);
         %[~] = plotPend(i,model,params);
