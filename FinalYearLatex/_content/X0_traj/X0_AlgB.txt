@@ -27,7 +27,7 @@
                     \State $    Sum 	                \gets 0		                    $
                     \State $    STEP 	                \gets -STEP	                    $
                     \State $    \vec{A}                 \gets \vec{B}	                $
-                    \State $    \mathbf{T^{B}_{E}}      \gets takenStep(\mathbf{q})     $
+                    \State $    \mathbf{T^{B}_{E}}      \gets DKM(\mathbf{q})           $   \Comment{The transform once a step is complete}
                 \Else
                     \State $    \mathbf{REF}_{[:,i]}    \gets \mathbf{REF}_{[:,i - 1]}  $
                 \EndIf

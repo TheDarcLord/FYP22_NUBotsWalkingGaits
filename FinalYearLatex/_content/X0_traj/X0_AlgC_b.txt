@@ -1,28 +1,39 @@
 \begin{algorithm}[h!]
-    \caption{ZMP Preview Reference}\label{alg:Loc2RefA}
+    \caption{ZMP Preview Reference}\label{alg:Loc2RefB}
         \begin{algorithmic}
-            \Procedure{PreviewReference}{$ STEP, StepSize, \vec{A}, \mathbf{R^{E}_{B}}, \vec{r_{BE}}, \mathbf{Q}_{2 \times N}, N_{l}, t_{i}, Sum, \mathbf{REF} $}
-                \State $ \vec{A_{p}}    \gets \mathbf{R^{E}_{B}} \cdot ( \vec{A} - \vec{r_{BE}} )   $
-                \State $ STEP_{p}       \gets STEP                                                  $
-                \State $ t_{init}       \gets t_{i} + 1                                             $
-                \State $ t_{end}        \gets t_{i} + N_{l}                                         $
-                \State $ Sum_{p}        \gets Sum                                                   $
-                \For {$j \gets t_{init} $ $\mathbf{to}$ $t_{end}$}
-                    \If {$j > N$}
-                        \State $ \mathbf{REF}_{[:,j]} \gets \mathbf{REF}_{[:,j - 1]}                $ 
-                    \Else
-                        \State $ Sum_{p} \gets Sum_{p} + \| \, \mathbf{Q}_{[:,j-1]} - \mathbf{Q}_{[:,j]} \, \|  $ 
-                        \If {$Sum_{p} \geq StepSize$ $\mathbf{OR}$ $j = N$}
-                            \State $    \vec{B_{p}}          \gets \mathbf{Q}_{[:,j]}               $
-                            \State $    \mathbf{REF}_{[:,j]} \gets \vec{B_{p}} + STEP_{p} \cdot \begin{pmatrix} \nabla_{AB} \cdot r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \\ -r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \end{pmatrix} $
-                            \State $    Sum_{p} 	         \gets 0		                        $
-                            \State $    STEP_{p} 	         \gets -STEP	                        $
-                            \State $    \vec{A_{p}}          \gets \vec{B}	                        $
-                        \Else
-                            \State $ \mathbf{REF}_{[:,j]} \gets \mathbf{REF}_{[:,j - 1]}            $ 
-                        \EndIf
-                    \EndIf
-                \EndFor
-            \EndProcedure
+            \State $    \mathbf{T^{B}_{E}}      \gets \mathbf{I}_{4 \times 4}       $
+            \State $    StepLength                                                  $
+            \State $    N_{l}                   \gets \frac{timeHorizon}{timeStep}  $
+            \State $    r                       \gets \frac{1}{2} \cdot HipWidth    $
+            \State $    \mathbf{Q}_{2 \times N} \gets Trajectory                    $
+            \State $    \mathbf{REF}            \gets \mathbf{0}_{2 \times N}       $
+            \State $    Sum                     \gets 0                             $
+            \State $    \vec{A}                 \gets \mathbf{Q}_{[:,1]}            $
+            \State $    STEP                    \gets -1                            $
+            \State $    \mathbf{REF}_{[:,1]}    \gets \vec{A}                       $
+            \State $    tspan_{1 \times N}      \gets 0 \to time_{final}            $
+
+            \For {$ i \gets 2$  $\mathbf{to}$ $N$}
+                \State $    \mathbf{R^{E}_{B}} \gets (\mathbf{T^{B}_{E}}_{[1\to3, \, 1\to3]})^{\top}   $
+                \State $    \vec{r_{BE}}       \gets \mathbf{T^{B}_{E}}_{[1\to3,4]}                    $
+
+                \State $    Sum \gets Sum + \| \, \mathbf{Q}_{[:,i-1]} - \mathbf{Q}_{[:,i]} \, \|  $
+                \State $    \mathbf{REF}_{[:,i \to i+N_{l}]} \gets PreviewReference(STEP, StepSize, \vec{A}, \mathbf{R^{E}_{B}}, \vec{r_{BE}}, \mathbf{Q}_{2 \times N}, N_{l}, tspan_{i}, Sum, \mathbf{REF}, r) $
+
+                \If {$Sum \geq StepLength$ $\mathbf{OR}$ $i = N$}
+                    \For {$u \gets i$ $\mathbf{to}$ $N$}
+                        \State $ \mathbf{Q}_{[:,u]} \gets \mathbf{R^{E}_{B}} \cdot ( \mathbf{Q}_{[:,u]} - \vec{r_{BE}} )    $  
+                    \EndFor
+                    \For {$u \gets i$ $\mathbf{to}$ $N+N_{l}$}
+                        \State $ \mathbf{Q}_{[:,u]} \gets \mathbf{R^{E}_{B}} \cdot ( \mathbf{Q}_{[:,u]} - \vec{r_{BE}} )    $  
+                    \EndFor
+                    \State $    createStepTrajectory()                      $
+                    \State $    executeStep()                               $
+                    \State $    \mathbf{T^{B}_{E}}   \gets DKM(\mathbf{q})  $
+                    \State $    Sum 	             \gets 0		        $
+                    \State $    STEP 	             \gets -STEP	        $
+                \EndIf
+
+            \EndFor
         \end{algorithmic}
 \end{algorithm}
