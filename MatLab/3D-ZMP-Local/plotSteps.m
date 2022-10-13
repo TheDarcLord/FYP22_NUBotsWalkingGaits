@@ -1,17 +1,12 @@
-function pass = plotSteps(model)
-    Q = model.glbTrj;
-    plot3(Q(3,:), ...                % Z
-          Q(1,:), ...                % X
-          zeros(1,length(Q)),'k:','LineWidth',1.5);   % Y
-%     % Z X Y 
-%     plot3(model.p.pREF(2,1:t_n), ...                   % Z
-%           model.p.pREF(1,1:t_n), ...                   % X
-%           zeros(1,length(model.p.pREF(1:t_n))),'rx');  % Y
-%     % Z X Y 
-%     plot3(model.p.pREF(2,1:t_n), ...                   % Z
-%           model.p.pREF(1,1:t_n), ...                   % X
-%           zeros(1,length(model.p.pREF(1:t_n))),'r:');  % Y
-
+function pass = plotSteps(model,tspan)
+    Q = model.glbTrj(:,tspan);
+    plot3(Q(3,:), ...                                 % Z
+          Q(1,:), ...                                 % X
+          zeros(1,length(Q)),'k-','LineWidth',1.5);   % Y
+    % ZMP_reference
+    P = model.p.pREF(:,tspan);
+    plot3(P(2,:),P(1,:),zeros(1,length(P)),'rx');
+    plot3(P(2,:),P(1,:),zeros(1,length(P)),'r:');
     drawnow
     pass = 1;
 end
