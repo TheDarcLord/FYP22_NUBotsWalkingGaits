@@ -18,7 +18,7 @@ clc
         xlabel('{\bfX} (metres)','FontSize',16);
         ylabel('{\bfY} (metres)','FontSize',16);
         zlabel('{\bfZ} (metres)','FontSize',16);
-        title({'2 Waypoint Trajectory, varying T_{final}',...
+        title({'3 Waypoint Trajectory, varying T_{final}',...
                'Elevation: 15^{o}'},'FontSize',18);
         view(45,15);
         axis([0 0.2 0 0.2 0 0.1])
@@ -114,7 +114,6 @@ clc
             ttt2    = tm:TIME_STEP:tf;
             T2      = ttt2.^((0:5).');
             q       = [C1*T1 C2*T2];
-            size(q)
 
             plot3(q(1,:),q(2,:),q(3,:),'LineWidth',2,...
                 'LineStyle',STYLE(i),'Color',COLOUR(i));
@@ -126,7 +125,7 @@ clc
         
 %% Trajectory Generation - Continuous Tim
     
-    TrajectoryTest = figure(2);
+    TrajectoryTest = figure(3);
         hold on
         grid on
         axis equal
