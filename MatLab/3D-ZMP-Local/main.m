@@ -84,6 +84,7 @@ clc
     ROBOT_FRAME = figure(1);
         hold on
         grid on
+        axis equal
         set(gca,'Color','#CCCCCC');
         title("3D Model - ZMP Walking",'FontSize',12);
         xlabel('{\bfZ} (metres)');
@@ -97,7 +98,7 @@ clc
    [model.glbTrj,~,~] = ...
        trajGenGlobal(model.tspan, ...       % Time Span
                      model.r.xe(1:3,1)./2); % Init Position
-
+        [~] = plotSteps(model,1:length(model.tspan));
 %% STEPPING
     % Helper Functions
     gradFUNC = @(A,B) (B(2) - A(2)) ...
@@ -125,7 +126,7 @@ clc
             j               = t_begin; % `j` runs the step
             model.r.xe(:,j) = k(model.r.q(:,j), params); % Update Xe
             
-            A = updateCoord(model.TBE, A);
+            
 
             for u=t_begin:length(model.tspan)
                 % UPDATE: Global Trajectory to End Effector Coords
@@ -162,6 +163,7 @@ clc
                 model.p.pREF(:,u) = tempREF([1 3]);
             end
 
+            A = updateCoord(model.TBE, A);
             B = model.glbTrj(:,i);
             M = gradFUNC(A([1 3]),B([1 3]));
             % Right (+) & Left (-)
