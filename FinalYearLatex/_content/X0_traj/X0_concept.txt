@@ -63,14 +63,9 @@ As such, both the FKM and the decision as to which foot is in motion are driven 
 
 However, this method breaks down if the trajectory rotates more than $\pm \frac{\pi}{2}$ about the global 
 $Z$ axis. Figure \ref{fig:TRJ_Fail} demonstrates breakdown which culminated in a double step on a 
-particular side, depending on the inital value of $STEP$. This was caused by the change 
+particular side, the side depending on the inital value of $STEP$. This was caused by the change 
 in sign of the roots of equation \ref{eq:TRJ_Quad}.
 \newline
-To resolve this, rather than tracking and updating the location of the base of the FKM with a global variable,
-it is assumed that the base of fixed foot is the origin of coordinate system. As such, the robot is now defined
-in terms of local coordinates. Additionally, algorithm \ref{alg:Glb2Fts} was modified to apply the 
-homogeneous transform, that describes the location of the end effector with respect to the origin, to the 
-entire trajectory. This idea is borrowed directly from Kajita \citep{kajita_2003_biped}. 
 
 \begin{figure}[!h]
     \begin{center}
@@ -81,3 +76,16 @@ entire trajectory. This idea is borrowed directly from Kajita \citep{kajita_2003
 \end{figure}
 
 \input{_content/X0_traj/X0_AlgB.txt}
+
+To resolve this, rather than tracking and updating the location of the $Base$ of the FKM and the location of 
+the $End$ $Effector$ with a pair of global variables, it was assumed that the base of fixed foot is at the origin. 
+Thus, the robot is now defined in terms of local coordinates. Algorithm \ref{alg:Glb2Fts} was then modified.
+The variable $\mathbf{T_{B}^{E}}$ was initialised as $\mathbf{I}_{4 \times 4}$, and was used to hold 
+the homogenous transform that describes the relationship between the $Base$ and the $End$ $Effector$.
+This transform is then decomposed into its rotation matrix, $\mathbf{R_{B}^{E}}$, and the position vector,
+$\vec{r_{B}^{E}}$. $\mathbf{R_{B}^{E}}$ was applied to the difference between every subsequent position vector 
+along the trajectory, and position of the $End$ $Effector$. This transforms the original trajectory into 
+the coordinates of the $End$ $Effector$, following the completion of a step, as this becomes the origin, the $Base$,
+of the kinematic chain in preparation for the next step. This transformation was also applied to $\vec{A}$ in 
+order to shift it to the new coordinate system. This idea is borrowed directly from Kajita \citep{kajita_2003_biped},
+and is presented as algorithm \ref{alg:Loc2Fts}.
