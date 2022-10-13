@@ -2,24 +2,24 @@
     \caption{Global Trajectory to Footsteps}\label{alg:Glb2Fts}
         \begin{algorithmic}
             \State $    r                       \gets \frac{1}{2} \cdot HipWidth    $
-            \State $    \mathbf{Q}              \gets Trajectory                    $   \Comment{Columns of $\vec{r}_{(x,y)}$}
+            \State $    \mathbf{Q}_{2 \times N} \gets Trajectory                    $   \Comment{Columns of $\vec{r}_{(x,y)}$}
             \State $    \mathbf{REF}            \gets \mathbf{0}_{2 \times N}       $
             \State $    Sum                     \gets 0                             $
-            \State $    \vec{A}                 \gets \mathbf{Q}_{(:,1)}            $
+            \State $    \vec{A}                 \gets \mathbf{Q}_{[:,1]}            $
             \State $    STEP                    \gets -1                            $
-            \State $    \mathbf{REF}_{(:,1)}    \gets \vec{A}                       $
+            \State $    \mathbf{REF}_{[:,1]}    \gets \vec{A}                       $
 
             \For {$ i \gets 2$  $\mathbf{to}$ $N$}
 
-                \State $    Sum \gets Sum + \| \mathbf{Q}_{(:,i-1)} - \mathbf{Q}_{(:,i)} \|     $
+                \State $    Sum \gets Sum + \| \, \mathbf{Q}_{[:,i-1]} - \mathbf{Q}_{[:,i]} \, \|  $
                 \If {$Sum \geq StepSize$ $\mathbf{OR}$ $i = N$}
-                    \State $    \vec{B}                 \gets \mathbf{Q}_{(:,i)}                                               $
-                    \State $    \mathbf{REF}_{(:,i)}    \gets \vec{B} + STEP \cdot \begin{pmatrix} \nabla_{AB} \cdot r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \\ -r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \end{pmatrix} $
-                    \State $    Sum 	\gets 0		$
-                    \State $    STEP 	\gets -STEP	$
-                    \State $    \vec{A} \gets \vec{B}	$
+                    \State $    \vec{B}              \gets \mathbf{Q}_{[:,i]}           $
+                    \State $    \mathbf{REF}_{[:,i]} \gets \vec{B} + STEP \cdot \begin{pmatrix} \nabla_{AB} \cdot r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \\ -r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \end{pmatrix} $
+                    \State $    Sum 	             \gets 0		                    $
+                    \State $    STEP 	             \gets -STEP	                    $
+                    \State $    \vec{A}              \gets \vec{B}	                    $
                 \Else
-                    \State $    \mathbf{REF}_{(:,i)} \gets \mathbf{REF}_{(:,i - 1)}                 $
+                    \State $    \mathbf{REF}_{[:,i]} \gets \mathbf{REF}_{[:,i - 1]}     $
                 \EndIf
 
             \EndFor
