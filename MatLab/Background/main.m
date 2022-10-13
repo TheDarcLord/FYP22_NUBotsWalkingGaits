@@ -40,19 +40,25 @@ clc
             ttf = tf.^(0:3).';
             TF  = [ttf, D*ttf];
             % Mid Waypoint
-            qm  = [(qi(1,1) + qf(1,1))/2, 0;
-                   (qi(2,1) + qf(2,1))/2, 0;
+            qm  = [(qi(1,1) + qf(1,1))/2, (qf(1,1)-qi(1,1))/(tf-ti);
+                   (qi(2,1) + qf(2,1))/2, (qf(2,1)-qi(2,1))/(tf-ti);
                                      0.1, 0];
             tm  = (ti + tf) / 2;
             ttm = tm.^(0:3).';
             TM  = [ttm, D*ttm];
-            % Evaluate Polynomial Coefficients 
-            C = [qi qm qf] / [TI TM TF];
-            %C = [qi qf] / [TI TF];
-            % Evaluate Time and Positions
-            tspan = ti:TIME_STEP:tf;
-            tt = tspan.^((0:3).');
-            q = C*tt;
+            % Evaluate Polynomial Coefficients
+%INCORRECT  C   = [qi qm qf] / [TI TM TF];      
+            C1  = [qi qm] / [TI TM];
+            C2  = [qm qf] / [TM TF];
+            % Evaluate Time and Positions       %
+%INCORRECT  tspan   = ti:TIME_STEP:tf;          
+%INCORRECT  tt      = tspan.^((0:3).');         
+%INCORRECT  q       = C*tt;         
+            ttt1    = ti:TIME_STEP:tm;
+            T1      = ttt1.^((0:3).');
+            ttt2    = tm:TIME_STEP:tf;
+            T2      = ttt2.^((0:3).');
+            q       = [C1*T1 C2*T2];
 
             plot3(q(1,:),q(2,:),q(3,:),'LineWidth',2,...
                 'LineStyle',STYLE(i),'Color',COLOUR(i));
@@ -93,19 +99,22 @@ clc
             ttf = tf.^(0:5).';
             TF  = [ttf, D*ttf, D^2*ttf];
             % Mid Waypoint
-            qm  = [(qi(1,1) + qf(1,1))/2, 0, 0;
-                   (qi(2,1) + qf(2,1))/2, 0, 0;
+            qm  = [(qi(1,1) + qf(1,1))/2, (qf(1,1)-qi(1,1))/(tf-ti), 0;
+                   (qi(2,1) + qf(2,1))/2, (qf(2,1)-qi(2,1))/(tf-ti), 0;
                                      0.1, 0, 0];
             tm  = (ti + tf) / 2;
             ttm = tm.^(0:5).';
             TM  = [ttm, D*ttm, D^2*ttm];
-            % Evaluate Polynomial Coefficients 
-            C = [qi qm qf] / [TI TM TF];
-            %C = [qi qf] / [TI TF];
+            % Evaluate Polynomial Coefficients
+            C1  = [qi qm] / [TI TM];
+            C2  = [qm qf] / [TM TF];
             % Evaluate Time and Positions
-            tspan = ti:TIME_STEP:tf;
-            tt = tspan.^((0:5).');
-            q = C*tt;
+            ttt1    = ti:TIME_STEP:tm;
+            T1      = ttt1.^((0:5).');
+            ttt2    = tm:TIME_STEP:tf;
+            T2      = ttt2.^((0:5).');
+            q       = [C1*T1 C2*T2];
+            size(q)
 
             plot3(q(1,:),q(2,:),q(3,:),'LineWidth',2,...
                 'LineStyle',STYLE(i),'Color',COLOUR(i));
@@ -117,7 +126,7 @@ clc
         
 %% Trajectory Generation - Continuous Tim
     
-    TrajectoryTest = figure(3);
+    TrajectoryTest = figure(2);
         hold on
         grid on
         axis equal
