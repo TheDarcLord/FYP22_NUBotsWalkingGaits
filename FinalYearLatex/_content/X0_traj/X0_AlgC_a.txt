@@ -1,0 +1,6 @@
+\begin{algorithm}[h!]
+    \caption{Preview ZMP Reference}\label{alg:Loc2RefA}
+        \begin{algorithmic}
+            
+        \end{algorithmic}
+\end{algorithm}
