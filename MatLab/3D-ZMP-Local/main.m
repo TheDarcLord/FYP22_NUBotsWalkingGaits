@@ -196,7 +196,7 @@ clc
                                        t_begin:t_end, ...
                                        model,params);
 
-%             % +-+-+-+-+-+-+-+-+-+-+-+
+%             % +-+-+-+-+-+-+-+-+-+-+-+ DEBUG
 %             ROBOT_FRAME = figure(1);
 %                 hold on
 %                 grid on
@@ -212,7 +212,7 @@ clc
 %                 t = t_begin:t_end;
 %                 plot3(Qstep(3,t),Qstep(1,t),Qstep(2,t),'b-','LineWidth',2)
 %                 pause(0.01)
-%             % +-+-+-+-+-+-+-+-+-+-+-+
+%             % +-+-+-+-+-+-+-+-+-+-+-+ DEBUG
 
             for j=t_begin:t_end
                 jn = j - 1;
