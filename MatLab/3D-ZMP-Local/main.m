@@ -107,7 +107,7 @@ clc
     stpLngth = params.StepLength;     % Step Size:   m
     Q        = model.glbTrj;          %         Q:  [x y z]ᵀ
     Qstep    = zeros(6,length(Q)); % Qstep:  [x 0 z]ᵀ
-    r        = (params.HipWidth/2) + 0.00;     % Radius of Circle
+    r        = (params.HipWidth/2);   % Radius of Circle
     STEP     = params.mode;           % DEFINE MODE:  1 RIGHT Step 
                                       %              -1 LEFT  Step
     current_Dist = 0;                 % Accumulated Current Distance
@@ -122,7 +122,7 @@ clc
             norm(model.glbTrj(:,i-1) - model.glbTrj(:,i));
 
         % PREVIEW FORWARD
-        preview_A    = updateCoord(model.TBE, A);
+        preview_A    = A;
         preview_STEP = STEP;
         preview_init = i + 1;
         preview_end  = i + Nl;
@@ -195,24 +195,24 @@ clc
                                        t_begin:t_end, ...
                                        model,params);
 
-            % +-+-+-+-+-+-+-+-+-+-+-+ DEBUG
-            ROBOT_FRAME = figure(1);
-                cla(ROBOT_FRAME);
-                hold on
-                grid on
-                axis equal
-                set(gca,'Color','#CCCCCC');
-                title("3D Model - ZMP Walking",'FontSize',12);
-                xlabel('{\bfZ} (metres)');
-                ylabel('{\bfX} (metres)');
-                zlabel('{\bfY} (metres)');
-                view(-165,50);
-                [~] = plotRobot(t_begin,model,params);
-                [~] = plotSteps(model,t_begin:(t_end+Nl));
-                t = t_begin:t_end;
-                plot3(Qstep(3,t),Qstep(1,t),Qstep(2,t),'b-','LineWidth',2)
-                pause(0.01)
-            % +-+-+-+-+-+-+-+-+-+-+-+ DEBUG
+%             % +-+-+-+-+-+-+-+-+-+-+-+ DEBUG
+%             ROBOT_FRAME = figure(1);
+%                 cla(ROBOT_FRAME);
+%                 hold on
+%                 grid on
+%                 axis equal
+%                 set(gca,'Color','#CCCCCC');
+%                 title("3D Model - ZMP Walking",'FontSize',12);
+%                 xlabel('{\bfZ} (metres)');
+%                 ylabel('{\bfX} (metres)');
+%                 zlabel('{\bfY} (metres)');
+%                 view(-165,50);
+%                 [~] = plotRobot(t_begin,model,params);
+%                 [~] = plotSteps(model,t_begin:(t_end+Nl));
+%                 t = t_begin:t_end;
+%                 plot3(Qstep(3,t),Qstep(1,t),Qstep(2,t),'b-','LineWidth',2)
+%                 pause(0.01)
+%             % +-+-+-+-+-+-+-+-+-+-+-+ DEBUG
 
             for j=t_begin:t_end
                 jn = j - 1;
@@ -232,7 +232,7 @@ clc
 
             % CLEAN UP
             current_Dist    = 0;
-            A               = model.glbTrj(:,t_end);
+            A               = model.glbTrj(:,t_end - 1);
             STEP            = STEP * -1;
             t_begin         = t_end - 1;
             toc
