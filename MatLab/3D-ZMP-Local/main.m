@@ -95,7 +95,7 @@ clc
     % +-+-+-+-+-+-+-+-+-+-+-+
 
 %% Generate Trajectory
-   model.glbTrj = trajGen_cir(model.tspan, model.r.xe(1:3,1)./2); % Init Position
+   model.glbTrj = trajGen_sin(model.tspan, model.r.xe(1:3,1)./2); % Init Position
         [~] = plotSteps(model,1:length(model.tspan));
 %% STEPPING
     % Helper Functions
