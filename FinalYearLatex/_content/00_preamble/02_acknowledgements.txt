@@ -12,3 +12,5 @@ and guiding me back to a logical progression of knowledge for this year's FYP.
 \\\citep{kato_1973_the} - The WABOT-1 -> First known Quasi Static Biped ?
 \\\citep{vukobratovi_1983_is} - Is Dynamic Control Needed in Robotic Systems ?
 \\\citep{hirose_1984_a} - Design and Control of a Quadruped Walking Vehicle ?
+\\\citep{handbook_robotics_2016} - 2016 Handbook of Robotics
+\\\citep{handbook_robotics_2008} - 2008 Version
