@@ -1,13 +1,24 @@
-Elements of the walking problem include:
-- Walking Stages
-- Stability Criterion
-    - CoM
-    - Support Polygon
+The walking problem is solved using either a statically stable or dynamically stable approach. Both rely 
+on concepts such as the centre of mass and the support polygon, and consist of a repeating cycle of 
+stages.
 
+\subsubsection*{Centre of Mass}
+The centre of mass is the weighted sum of the position of each mass in the system, which is then divided 
+by the total mass of the system.
+-- Equation + figure
+
+\subsubsection*{Support Polygon}
+The support polygon is the area defined by a set of points that are fixed to the ground. In the case
+of humanoids, it is the area beneath a single foot when it is perpendicular to, and placed on, the ground. 
+When both feet are perpendicular to, and touching, the ground the set of outer vertices define the support
+polygon.
+-- figure
+
+\subsubsection*{Walking stages}
 
 \begin{figure}[h!]
     \begin{center}
-        \includegraphics[width=.8\linewidth]{_content/10_background/fig_cycle_bot.png}
+        \includegraphics[width=.8\linewidth]{_content/10_background/fig_cycle_lower.png}
         \caption{
             Walking cycle
         }
@@ -15,9 +26,8 @@ Elements of the walking problem include:
     \end{center}
 \end{figure}
 
+\subsubsection*{Quasistatic locomotion}
+- Statically stable gait
 
-
-
-Approaches covered by this thesis are 
-- Quasi Static          - Statically stable gait
-- Zero Moment Point     - Dynamically stable gait
+\subsubsection*{Zero Moment Point locomotion}
+- Dynamically stable gait
