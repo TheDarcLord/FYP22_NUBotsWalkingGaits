@@ -12,11 +12,13 @@ function [Q] = trajGenStep(xe,ZMP,indexspan,model,params)
         ti = indexspan(1);
         tf = indexspan(end);
 
-    %% TANGENTS 
-        vTraj = model.glbTrj(:,indexspan(end)) - ...
-                model.glbTrj(:,indexspan(end)-1);
-        vZec1  = [0 0 1]; % X Y Z
-        dotAng =  acos( (vZec1 * vTraj)/norm(vTraj) ) - (pi/2);
+    %% ANGLE
+        A = model.glbTrj(:,indexspan(end));     % [x 0 y]
+        B = model.glbTrj(:,indexspan(end)-1);   % [x 0 y]
+        gradFUNC = @(A,B) -1*(B(3) - A(3)) ...
+                            /(B(1) - A(1));  % Gradient -> ∇
+        M = gradFUNC(A,B);
+        dotAng = atan2(M,1);
 
     %% TRAJECTORY - CUBIC SPLINE            
         q0 = [xe(4) 0; % qR(x)
