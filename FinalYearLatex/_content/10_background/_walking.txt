@@ -66,12 +66,12 @@ moment that will cause the robot to fall.
 
 
 \subsubsection*{Quasistatic locomotion}
-Quasistatic locomotion relies on the quasistatic assumption, which is;
-
-\begin{displayquote}
-
-\end{displayquote}
-
+The aim of quasistatic locomotion is `\emph{walking while maintaining static stability}` 
+\citep{kato_1973_development}. Static stability dictates that if the robot were to stop 
+or pause at any moment, it would remain stable.  This relies on the horizontal components of 
+$\vec{r_{CoM}}$ remaining within `\emph{the support sole plane}`. Quasistatic locomotion also 
+relies on the \emph{quasistatic assumption} `\emph{that parts move slowly enough that inertial 
+effects are negligible}` \citep{siciliano_2016_springer}.
 
 \subsubsection*{Zero Moment Point locomotion}
 - Dynamically stable gait
