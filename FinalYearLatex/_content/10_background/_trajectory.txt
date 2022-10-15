@@ -1,6 +1,16 @@
 A path is a \citep{grimble_2009_robotics} purely geometric object such as a line or function, while
 a trajectory a path defined as a function of time.
 
-\subsubsection*{Cubic Splines}
+\subsubsection*{Polynomial Splines}
+Polynomial splines is the most common method of defining a trajectory through a set of waypoints.
+-- figure --
 
-\subsubsection*{Boundary Value Problems}
+
+
+\subsubsection*{Initial Value Problems}
+
+\begin{align}
+    \ddot{r}(t) &= a             \\
+    \dot{r}(t) &= a\,t + b  \\
+    r(t) &= a\,\frac{t^2}{2} + b\,t + c 
+\end{align}
