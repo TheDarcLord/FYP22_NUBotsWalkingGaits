@@ -72,7 +72,7 @@ vector and rotation matrix needed to reach the end effector from some base, $B$,
 \begin{equation}
     \mathbf{T}_{E}^{B}(\mathbf{q}) = 
     \mathbf{A}^{B}_{0} \mathbf{A}^{0}_{1}(q_1) \mathbf{A}^{1}_{2}(q_2) \dots 
-    \mathbf{A}^{n-1}_{n}(q_N) \mathbf{A}^{n}_{E}
+    \mathbf{A}^{n-1}_{n}(q_n) \mathbf{A}^{n}_{E}
 \end{equation}
 
 The Forward Kinematic Model (FKM) describes the position and orientation, the pose, of the end effector
@@ -96,8 +96,8 @@ in the rotation matrix;
         R_{21} & R_{22} & R_{23} \\
         R_{31} & R_{32} & R_{33} 
     \end{bmatrix} = \begin{bmatrix}
-        cos\psi cos\theta & -sin\psi cos\phi + cos\psi sin\theta sin\phi &  sin\psi sin\phi + cos\psi sin\theta cos\phi  \\
-        sin\psi cos\theta &  cos\psi cos\phi + sin\psi sin\theta sin\phi & -cos\psi sin\phi + sin\psi sin\theta cos\phi  \\
+        cos\psi cos\theta & - sin\psi cos\phi + cos\psi sin\theta sin\phi & + sin\psi sin\phi + cos\psi sin\theta cos\phi  \\
+        sin\psi cos\theta & + cos\psi cos\phi + sin\psi sin\theta sin\phi & - cos\psi sin\phi + sin\psi sin\theta cos\phi  \\
        -sin\theta & cos\theta sin\phi & cos\theta cos\phi
     \end{bmatrix}
 \end{equation}
@@ -118,5 +118,5 @@ Thus the inverse map from $\mathbf{R}_{E}^{B}$ to $\mathbf{\Theta_{E}^{B}}$ is;
 
 The FKM is thus parameterised as;
 \begin{equation}
-    \mathbf{x_{e}} = [ x, y, z, \phi, \theta, \psi ]^{T} = \mathbf{k}(\mathbf{q})
+    \mathbf{x_{e}} = [ x, y, z, \phi, \theta, \psi ]^{\top} = \mathbf{k}(\mathbf{q})
 \end{equation}
