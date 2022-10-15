@@ -1,1 +1,6 @@
-positions 
+A path is a \citep{grimble_2009_robotics} purely geometric object such as a line or function, while
+a trajectory a path defined as a function of time.
+
+\subsubsection*{Cubic Splines}
+
+\subsubsection*{Initial Value Problems}
