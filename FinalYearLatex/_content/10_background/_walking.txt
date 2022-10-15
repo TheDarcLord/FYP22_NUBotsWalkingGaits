@@ -74,4 +74,7 @@ Quasistatic locomotion also relies on the \emph{quasistatic assumption} that `\e
 slowly enough that inertial effects are negligible}' \citep{siciliano_2016_springer}.
 
 \subsubsection*{Zero Moment Point locomotion}
-jhgjj
+Zero Moment Point (ZMP) locomotion shifts the focus from the CoM to the point at which torques about both 
+horizontal axes is zero, beneath the fixed or planted foot. This results in what Vukobratović describes 
+as `dynamic balance' \citep{vukobratovi_2004_zeromoment}. So long as the ZMP remains within the support polygon,
+the robot can be considered dynamically stable.
