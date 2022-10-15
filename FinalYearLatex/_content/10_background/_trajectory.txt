@@ -7,7 +7,7 @@ Polynomial splines is the most common method of defining a trajectory through a 
 
 
 
-\subsubsection*{Initial Value Problems}
+\subsubsection*{Initial Value Problems | Boundary Value Problem | Second Order Differential Equation}
 
 \begin{align}
     \ddot{r}(t) &= a             \\
