@@ -20,8 +20,6 @@
                     \For {$u \gets i$ $\mathbf{to}$ $N$}
                         \State $ \mathbf{Q}_{[:,u]} \gets \mathbf{R^{E}_{B}} \cdot ( \mathbf{Q}_{[:,u]} - \vec{r_{BE}} )    $  
                     \EndFor
-
-                    \State $    \vec{A}                 \gets \mathbf{R^{E}_{B}} \cdot ( \vec{A} - \vec{r_{BE}} )           $
                     \State $    \vec{B}                 \gets \mathbf{Q}_{[:,i]}                                            $
                     \State $    \mathbf{REF}_{[:,i]}    \gets \vec{B} + STEP \cdot \begin{pmatrix} \nabla_{AB} \cdot r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \\ -r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \end{pmatrix} $
                     \State $    Sum 	                \gets 0		                    $
