@@ -8,7 +8,7 @@ Polynomial splines is the most common method of defining a trajectory through a 
 
 
 \subsubsection*{Initial Value Problems | Boundary Value Problem | Second Order Differential Equation}
-
+For simple point to point trajectories THE ABOVE is well suited for generating a concise trajectory.
 \begin{align}
     \ddot{r}(t) &= a             \\
     \dot{r}(t) &= a\,t + b  \\
