@@ -3,4 +3,4 @@ a trajectory a path defined as a function of time.
 
 \subsubsection*{Cubic Splines}
 
-\subsubsection*{Initial Value Problems}
+\subsubsection*{Boundary Value Problems}
