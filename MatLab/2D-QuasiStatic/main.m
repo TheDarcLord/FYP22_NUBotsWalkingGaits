@@ -3,7 +3,7 @@ close all
 clc 
 
 %% Setup
-params.framerate    = 10;
+params.framerate    = 40;
 model.tspan         = 0:(1 / params.framerate):24;
 
 model.q             = zeros(6,length(model.tspan)); % q     [θ₁θ₂θ₃θ₄θ₅θ₆]ᵀ
@@ -64,17 +64,15 @@ params.mass.foot    = 0.1;  % Foot
         title("2D Model - 3D View");
         plotRobot(1,model,params);
 
-    Q1 = trajGenStep(2:81,model,params);
+    Q1 = trajGenStep(2:321,model,params);
 
 %% MAIN LOOPs
 tic % START TIMING
 % Trajectory Generation
-Q1 = trajGenStep(2:81,model,params);
+Q1 = trajGenStep(2:321,model,params);
 Q  = [[0;0;0], Q1];
 
-
-
-for i=2:81
+for i=2:321
     model.xe(:,i)    = [Q(:,i); zeros(3,1)];
     model.q(:,i)     = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
     [~, HTs]         = k(model.q(:,i),(i-1),model, params);
@@ -106,27 +104,10 @@ end
 
 params.mode = 1;
 % Trajectory Generation
-Q2 = trajGenStep(82:161,model,params);
+Q2 = trajGenStep(322:641,model,params);
 Q = [Q Q2];
 
- ANIMATION = figure(1);
-        clf(ANIMATION)
-        hold on
-        grid on
-        axis equal
-        view(145,20);
-        xlabel('{\bfZ} (metres)');
-        ylabel('{\bfX} (metres)');
-        zlabel('{\bfY} (metres)');
-        set(gca,'Color','#EEEEEE');
-        axis([-0.4,0.2, -1,1, 0,1]);
-        title("2D Model - 3D View");
-        plotRobot(81,model,params);
-        plot3(Q(3,:),Q(1,:),Q(2,:),'b-');
-        drawnow
-        pause(0.01)
-
-for i=82:161
+for i=322:641
     model.xe(:,i)   = [Q(:,i); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
     [~, HTs]        = k(model.q(:,i),(i-1),model, params);
@@ -156,27 +137,10 @@ end
 
 params.mode = -1;
 % Trajectory Generation
-Q3 = trajGenStep(162:241, model, params);
+Q3 = trajGenStep(642:961, model, params);
 Q = [Q Q3];
 
-ANIMATION = figure(1);
-        clf(ANIMATION)
-        hold on
-        grid on
-        axis equal
-        view(145,20);
-        xlabel('{\bfZ} (metres)');
-        ylabel('{\bfX} (metres)');
-        zlabel('{\bfY} (metres)');
-        set(gca,'Color','#EEEEEE');
-        axis([-0.4,0.2, -1,1, 0,1]);
-        title("2D Model - 3D View");
-        plotRobot(161,model,params);
-        plot3(Q(3,:),Q(1,:),Q(2,:),'b-');
-        drawnow
-        pause(0.01)
-
-for i=162:241
+for i=642:961
     model.xe(:,i)   = [Q(:,i); zeros(3,1)];
     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
     [~, HTs]     = k(model.q(:,i),(i-1),model, params);
