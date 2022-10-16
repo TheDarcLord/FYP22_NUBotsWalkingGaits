@@ -28,8 +28,8 @@ params.mode         = -1;          % LEFT  FIXED - FKM T16
 params.mass.femur   = 1;    % Thigh Bone
 params.mass.fibula  = 1;    % Paired with `tibia`
 params.mass.joint   = 0.5;  % Knee Bone / Joints / Ankles
-params.mass.pelvis  = 0.7;  % Waist
-params.mass.foot    = 0.1;  % Foot
+params.mass.pelvis  = 3;  % Waist
+params.mass.foot    = 0.2;  % Foot
 
 %% Initial Position & Orientation & Conditions
     model.q0 = [-pi/8;      % θ₁
@@ -118,8 +118,69 @@ end
 
 toc % FINISH TIMING
 
-%% Figures
-ANIMATION = figure(3);
+%% Figure
+figure(2)
+    subplot(1,2,1)
+        hold on
+        grid on
+        grid minor
+        stepA = 1:321;
+        stepB = 322:641;
+        stepC = 642:961;
+        plot(model.tspan, model.rCoMb(1,:),'k','LineWidth',2)
+        plot(model.tspan(stepA), model.rBLb(1,stepA) ...
+            + 0.05*ones(size(stepA)),'r-','LineWidth',2)
+        plot(model.tspan(stepA), model.rBLb(1,stepA) ...
+            - 0.05*ones(size(stepA)),'r--','LineWidth',2)
+    
+        plot(model.tspan(stepB), model.rBRb(1,stepB) ...
+            + 0.05*ones(size(stepB)),'b-','LineWidth',2)
+        plot(model.tspan(stepB), model.rBRb(1,stepB) ...
+            - 0.05*ones(size(stepB)),'b--','LineWidth',2)
+    
+        plot(model.tspan(stepC), model.rBLb(1,stepC) ...
+            + 0.05*ones(size(stepC)),'r-','LineWidth',2)
+        plot(model.tspan(stepC), model.rBLb(1,stepC) ...
+            - 0.05*ones(size(stepC)),'r--','LineWidth',2)
+
+        title('CoM Position with time','FontSize',18)
+        xlabel('Time ( \it{sec} )','FontSize',14)
+        ylabel('X Displacement ( \it{m} )','FontSize',14)
+        legend({'x_{CoM}','Upper Left_{sp}','Lower Left_{sp}'...
+                'Upper Right_{sp}', 'Lower Right_{sp}'} ...
+                ,'FontSize',12,'Location','northwest')
+    
+    subplot(1,2,2)
+        hold on
+        grid on
+        grid minor
+        plot(model.tspan,model.rBLb(1,:),'r','LineWidth',2)
+        plot(model.tspan,model.rBRb(1,:),'b','LineWidth',2)
+
+        title('Foot Position with time','FontSize',18)
+        xlabel('Time ( \it{sec} )','FontSize',14)
+        ylabel('X Displacement ( \it{m} )','FontSize',14)
+        legend({'Left Foot Position','Right Foot Position'} ...
+        ,'FontSize',12,'Location','northwest')
+
+figure(3)
+    hold on
+    grid on
+    axis equal
+    grid minor
+    axis([0 0.8 0 0.2])
+    plot(model.rBLb(1,:),model.rBLb(2,:),'r','LineWidth',2)
+    plot(model.rBRb(1,:),model.rBRb(2,:),'b','LineWidth',2)
+    title('Foot Paths','FontSize',18)
+    ylabel('Y Displacement ( \it{m} )','FontSize',14)
+    xlabel('X Displacement ( \it{m} )','FontSize',14)
+    legend({'Left Foot Position','Right Foot Position'} ...
+            ,'FontSize',12,'Location','northeast')
+
+    
+
+%% ANIMATION
+ANIMATION = figure(4);
     
 for i=1:length(model.tspan)
     clf(ANIMATION)
@@ -127,8 +188,7 @@ for i=1:length(model.tspan)
     grid on
     grid("minor");
     axis equal
-    view(140,30);
-    xlabel('{\bfZ} (metres)');
+    view(90,0);
     ylabel('{\bfX} (metres)');
     zlabel('{\bfY} (metres)');
     set(gca,'Color','#DDDDDD');

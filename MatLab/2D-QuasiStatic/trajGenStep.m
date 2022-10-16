@@ -5,7 +5,7 @@ function [Q] = trajGenStep(indexspan,model,params)
               H = params.HipWidth;
     %% TIME
         ti_i = indexspan(1);
-        tm_i = indexspan(1) + floor((indexspan(end) - indexspan(1))/3);
+        tm_i = indexspan(1) + floor((indexspan(end) - indexspan(1))/2);
         tf_i = indexspan(end);
     
         shftSpan = ti_i:tm_i-1;
