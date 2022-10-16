@@ -25,7 +25,7 @@ matrices $A$ and $A_{eq}$ form linear constraints with $b$ and $b_{eq}$. $lb$ is
 column matrix that forms the lower bound of $\mathbf{x}$, while $ub$ is the column matrix
 that forms the upper bound of $\mathbf{x}$.
 
-Numerical optimisation is used to solve the inverse kinematics problem, where, given 
+Numerical optimisation is used to solve the Inverse Kinematic Model (IKM), where, given 
 a desired end effector pose, the column matrix of joint variables that achieve the desired pose 
 is returned.
 

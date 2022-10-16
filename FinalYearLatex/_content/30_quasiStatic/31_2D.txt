@@ -1,6 +1,6 @@
 The two dimensional model was used to initially investigate quasistatic locomotion,
 as the model was less complex than its three dimensional counterparts. The experience 
-gained in solving the inverse kinematic problem for two dimensional trajectories, 
+gained in solving the inverse kinematic problem for two dimensional step trajectories, 
 transitioning between the kinematic chains and shifting the CoM between steps, was
 found to be invaluable when moving to three dimensions.
 
@@ -63,6 +63,50 @@ describes the trajectory of stepping foot.
 
 \subsubsection*{Inverse Kinematic Model}
 
+The two dimensional inverse kinematic Model (IKM) is a quadratic optimisation function solving for the 
+array of joint variables, $\mathbf{q}$, that minimise the equation \ref{eq:2D_ikm}. Weights, 
+$\mathbf{K_q}$, $\mathbf{K_e}$, and $\mathbf{K_{CoM}}$ penalise the change in joint variables,
+end effector error, and displacement of the ground projected CoM from the centre of the support polygon.
+
+\begin{equation}\label{eq:2D_ikm}
+    \mathbf{q^{*}} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
+    \mathbf{K_{e}}     \lVert  {    k(\mathbf{q}) - \mathbf{x_{e}^*}            } \rVert \: + \:
+    \mathbf{K_{q}}     \lVert  {    \mathbf{q_{0}} - \mathbf{q}                 } \rVert \: + \:
+    \mathbf{K_{CoM}}   \lVert  {    \mathbf{ \mathbf{r^{B}_{SP}} - r^{B}_{CoM}} } \rVert
+\end{equation}
+
+The FKM, $k(\mathbf{q})$, is the core element of the Inverse Kinematic Model.
+The FKM producing the pose of the end effector, as a function of $\mathbf{q}$, with 
+respect to some base coordinate system. The IKM is a function of the end effector's pose, 
+$\mathbf{x_{e}}$, and returns the array of $\mathbf{q}$ necessary to achieve it. Thus, 
+when given a desired pose, $\mathbf{x_{e}^*}$, the IKM returns the optimal $\mathbf{q^{*}}$ in order
+to achieve it. \\
+
+$\mathbf{q_{0}}$ is the previous array of optimal joint variables. Without penalising the change in 
+joint angles, the new optimal joint variables, $\mathbf{q^{*}}$, could have resulted large changes 
+joint angles. When considered in the context of time and position, this would have resulted in the 
+acceleration of elements that form the kinematic chain, thus violating the `quasistatic assumption'. \\
+
+The position of the ground projected CoM with respect to the base coordinate system, $\mathbf{r^{B}_{CoM}}$, 
+is subtracted from the position of the centre of the the support polygon, $\mathbf{r^{B}_{SP}}$. 
+Given sufficient time, the displacement between these two points will become zero. Alternatively,
+the $\mathbf{r^{B}_{CoM}}$ could be the subject of inequality constraints, applied to the IKM.
+These would be of the form found in equation \ref{eq:ineq}, where $(-x^{B}_{sp}, -y^{B}_{sp})$
+are the lower bounds of the support polygon while $(+x^{B}_{sp}, +y^{B}_{sp})$ are the upper bounds.
+
+\begin{equation}\label{eq:ineq}
+    \begin{bmatrix} 
+        +x^{B}_{sp} \\
+        +y^{B}_{sp}
+    \end{bmatrix} 
+    \le \mathbf{r^{B}_{CoM}} \le 
+    \begin{bmatrix} 
+        -x^{B}_{sp} \\
+        -y^{B}_{sp}
+    \end{bmatrix} 
+\end{equation}
+
+\subsubsection*{Implementation}
 
 
 
