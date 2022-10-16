@@ -7,7 +7,7 @@ function [qStar] = k_Inv(q0, xe, i, m, p)
 % SOLUTION: qˣ = ARG MIN (q): qᵀ W q + (k(q) - xeˣ)ᵀ K (k(q) - xeˣ)
     Kxe = 1e3*eye(length(xe),length(xe));
     Kq  = 1*eye(length(q0),length(q0));
-    Km  = 5*eye(length(xe(1:3)),length(xe(1:3)));
+    Km  = 4*eye(length(xe(1:3)),length(xe(1:3)));
     Kmv = 1e2*eye(length(xe(1:3)),length(xe(1:3)));
     kN  = i - 1;
 
@@ -15,8 +15,8 @@ function [qStar] = k_Inv(q0, xe, i, m, p)
     b       = [];
     Aeq     = [];
     beq     = [];
-    lb      = [];
-    ub      = [];
+    lb      = [-pi/2; pi/720; -pi/2; -pi/2; -pi/2;   -pi/2];
+    ub      = [ pi/2;   pi/2;  pi/2;  pi/2; -pi/720;  pi/2];
     nonlcon = [];
     options = optimoptions('fmincon', ...
         'Display','notify',...

@@ -32,12 +32,12 @@ params.mass.pelvis  = 0.7;  % Waist
 params.mass.foot    = 0.1;  % Foot
 
 %% Initial Position & Orientation & Conditions
-    model.q0 = [-pi/6;      % θ₁
-               2*pi/6;      % θ₂
-                -pi/6;      % θ₃
-                 pi/6;      % θ₄
-              -2*pi/6;      % θ₅
-                 pi/6];     % θ₆
+    model.q0 = [-pi/8;      % θ₁
+               2*pi/8;      % θ₂
+                -pi/8;      % θ₃
+                 pi/8;      % θ₄
+              -2*pi/8;      % θ₅
+                 pi/8];     % θ₆
 
     % Initial Conditions
     model.q(:,1)        = model.q0;
@@ -54,17 +54,18 @@ params.mass.foot    = 0.1;  % Foot
         clf(ANIMATION)
         hold on
         grid on
+        grid("minor");
         axis equal
-        view(145,20);
+        view(90,0);
         xlabel('{\bfZ} (metres)');
         ylabel('{\bfX} (metres)');
         zlabel('{\bfY} (metres)');
-        set(gca,'Color','#EEEEEE');
-        axis([-0.4,0.2, -1,1, 0,1]);
+        set(gca,'Color','#DDDDDD');
         title("2D Model - 3D View");
         plotRobot(1,model,params);
 
     Q1 = trajGenStep(2:321,model,params);
+        plot3(Q1(3,:),Q1(1,:),Q1(2,:),'Color','#228B22','LineWidth',2);
 
 %% MAIN LOOPs
 tic % START TIMING
@@ -81,25 +82,6 @@ for i=2:321
     model.rBHb(:,i)  = HTs.AbH(1:3,4);
     model.rCoMb(:,i) = rCoM(model.q(:,i),i,model,params);
     model.mode(:,i)  = params.mode;
-    
-    [model.rBRb(1,i) model.rBLb(1,i) model.rCoMb(1,i)]
-
-    ANIMATION = figure(1);
-        clf(ANIMATION)
-        hold on
-        grid on
-        axis equal
-        view(145,20);
-        xlabel('{\bfZ} (metres)');
-        ylabel('{\bfX} (metres)');
-        zlabel('{\bfY} (metres)');
-        set(gca,'Color','#EEEEEE');
-        axis([-0.4,0.2, -1,1, 0,1]);
-        title("2D Model - 3D View");
-        plotRobot(i,model,params);
-        plot3(Q(3,:),Q(1,:),Q(2,:),'b-');
-        drawnow
-        pause(0.01)
 end
 
 params.mode = 1;
@@ -116,23 +98,6 @@ for i=322:641
     model.rBHb(:,i) = HTs.AbH(1:3,4);
     model.rCoMb(:,i) = rCoM(model.q(:,i),i,model,params);
     model.mode(:,i) = params.mode;
-
-    ANIMATION = figure(1);
-        clf(ANIMATION)
-        hold on
-        grid on
-        axis equal
-        view(145,20);
-        xlabel('{\bfZ} (metres)');
-        ylabel('{\bfX} (metres)');
-        zlabel('{\bfY} (metres)');
-        set(gca,'Color','#EEEEEE');
-        axis([-0.4,0.2, -1,1, 0,1]);
-        title("2D Model - 3D View");
-        plotRobot(i,model,params);
-        plot3(Q(3,:),Q(1,:),Q(2,:),'b-');
-        drawnow
-        pause(0.01)
 end
 
 params.mode = -1;
@@ -151,60 +116,32 @@ for i=642:961
     model.mode(:,i) = params.mode;
 end
 
-% params.mode = 1;
-% % Trajectory Generation
-% [Q4,~,~] = trajectoryGeneration(181, model, 182:241, params);
-%  Q = [Q Q4];
-% 
-% for i=182:241
-%     model.xe(:,i)   = [Q(:,i); zeros(3,1)];
-%     model.q(:,i)    = k_Inv(model.q(:,i-1), model.xe(:,i), i, model, params);
-%     [~, HTs]     = k(model.q(:,i),(i-1),model, params);
-%     model.rBLb(:,i) = HTs.ABLb(1:3,4);
-%     model.rBRb(:,i) = HTs.ABRb(1:3,4);
-%     model.rBHb(:,i) = HTs.AbH(1:3,4);
-%     model.rCoMb(:,i) = rCoM(model.q(:,i),i,model,params);
-%     model.mode(:,i) = params.mode;
-% end
-
 toc % FINISH TIMING
 
-%% Figures 
-jointVariables = figure(2);
-    hold on
-    plot(model.tspan,model.q(1,:),'r-','LineWidth',2);
-    plot(model.tspan,model.q(2,:),'g-','LineWidth',2);
-    plot(model.tspan,model.q(3,:),'b-','LineWidth',2);
-    plot(model.tspan,model.q(4,:),'c-','LineWidth',2);
-    plot(model.tspan,model.q(5,:),'y-','LineWidth',2);
-    plot(model.tspan,model.q(6,:),'m-','LineWidth',2);
-    set(gca,'Color','#CCCCCC');
-    xlabel('Time (t) ({\itSeconds})','FontWeight','bold');
-    ylabel('qθ_{1-6} ({\itRadians})','FontWeight','bold');
-    title('All Joint Variables: {\itθ}_{1-6}({\itt})','FontSize',12);
-    legend('θ₁','θ₂','θ₃', 'θ₄','θ₅','θ₆');
-%%
-
+%% Figures
 ANIMATION = figure(3);
+    
 for i=1:length(model.tspan)
-    params.mode = model.mode(i);
-
     clf(ANIMATION)
     hold on
     grid on
-    view(145,20);
+    grid("minor");
+    axis equal
+    view(140,30);
     xlabel('{\bfZ} (metres)');
     ylabel('{\bfX} (metres)');
     zlabel('{\bfY} (metres)');
-    set(gca,'Color','#EEEEEE');
-    axis([-0.4,0.2, -1,1, 0,1]);
+    set(gca,'Color','#DDDDDD');
     title("2D Model - 3D View");
- 
-    plotRobot(i,model,params);
 
-    plot3(model.rCoMb(3,i)*[1 1], ...
-          model.rCoMb(1,i)*[1 1], ...
-          model.rCoMb(2,i)*[1 0],'m:','LineWidth',2)
+    params.mode = model.mode(i);
+    plotRobot(i,model,params);
+    plot3(model.rCoMb(3,i), ...
+          model.rCoMb(1,i), ...
+          model.rCoMb(2,i),'ro','LineWidth',2,'MarkerSize',10)
+    plot3(model.rCoMb(3,i), ...
+          model.rCoMb(1,i), ...
+          0,'rx','LineWidth',2,'MarkerSize',10)
 
 %     legend({'+Z_0','+X_0','+Y_0','{r}^B_0 - \it{Link 0}',...
 %             'Joints (1 - 3)','','','','','Mid Waist','',...
