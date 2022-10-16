@@ -64,9 +64,7 @@ params.mass.foot    = 0.1;  % Foot
         title("2D Model - 3D View");
         plotRobot(1,model,params);
 
-    Q1 = trajGenStep(2:61,model,params);
-        
-
+    Q1 = trajGenStep(2:81,model,params);
 
 %% MAIN LOOPs
 tic % START TIMING
@@ -208,19 +206,20 @@ end
 toc % FINISH TIMING
 
 %% Figures 
-% jointVariables = figure(2);
-%     hold on
-%     plot(model.tspan,model.q(1,:),'r-','LineWidth',2);
-%     plot(model.tspan,model.q(2,:),'g-','LineWidth',2);
-%     plot(model.tspan,model.q(3,:),'b-','LineWidth',2);
-%     plot(model.tspan,model.q(4,:),'c-','LineWidth',2);
-%     plot(model.tspan,model.q(5,:),'y-','LineWidth',2);
-%     plot(model.tspan,model.q(6,:),'m-','LineWidth',2);
-%     set(gca,'Color','#CCCCCC');
-%     xlabel('Time (t) ({\itSeconds})','FontWeight','bold');
-%     ylabel('qθ_{1-6} ({\itRadians})','FontWeight','bold');
-%     title('All Joint Variables: {\itθ}_{1-6}({\itt})','FontSize',12);
-%     legend('θ₁','θ₂','θ₃', 'θ₄','θ₅','θ₆');
+jointVariables = figure(2);
+    hold on
+    plot(model.tspan,model.q(1,:),'r-','LineWidth',2);
+    plot(model.tspan,model.q(2,:),'g-','LineWidth',2);
+    plot(model.tspan,model.q(3,:),'b-','LineWidth',2);
+    plot(model.tspan,model.q(4,:),'c-','LineWidth',2);
+    plot(model.tspan,model.q(5,:),'y-','LineWidth',2);
+    plot(model.tspan,model.q(6,:),'m-','LineWidth',2);
+    set(gca,'Color','#CCCCCC');
+    xlabel('Time (t) ({\itSeconds})','FontWeight','bold');
+    ylabel('qθ_{1-6} ({\itRadians})','FontWeight','bold');
+    title('All Joint Variables: {\itθ}_{1-6}({\itt})','FontSize',12);
+    legend('θ₁','θ₂','θ₃', 'θ₄','θ₅','θ₆');
+%%
 
 ANIMATION = figure(3);
 for i=1:length(model.tspan)
@@ -258,7 +257,7 @@ end
 
 %% VIDEO
 videoWriterObj           = VideoWriter('2D_Step.mp4','MPEG-4');
-videoWriterObj.FrameRate = params.framerate * 2;
+videoWriterObj.FrameRate = params.framerate;
 open(videoWriterObj);                        
 for i=1:length(IMAGE)
     frame = IMAGE(i);   % Convert from an Image to a Frame
