@@ -1,8 +1,8 @@
-%% MATLAB DRAWN QUASI MODEL
-\begin{figure}[!h]
-    \begin{center}
-        \includegraphics[width=.95\linewidth]{_figures/3D_Quasi.png}
-        \caption{3D model Quasi-Static walk sequence.}
-        \label{fig:3D_Quasi}
-    \end{center}
-\end{figure}
+The three dimensional model offers new challenges and new options in terms of quasistatic
+locomotion. Modifications are made to the IKM and step trajectory generation in order to 
+exploit as much of the work completed in section \ref{sec:2D_QS}. \\
+
+Rather than walking in a straight line, the robot shall now `follow' a trajectory. The method 
+used to convert a trajectory into a series of foot steps is found in section \ref{sec:NovelTraj}.
+
+\subsubsection*{Three Dimensional Inverse Kinematic Model}

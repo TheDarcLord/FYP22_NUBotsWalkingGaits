@@ -4,6 +4,43 @@ gained in solving the inverse kinematic problem for two dimensional step traject
 transitioning between the kinematic chains and shifting the CoM between steps, was
 found to be invaluable when moving to three dimensions.
 
+\subsubsection*{Two Dimensional Inverse Kinematic Model}
+
+The two dimensional inverse kinematic Model (IKM) is a quadratic optimisation function solving for the 
+array of joint variables, $\mathbf{q}$, that minimise the equation \ref{eq:2D_ikm}. Weights, 
+$\mathbf{K_q}$, $\mathbf{K_e}$, and $\mathbf{K_{CoM}}$, penalise the change in joint variables, the
+end effector error and the displacement of the ground projected CoM from the centre of the support polygon.
+
+\begin{equation}\label{eq:2D_ikm}
+    \mathbf{q^{*}} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
+    \mathbf{K_{e}}            \lVert  {    k(\mathbf{q}) - \mathbf{x_{e}^*}                         } \rVert \: + \\
+    \mathbf{K_{CoM}}          \lVert  {    \mathbf{r^{B}_{SP}} - \mathbf{r^{B}_{CoM}}(\mathbf{q})   } \rVert \: + \\
+    \mathbf{K_{q}}            \lVert  {    \mathbf{q_{0}} - \mathbf{q}                              } \rVert \:
+\end{equation}
+
+The FKM, $k(\mathbf{q})$, is the core element of the Inverse Kinematic Model.
+The FKM produces the pose of the end effector, as a function of $\mathbf{q}$, with 
+respect to some base coordinate system. The IKM is a function of the end effector's pose, 
+$\mathbf{x_{e}}$, and returns the array of $\mathbf{q}$ necessary to $\mathbf{x_{e}}$. Thus, 
+when given a desired pose, $\mathbf{x_{e}^*}$, the IKM returns the optimal $\mathbf{q^{*}}$ in order
+to achieve it. \\
+
+The position of the ground projected CoM with respect to the base coordinate system, $\mathbf{r^{B}_{CoM}}$, 
+is subtracted from the position of the centre of the the support polygon, $\mathbf{r^{B}_{SP}}$. 
+Given sufficient time, the displacement between these two points will become zero. \\ 
+
+$\mathbf{q_{0}}$ is the previous array of optimal joint variables. Without penalising the change in 
+joint angles, the new optimal joint variables, $\mathbf{q^{*}}$, could yield large changes 
+in the value of the joint angles. When considered in the context of time and position, this would have resulted in the 
+acceleration of elements that form the kinematic chain, thus violating the `quasistatic assumption'.
+Similarly, to prevent the CoM from accelerating beyond minimal velocities the IKM is subject to the nonlinear inequality
+constraint, found in \ref{eq:2D_ineq}, where $\Delta_{t}$ is the time step of the system. This prevents the CoM from
+traveling more than 10cm per second in any linear direction, thus remaining slow enough to ignore inertial effects.
+
+\begin{equation}\label{eq:2D_ineq}
+    \frac{\lvert\: \mathbf{r^{B}_{CoM}} (\mathbf{q}) - \mathbf{r^{B}_{CoM}}(\mathbf{q0}) \:\rvert }{\Delta_{t}}  - \mathbf{1 \times 10^{-1}}_{3 \times 1} \leq \mathbf{0}_{3 \times 1}
+\end{equation}
+
 \subsubsection*{Footstep Trajectory Generation}
 The a foot step trajectory was generated using ODEs, in a similar fashion to projectile motion.
 Given an inital position, $\mathbf{r_i}$, final position, $\mathbf{r_f}$, desired step height, $y_{d}$, 
@@ -61,43 +98,6 @@ a function of time.
         t \, \frac{x_f - x_i}{t_f - t_i}     \\
         4 t \frac{y_{d}}{(t_i + t_f)} (1 - \frac{t}{t_i + t_f}) 
     \end{bmatrix}
-\end{equation}
-
-\subsubsection*{Inverse Kinematic Model}
-
-The two dimensional inverse kinematic Model (IKM) is a quadratic optimisation function solving for the 
-array of joint variables, $\mathbf{q}$, that minimise the equation \ref{eq:2D_ikm}. Weights, 
-$\mathbf{K_q}$, $\mathbf{K_e}$, and $\mathbf{K_{CoM}}$, penalise the change in joint variables, the
-end effector error and the displacement of the ground projected CoM from the centre of the support polygon.
-
-\begin{equation}\label{eq:2D_ikm}
-    \mathbf{q^{*}} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
-    \mathbf{K_{e}}            \lVert  {    k(\mathbf{q}) - \mathbf{x_{e}^*}                         } \rVert \: + \\
-    \mathbf{K_{CoM}}          \lVert  {    \mathbf{r^{B}_{SP}} - \mathbf{r^{B}_{CoM}}(\mathbf{q})   } \rVert \: + \\
-    \mathbf{K_{q}}            \lVert  {    \mathbf{q_{0}} - \mathbf{q}                              } \rVert \:
-\end{equation}
-
-The FKM, $k(\mathbf{q})$, is the core element of the Inverse Kinematic Model.
-The FKM produces the pose of the end effector, as a function of $\mathbf{q}$, with 
-respect to some base coordinate system. The IKM is a function of the end effector's pose, 
-$\mathbf{x_{e}}$, and returns the array of $\mathbf{q}$ necessary to $\mathbf{x_{e}}$. Thus, 
-when given a desired pose, $\mathbf{x_{e}^*}$, the IKM returns the optimal $\mathbf{q^{*}}$ in order
-to achieve it. \\
-
-The position of the ground projected CoM with respect to the base coordinate system, $\mathbf{r^{B}_{CoM}}$, 
-is subtracted from the position of the centre of the the support polygon, $\mathbf{r^{B}_{SP}}$. 
-Given sufficient time, the displacement between these two points will become zero. \\ 
-
-$\mathbf{q_{0}}$ is the previous array of optimal joint variables. Without penalising the change in 
-joint angles, the new optimal joint variables, $\mathbf{q^{*}}$, could yield large changes 
-in the value of the joint angles. When considered in the context of time and position, this would have resulted in the 
-acceleration of elements that form the kinematic chain, thus violating the `quasistatic assumption'.
-Similarly, to prevent the CoM from accelerating beyond minimal velocities the IKM is subject to the nonlinear inequality
-constraint, found in \ref{eq:2D_ineq}, where $\Delta_{t}$ is the time step of the system. This prevents the CoM from
-traveling more than 10cm per second in any linear direction, thus remaining slow enough to ignore inertial effects.
-
-\begin{equation}\label{eq:2D_ineq}
-    \frac{\lvert\: \mathbf{r^{B}_{CoM}} (\mathbf{q}) - \mathbf{r^{B}_{CoM}}(\mathbf{q0}) \:\rvert }{\Delta_{t}}  - \mathbf{1 \times 10^{-1}}_{3 \times 1} \leq \mathbf{0}_{3 \times 1}
 \end{equation}
 
 \subsubsection*{Implementation}
