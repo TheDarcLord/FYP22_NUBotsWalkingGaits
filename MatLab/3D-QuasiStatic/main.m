@@ -5,7 +5,7 @@ clc
 %% Video & Time Parameters
     params.framerate  = 20;                             % FPS
     params.timestp    = params.framerate^(-1);          % Seconds
-    model.tspan       = 0 : params.timestp : 100;        % [ time ]
+    model.tspan       = 0 : params.timestp : 24;        % [ time ]
  % Physical Parameters - Affect CoM or FKM
     params.kx        = 0;        % These affect the plane to which    |
     params.ky        = 0;        % ... the CoM is constrained         |
@@ -73,7 +73,8 @@ clc
     % +-+-+-+-+-+-+-+-+-+-+-+
 
 %% Generate Trajectory
-   model.glbTrj = trajGenC(params.timestp, model.xe(1:3,1)./2); % Init Position
+    %model.glbTrj = trajGenC(params.timestp, model.xe(1:3,1)./2);
+    model.glbTrj = trajGen_cir(model.tspan, model.xe(1:3,1)./2);
         [~] = plotSteps(model,1:length(model.tspan));
 
 %% STEPPING
@@ -135,13 +136,11 @@ clc
 %                 ylabel('{\bfX} (metres)');
 %                 zlabel('{\bfY} (metres)');
 %                 view(-165,50);
-%                 plot3(Qstep(3,:),Qstep(1,:),Qstep(2,:),'b-','LineWidth',2);
+%                 plot3(Qstep(3,t_begin:t_end),Qstep(1,t_begin:t_end),Qstep(2,t_begin:t_end),'b-','LineWidth',2);
 %                 [~] = plotRobot(t_begin-1,model,params);
 %                 [~] = plotSteps(model,t_begin:t_end);
-               
             for j=t_begin:t_end
                 jn = j - 1;
-    
                 model.mode(j)     = params.mode;
                 xeSTAR = Qstep(:,j);
                 model.q(:,j)  = k_Inv(model.q(:,jn), ...

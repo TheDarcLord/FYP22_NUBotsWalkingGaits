@@ -1,5 +1,5 @@
 function Q = trajGen_cir(tspan, init)
-    omega = pi/10;
+    omega = pi/120;
     r = 0.5;
 
     Q = init + [r*sin(omega*tspan);
