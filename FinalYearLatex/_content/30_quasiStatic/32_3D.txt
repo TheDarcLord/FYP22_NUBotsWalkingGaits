@@ -1,8 +1,13 @@
 The three dimensional model offers new challenges and new options in terms of quasistatic
 locomotion. Modifications are made to the IKM and step trajectory generation in order to 
-exploit as much of the work completed in section \ref{sec:2D_QS}. \\
+exploit as much of the work completed in section \ref{sec:2D_QS} as possible. \\
 
 Rather than walking in a straight line, the robot shall now `follow' a trajectory. The method 
-used to convert a trajectory into a series of foot steps is found in section \ref{sec:NovelTraj}.
+used to convert an arbitrary trajectory into a series of foot steps is found in section \ref{sec:NovelTraj}.
 
 \subsubsection*{Three Dimensional Inverse Kinematic Model}
+    - Vector across Waist
+    - Vector down from hip
+\subsubsection*{Footstep Trajectory Generation}
+    - novel trajectory method
+\subsubsection*{Implementation}
