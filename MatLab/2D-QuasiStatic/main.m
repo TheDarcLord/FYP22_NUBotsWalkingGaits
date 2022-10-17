@@ -4,6 +4,7 @@ clc
 
 %% Setup
 params.framerate    = 40;
+params.timestep     = 1 / params.framerate;
 model.tspan         = 0:(1 / params.framerate):24;
 
 model.q             = zeros(6,length(model.tspan)); % q     [θ₁θ₂θ₃θ₄θ₅θ₆]ᵀ
@@ -188,7 +189,7 @@ for i=1:length(model.tspan)
     grid on
     grid("minor");
     axis equal
-    view(90,0);
+    view(135,30);
     ylabel('{\bfX} (metres)');
     zlabel('{\bfY} (metres)');
     set(gca,'Color','#DDDDDD');

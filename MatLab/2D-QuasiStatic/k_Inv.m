@@ -5,10 +5,9 @@ function [qStar] = k_Inv(q0, xe, i, m, p)
 %              qStar:   necessary joint variables
 %
 % SOLUTION: qˣ = ARG MIN (q): qᵀ W q + (k(q) - xeˣ)ᵀ K (k(q) - xeˣ)
-    Kxe = 1e3*eye(length(xe),length(xe));
+    Kxe = 1e4*eye(length(xe),length(xe));
     Kq  = 1*eye(length(q0),length(q0));
-    Km  = 6*eye(length(xe(1:3)),length(xe(1:3)));
-    Kmv = 1e2*eye(length(xe(1:3)),length(xe(1:3)));
+    Km  = 1e3*eye(length(xe(1:3)),length(xe(1:3)));
     kN  = i - 1;
 
     A       = [];
@@ -17,7 +16,6 @@ function [qStar] = k_Inv(q0, xe, i, m, p)
     beq     = [];
     lb      = [-pi/2; pi/720; -pi/2; -pi/2; -pi/2;   -pi/2];
     ub      = [ pi/2;   pi/2;  pi/2;  pi/2; -pi/720;  pi/2];
-    nonlcon = [];
     options = optimoptions('fmincon', ...
         'Display','notify',...
         'MaxFunctionEvaluations',1e5,...
@@ -32,11 +30,11 @@ function [qStar] = k_Inv(q0, xe, i, m, p)
     end
 
     R0A(2) = m.rCoMb(2,kN);
+    R0A(3) = m.rCoMb(3,kN);
 
     argmin = @(q) (q0 - q)'*Kq *(q0 - q) + ...
         (k(q,kN,m,p) - xe)'*Kxe*(k(q,kN,m,p) - xe) + ...
-    (rCoM(q,kN,m,p) - R0A)'*Km *(rCoM(q,kN,m,p) - R0A) + ...
-    (rCoM(q,kN,m,p) - m.rCoMb(:,kN))'*Kmv *(rCoM(q,kN,m,p) - m.rCoMb(:,kN));
+    (rCoM(q,kN,m,p) - R0A)'*Km *(rCoM(q,kN,m,p) - R0A);
 
-    qStar = fmincon(argmin,q0,A,b,Aeq,beq,lb,ub,nonlcon,options);
+    qStar = fmincon(argmin,q0,A,b,Aeq,beq,lb,ub,@(q)vCoM(q,kN,m,p),options);
 end
