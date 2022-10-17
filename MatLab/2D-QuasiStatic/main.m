@@ -58,15 +58,25 @@ params.mass.foot    = 0.2;  % Foot
         grid("minor");
         axis equal
         view(90,0);
-        xlabel('{\bfZ} (metres)');
-        ylabel('{\bfX} (metres)');
-        zlabel('{\bfY} (metres)');
         set(gca,'Color','#DDDDDD');
-        title("2D Model - 3D View");
+        xlabel('{\bfZ} (metres)','FontSize',14);
+        ylabel('{\bfX} (metres)','FontSize',14);
+        zlabel('{\bfY} (metres)','FontSize',14);
+        title('Initialised 2D Model','FontSize',18);
+        plot3(model.rCoMb(3,1), ...
+              model.rCoMb(1,1), ...
+              model.rCoMb(2,1),'ro','LineWidth',2,'MarkerSize',10)
+        plot3(model.rCoMb(3,1), ...
+              model.rCoMb(1,1), ...
+              0,'rx','LineWidth',2,'MarkerSize',10)
         plotRobot(1,model,params);
+        legend({'{\bfr}^B_{CoM}(q_{0})','GND Projected CoM',...
+                'Support Polygon',' Links',' Joints ( 1 - 6 )', ...
+                '','','','','','','','','','','','',''} ...
+                        ,'FontSize',12,'Location','eastoutside')
 
     Q1 = trajGenStep(2:321,model,params);
-        plot3(Q1(3,:),Q1(1,:),Q1(2,:),'Color','#228B22','LineWidth',2);
+        %plot3(Q1(3,:),Q1(1,:),Q1(2,:),'Color','#228B22','LineWidth',2);
 
 %% MAIN LOOPs
 tic % START TIMING
@@ -125,8 +135,8 @@ figure(2)
         hold on
         grid on
         grid minor
-        stepA = 1:321;
-        stepB = 322:641;
+        stepA = 1:481;
+        stepB = 322:801;
         stepC = 642:961;
         plot(model.tspan, model.rCoMb(1,:),'k','LineWidth',2)
         plot(model.tspan(stepA), model.rBLb(1,stepA) ...
@@ -147,7 +157,7 @@ figure(2)
         title('CoM Position with time','FontSize',18)
         xlabel('Time ( \it{sec} )','FontSize',14)
         ylabel('X Displacement ( \it{m} )','FontSize',14)
-        legend({'x_{CoM}','Upper Left_{sp}','Lower Left_{sp}'...
+        legend({'X_{CoM}','Upper Left_{sp}','Lower Left_{sp}'...
                 'Upper Right_{sp}', 'Lower Right_{sp}'} ...
                 ,'FontSize',12,'Location','northwest')
     
@@ -161,7 +171,7 @@ figure(2)
         title('Foot Position with time','FontSize',18)
         xlabel('Time ( \it{sec} )','FontSize',14)
         ylabel('X Displacement ( \it{m} )','FontSize',14)
-        legend({'Left Foot Position','Right Foot Position'} ...
+        legend({'X_{Left}','X_{Right}'} ...
         ,'FontSize',12,'Location','northwest')
 
 figure(3)
@@ -175,7 +185,7 @@ figure(3)
     title('Foot Paths','FontSize',18)
     ylabel('Y Displacement ( \it{m} )','FontSize',14)
     xlabel('X Displacement ( \it{m} )','FontSize',14)
-    legend({'Left Foot Position','Right Foot Position'} ...
+    legend({'{\bfr}^B_{Left}','{\bfr}^B_{Right}'} ...
             ,'FontSize',12,'Location','northeast')
 
     
