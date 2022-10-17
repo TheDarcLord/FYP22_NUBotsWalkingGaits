@@ -65,6 +65,6 @@
 \firstpage{1}    % Set page number for first page
 \UoNMCHAreportNo{MCHA3500} %Report number
 \UoNMCHAyear{2022}   % Year
-\shorttitle{FYP Report Part A} %For odd pages
+\shorttitle{FYP Report Part B} %For odd pages
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
