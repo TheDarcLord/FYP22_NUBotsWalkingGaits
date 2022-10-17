@@ -126,39 +126,31 @@ approach was based on the relationship between the dual kinematic chains, as see
     (\mathbf{T}^{Left}_{Right})^{1} = (\mathbf{T}^{Right}_{Left})^{-1}
 \end{equation}
 
-As the matrix inverse is computationally expensive, $\emph{if}$ statements were used to switch between 
-the kinematic chains. The position of the left sole, and position of the right sole, were tracked with
-global two dimensional arrays, as seen in algorithm \ref{alg:2D_run}.
-
 \input{_content/30_quasiStatic/AlgRun.txt}
 
+As the matrix inverse is computationally expensive, $\emph{if}$ statements were used to switch between 
+the kinematic chains. The position of the left sole, and position of the right sole, were tracked with
+global two dimensional arrays, as seen in algorithm \ref{alg:2D_run}. \\
+
 The trajectory followed by each step was designed using 
-equation \ref{eq:2D_pos}. Rather than a dedicated IKM to shift the CoM between steps, the step 
-duration was halved during step trajectory generation  with the inital half being used to shift
-the CoM to the fixed foot. 
+equation \ref{eq:2D_pos}. Rather than a dedicated, parallel kinematic chain and IKM to shift the CoM between steps, 
+the step duration was halved during step trajectory generation algorithm. 
+The inital half of the step time period was used to shift the CoM to the fixed foot, while the remainder
+stepped the foot. This was achieved by populating the first half of the trajectory matrix, $\mathbf{Q}$, with the 
+initial position of the end effector, $\mathbf{r}_i = \mathbf{x_e}$. Thus, the trajectory 
+passed as the desired end effector position, $\mathbf{x_e^*}$, keeps the stepping foot in 
+its initial position for half the time period of the step, while the CoM shifts to the opposite foot.
 
 \input{_content/30_quasiStatic/AlgTrajgen.txt}
 
+The IKM is a direct implementation of equation \ref{eq:2D_ikm} with weights found in equations \ref{eq:2D_w2} to \ref{eq:2D_w4}.
+
+\begin{align}
+    \mathbf{K_q}            &= 1  \times 10^{3} \cdot \mathbf{I}_{4x4} \label{eq:2D_w1} \\ 
+    \mathbf{K_e}            &= 1                \cdot \mathbf{I}_{4x4} \label{eq:2D_w2} \\ 
+    \mathbf{K_{CoM}}        &= 6                \cdot \mathbf{I}_{4x4} \label{eq:2D_w3} \\ 
+    \mathbf{K_{\dot{CoM}}}  &= 1 \times 10^{2}  \cdot \mathbf{I}_{4x4} \label{eq:2D_w4}
+\end{align}
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-%% MATLAB DRAWN QUASI MODEL
-\begin{figure}[!h]
-    \begin{center}
-        \includegraphics[width=.6\linewidth]{_figures/2D_Quasi.png}
-        \caption{2D model, plotted in 3D, Quasi Static walk sequence.}
-        \label{fig:2D_Quasi}
-    \end{center}
-\end{figure}
-\clearpage
