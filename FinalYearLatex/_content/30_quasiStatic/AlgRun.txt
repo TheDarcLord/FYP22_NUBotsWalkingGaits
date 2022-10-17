@@ -1,0 +1,40 @@
+\begin{algorithm}[h!]
+    \caption{Run time}\label{alg:2D_run}
+        \begin{algorithmic}
+            \State $    STEP                            \:\gets -1                              $
+            \State $    timestep                        \:\gets (40^{-1})                       $
+            \State $    \mathbf{tspan}_{1 \times n}     \:\gets (0 \: \to \: 24)                $   \Comment{ in $timestep$ increments}
+            \State $    stp_{1}                         \:\gets [i_{i1}     \:\:\: i_{f1}]      $   \Comment{ indexes of $tspan$ }
+            \State $    stp_{2}                         \:\gets [(i_{f1}+1) \:\:\: i_{f2}]      $
+            \State $    stp_{3}                         \:\gets [(i_{f2}+1) \:\:\: i_{f3}]      $
+            \State 
+            \State $    \mathbf{q}_{6 \times n}         \:\gets \mathbf{0}_{6 \times n}         $
+            \State $    \mathbf{x_e}_{4 \times n}       \:\gets \mathbf{0}_{4 \times n}         $
+            \State $    \mathbf{r^B_L}_{2 \times n}     \:\gets \mathbf{0}_{2 \times n}         $   \Comment{ Left Foot }
+            \State $    \mathbf{r^B_R}_{2 \times n}     \:\gets \mathbf{0}_{2 \times n}         $   \Comment{ Right Foot } 
+            \State 
+            \State $    \mathbf{q}_{[:,1]}              \:\gets \mathbf{q_{0}}                  $   
+            \State $    \mathbf{x_e}_{[:,1]}            \:\gets FKM(\mathbf{q_{0}},STEP)        $
+            \State $    \mathbf{r^B_R}_{[:,1]}          \:\gets \mathbf{x_e}_{[1 \:\to\: 2,1]}  $
+            \State $    \mathbf{r^B_L}_{[:,1]}          \:\gets \mathbf{0}_{2 \ times 1}        $
+            \State
+            \State $ \mathbf{Q} \:\gets TrajectoryGeneration(stp_{1}, \: tspan, \: \mathbf{r^B_L}_{[:,1]})                      $
+            \For {$ i \gets stp_{1}[0]$ $\mathbf{to}$ $stp_{1}[1]$}
+                \State $    \mathbf{x_e^{*}}        \:\gets\:       [ \mathbf{Q}_{[:,i]}, 0, 0 ]^\top                           $
+                \State $    \mathbf{q}_{[:,i]}      \:\gets\:       IKM(\mathbf{q}_{[:,i-1]}, \: \mathbf{x_e^{*}}, \: STEP)     $
+                \State $    \mathbf{x_e}_{[:,i]}    \:\gets\:       FKM(\mathbf{q}_{:,i}, \: STEP)                              $
+                \State $    \mathbf{r^B_R}_{[:,i]}  \:\gets\:       \mathbf{x_e}_{[1 \:\to\: 2,i]}                              $
+                \State $    \mathbf{r^B_L}_{[:,i]}  \:\gets\:       \mathbf{r^B_L}_{[:,i-1]}                                    $
+            \EndFor
+            \State
+            \State $ STEP \:\gets\: -1 STEP                                                                                     $
+            \State $ \mathbf{Q} \:\gets TrajectoryGeneration(stp_{2}, \: tspan, \: \mathbf{r^B_R}_{[:,stp_{1}[1]]})             $
+            \For {$ i \gets stp_{2}[0]$ $\mathbf{to}$ $stp_{2}[1]$}
+                \State $    \mathbf{x_e^{*}}        \:\gets\:       [ \mathbf{Q}_{[:,i]}, 0, 0 ]^\top                           $
+                \State $    \mathbf{q}_{[:,i]}      \:\gets\:       IKM(\mathbf{q}_{[:,i-1]}, \: \mathbf{x_e^{*}}, \: STEP)     $
+                \State $    \mathbf{x_e}_{[:,i]}    \:\gets\:       FKM(\mathbf{q}_{:,i}, \: STEP)                              $
+                \State $    \mathbf{r^B_L}_{[:,i]}  \:\gets\:       \mathbf{x_e}_{[1 \:\to\: 2,i]}                              $
+                \State $    \mathbf{r^B_R}_{[:,i]}  \:\gets\:       \mathbf{r^B_R}_{[:,i-1]}                                    $
+            \EndFor
+        \end{algorithmic}
+\end{algorithm}

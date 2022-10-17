@@ -48,8 +48,9 @@ the $y$ component of the trajectory was to the desired step height halfway along
 
 Substituting $b_{y} = a_{y}(\frac{1}{2}(t_i + t_f))$ into equation \ref{eq:2D_solve}
 yields coefficients $a_{y}$ and $b_{y}$. As the $x$ component of the trajectory must equal 
-the $x$ component of the inital position. This lead to equation \ref{eq:2D_pos} which 
-describes the trajectory of stepping foot.
+the $x$ component of the inital position at time $t_i$, $c_{x} = x_i$. 
+This lead to equation \ref{eq:2D_pos} which paramterises the trajectory of stepping foot as
+a function of time.
 
 \begin{equation}\label{eq:2D_pos}
     \mathbf{r}(t) = \begin{bmatrix}
@@ -65,14 +66,16 @@ describes the trajectory of stepping foot.
 
 The two dimensional inverse kinematic Model (IKM) is a quadratic optimisation function solving for the 
 array of joint variables, $\mathbf{q}$, that minimise the equation \ref{eq:2D_ikm}. Weights, 
-$\mathbf{K_q}$, $\mathbf{K_e}$, and $\mathbf{K_{CoM}}$ penalise the change in joint variables,
-end effector error, and displacement of the ground projected CoM from the centre of the support polygon.
+$\mathbf{K_q}$, $\mathbf{K_e}$, $\mathbf{K_{CoM}}$ and $\mathbf{K_{\dot{CoM}}}$, penalise the change in joint variables,
+end effector error, the displacement of the ground projected CoM from the centre of the support polygon and the
+change in position of the CoM.
 
 \begin{equation}\label{eq:2D_ikm}
-    \mathbf{q^{*}} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
-    \mathbf{K_{e}}     \lVert  {    k(\mathbf{q}) - \mathbf{x_{e}^*}            } \rVert \: + \:
-    \mathbf{K_{q}}     \lVert  {    \mathbf{q_{0}} - \mathbf{q}                 } \rVert \: + \:
-    \mathbf{K_{CoM}}   \lVert  {    \mathbf{ \mathbf{r^{B}_{SP}} - r^{B}_{CoM}} } \rVert
+        \mathbf{q^{*}} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
+        \mathbf{K_{e}}            \lVert  {    k(\mathbf{q}) - \mathbf{x_{e}^*}                                         } \rVert \: + \\
+        \mathbf{K_{q}}            \lVert  {    \mathbf{q_{0}} - \mathbf{q}                                              } \rVert \: + \\
+        \mathbf{K_{CoM}}          \lVert  {    \mathbf{r^{B}_{SP}} - \mathbf{r^{B}_{CoM}}(\mathbf{q})                   } \rVert \: + \\
+        \mathbf{K_{\dot{CoM}}}    \lVert  {    \mathbf{r^{B}_{CoM}}(\mathbf{q_{0}}) - \mathbf{r^{B}_{CoM}}(\mathbf{q})  } \rVert
 \end{equation}
 
 The FKM, $k(\mathbf{q})$, is the core element of the Inverse Kinematic Model.
@@ -85,7 +88,11 @@ to achieve it. \\
 $\mathbf{q_{0}}$ is the previous array of optimal joint variables. Without penalising the change in 
 joint angles, the new optimal joint variables, $\mathbf{q^{*}}$, could have resulted large changes 
 joint angles. When considered in the context of time and position, this would have resulted in the 
-acceleration of elements that form the kinematic chain, thus violating the `quasistatic assumption'. \\
+acceleration of elements that form the kinematic chain, thus violating the `quasistatic assumption'.
+Similarly, without $\mathbf{K_{\dot{CoM}}}$ the CoM itself will accelerate as the CoM is shifted
+over a series of time periods. This is caused by the fact that the IKM, and its
+solution, are independent of time. The shorter the time period, the larger $\mathbf{K_{\dot{CoM}}}$
+must be to slow the acceleration of the CoM. \\
 
 The position of the ground projected CoM with respect to the base coordinate system, $\mathbf{r^{B}_{CoM}}$, 
 is subtracted from the position of the centre of the the support polygon, $\mathbf{r^{B}_{SP}}$. 
@@ -107,6 +114,33 @@ are the lower bounds of the support polygon while $(+x^{B}_{sp}, +y^{B}_{sp})$ a
 \end{equation}
 
 \subsubsection*{Implementation}
+
+The two dimensional model was initialised with $ \mathbf{q_{0}} = 
+[\frac{-\pi}{8}, \frac{2\pi}{8}, \frac{-\pi}{8}, \frac{\pi}{8}, \frac{-2\pi}{8}, \frac{\pi}{8}]^\top$. This
+resulted in the model standing with slightly bent knees. The model was then run at $40Hz$ for 24 seconds,
+with the steps at 0, 8 and 16 seconds. To shift between kinematic chains, a parameter called $STEP$ was 
+established. $STEP$ took values of $-1$ or $1$ depending on which foot was traveling forward. This 
+approach was based on the relationship between the dual kinematic chains, as seen in equation \ref{eq:STEP}.
+
+\begin{equation}\label{eq:STEP}
+    (\mathbf{T}^{Left}_{Right})^{1} = (\mathbf{T}^{Right}_{Left})^{-1}
+\end{equation}
+
+As the matrix inverse is computationally expensive, $\emph{if}$ statements were used to switch between 
+the kinematic chains. The position of the left sole, and position of the right sole, were tracked with
+global two dimensional arrays, as seen in algorithm \ref{alg:2D_run}.
+
+\input{_content/30_quasiStatic/AlgRun.txt}
+
+The trajectory followed by each step was designed using 
+equation \ref{eq:2D_pos}. Rather than a dedicated IKM to shift the CoM between steps, the step 
+duration was halved during step trajectory generation  with the inital half being used to shift
+the CoM to the fixed foot. 
+
+\input{_content/30_quasiStatic/AlgTrajgen.txt}
+
+
+
 
 
 

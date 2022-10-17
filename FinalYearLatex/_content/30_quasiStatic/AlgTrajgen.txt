@@ -1,0 +1,27 @@
+\begin{algorithm}[h!]
+    \caption{Foot Trajectory Generation function}\label{alg:2D_trajGen}
+        \begin{algorithmic}
+            \State $ \mathbf{Q} \: = \: TrajectoryGeneration(  stp, \: tspan, \: \mathbf{r_{i}}  )                                      $
+            \State  \   \   \   \ $ x_{d}                           \:\gets\: StepSize                                                  $
+            \State  \   \   \   \ $ y_{d}                           \:\gets\: StepHeight                                                $
+            \State  \   \   \   \ $ $
+            \State  \   \   \   \ $ i_{mid}                         \:\gets\: stp[0] + \frac{1}{2}floor(stp[1] - stp[0])                $
+            \State  \   \   \   \ $ shiftIndexSpan_{1 \times a}     \:\gets\: stp[0]   \: \to \: ( i_{half} - 1 )                       $
+            \State  \   \   \   \ $ stepIndexSpan_{1  \times b}     \:\gets\: i_{half} \: \to \: stp[1]                                 $
+            \State  \   \   \   \ $ $
+            \State  \   \   \   \ $ t_{mid}                         \:\gets\: tspan[i_{mid}]                                            $
+            \State  \   \   \   \ $ t_{diff}                        \:\gets\: tspan[stp[1]] - t_{mid}                                   $
+            \State  \   \   \   \ $ \mathbf{TT}_{1 \times b}        \:\gets\: tspan(stepIndexSpan) - t_{mid}\mathbf{1}_{1 \times b}     $
+            \State  \   \   \   \ $ $
+            \State  \   \   \   \ $ \mathbf{r_{f}}  \:\gets\: \mathbf{r_{i}} + [x_{d}, 0]^\top                                          $
+            \State  \   \   \   \ $ $
+            \State  \   \   \   \ $ \mathbf{Q_{step}}_{2  \times b} \:\gets\: \mathbf{r_{i}} + 
+            \begin{bmatrix} 
+                \mathbf{TT} \, \frac{x_f - x_i}{t_{diff}} \\ 
+                \mathbf{TT} \frac{4 y_{d}}{t_diff} (1 - \frac{\mathbf{TT}}{t_{diff}}) 
+            \end{bmatrix} $
+            \State  \   \   \   \ $ $
+            \State  \   \   \   \ $ \mathbf{Q_{shift}}_{2 \times a} \:\gets\: \mathbf{r_{i}}\mathbf{1}_{1 \times a}                     $
+            \State  \   \   \   \ $ \mathbf{Q}_{2 \times (a + b)}   \:\gets\: [\mathbf{Q_{shift}} \mathbf{Q_{step}}]                    $           
+        \end{algorithmic}
+\end{algorithm}
