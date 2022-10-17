@@ -117,7 +117,8 @@ are the lower bounds of the support polygon while $(+x^{B}_{sp}, +y^{B}_{sp})$ a
 
 The two dimensional model was initialised with $ \mathbf{q_{0}} = 
 [\frac{-\pi}{8}, \frac{2\pi}{8}, \frac{-\pi}{8}, \frac{\pi}{8}, \frac{-2\pi}{8}, \frac{\pi}{8}]^\top$. This
-resulted in the model standing with slightly bent knees. The model was then run at $40Hz$ for 24 seconds,
+resulted in the model standing with slightly bent knees. For simplicity, the rotations associated with
+the end effector pose were set to zero. The model was then run at $40Hz$ for 24 seconds,
 with the steps at 0, 8 and 16 seconds. To shift between kinematic chains, a parameter called $STEP$ was 
 established. $STEP$ took values of $-1$ or $1$ depending on which foot was traveling forward. This 
 approach was based on the relationship between the dual kinematic chains, as seen in equation \ref{eq:STEP}.
@@ -143,14 +144,41 @@ its initial position for half the time period of the step, while the CoM shifts 
 
 \input{_content/30_quasiStatic/AlgTrajgen.txt}
 
-The IKM is a direct implementation of equation \ref{eq:2D_ikm} with weights found in equations \ref{eq:2D_w2} to \ref{eq:2D_w4}.
+The IKM is a direct implementation of equation \ref{eq:2D_ikm} with weights found in equations 
+\ref{eq:2D_w2} to \ref{eq:2D_w4}. The initial value passed to the numerical solver at each time index,
+was the previous set of optimal joint values, $\mathbf{q}_{(i-1)}$. At each time index, the corresponding
+index of the step trajectory was passed as the position component of the pose, $\mathbf{r_{E}^B}^{*}_{i}$.
+Concurrently, the the rotational components, $phi_x$ and $theta_y$, were set to zero.
 
 \begin{align}
     \mathbf{K_q}            &= 1  \times 10^{3} \cdot \mathbf{I}_{4x4} \label{eq:2D_w1} \\ 
-    \mathbf{K_e}            &= 1                \cdot \mathbf{I}_{4x4} \label{eq:2D_w2} \\ 
-    \mathbf{K_{CoM}}        &= 6                \cdot \mathbf{I}_{4x4} \label{eq:2D_w3} \\ 
-    \mathbf{K_{\dot{CoM}}}  &= 1 \times 10^{2}  \cdot \mathbf{I}_{4x4} \label{eq:2D_w4}
+    \mathbf{K_e}            &= 1                \cdot \mathbf{I}_{6x6} \label{eq:2D_w2} \\ 
+    \mathbf{K_{CoM}}        &= 6                \cdot \mathbf{I}_{1x1} \label{eq:2D_w3} \\ 
+    \mathbf{K_{\dot{CoM}}}  &= 1 \times 10^{2}  \cdot \mathbf{I}_{1x1} \label{eq:2D_w4}
 \end{align}
 
+The position of the centre of the support line, $\mathbf{r^{B}_{SP}}$, was updated as 
+a function of the $STEP$ variable. It was set to the position of the sole right foot, 
+$\mathbf{r^B_r}$, when $STEP = 1$, and the position of the sole of the left foot, $\mathbf{r^B_l}$,
+when $STEP = -1$. This positions are the bases of the kinematic chains from right to left, and from 
+left to right, respectively. \\
+As the returned $\mathbf{q^*}_{i}$ may not result in the exact desire pose, $\mathbf{x_{e}^*}_{i}$, the 
+the optimal joint variables were passed through the FKM to determine the true pose of the end effector.
 
+\subsubsection*{2D results}
 
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/30_quasiStatic/2D/fig_CoM.png}
+        \caption{2D model CoM and foot positions}
+        \label{fig:2D_CoM}
+    \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/30_quasiStatic/2D/fig_path.png}
+        \caption{2D paths for feet}
+        \label{fig:2D_traj}
+    \end{center}
+\end{figure}

@@ -1,5 +1,5 @@
 \begin{algorithm}[h!]
-    \caption{Run time}\label{alg:2D_run}
+    \caption{Three steps forward. Step three has been omitted for brevity}\label{alg:2D_run}
         \begin{algorithmic}[1]
             \State $    \text{STEP}                     \:\gets -1                              $
             \State $    timestep                        \:\gets (40^{-1})                       $
@@ -27,12 +27,12 @@
                 \State $    \mathbf{r^B_L}_{[:,i]}  \:\gets\:       \mathbf{r^B_L}_{[:,i-1]}                                    $
             \EndFor
             \State
-            \State $ 	\text{STEP} \:\gets\: -1 	\text{STEP}                                                                 $
+            \State $ 	\text{STEP} \:\gets\: -1 \cdot \text{STEP}                                                              $
             \State $ \mathbf{Q} \:\gets\text{StepTrajGen}(\text{stp}_{2}, \: \mathbf{tspan}, \: \mathbf{r^B_R}_{[:,i]})         $
             \For {$ i \gets \text{stp}_{2}[0]$ $\mathbf{to}$ $\text{stp}_{2}[1]$}
                 \State $    \mathbf{x_e^{*}}        \:\gets\:       [ \mathbf{Q}_{[:,i]}, 0, 0 ]^\top                           $
                 \State $    \mathbf{q}_{[:,i]}      \:\gets\:       \text{IKM}(\mathbf{q}_{[:,i-1]}, \: \mathbf{x_e^{*}}, \: 	\text{STEP})     $
-                \State $    \mathbf{x_e}_{[:,i]}    \:\gets\:       \text{FKM}(\mathbf{q}_{:,i}, \: 	\text{STEP})                $
+                \State $    \mathbf{x_e}_{[:,i]}    \:\gets\:       \text{FKM}(\mathbf{q}_{:,i}, \: 	\text{STEP})            $
                 \State $    \mathbf{r^B_L}_{[:,i]}  \:\gets\:       \mathbf{x_e}_{[1 \:\to\: 2,i]}                              $
                 \State $    \mathbf{r^B_R}_{[:,i]}  \:\gets\:       \mathbf{r^B_R}_{[:,i-1]}                                    $
             \EndFor
