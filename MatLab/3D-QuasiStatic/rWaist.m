@@ -1,4 +1,4 @@
-function [v6B] = rWaist(q, params)
+function [vWhoriz] = rWaist(q, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -35,13 +35,13 @@ function [v6B] = rWaist(q, params)
                s1,  c1*c234,  c1*s234,  c1*(Lu*c23 +Ll*c2 +S*(c234+1));
                 0,    -s234,     c234,  -1*(Lu*s23 +Ll*s2 +S*s234);
                 0,        0,        0,   1];
-        A46 = [c5*c6, -c5*s6,  s5, (H*c5*c6 -S*s5);
-               s5*c6, -s5*s6, -c5, (H*s5*c6 +S*c5);
-                  s6,     c6,   0, (H*s6);
-                   0,      0,   0, 1];
+        A45 = [c5, 0,  s5, -S*s5;
+               s5, 0, -c5,  S*c5;
+               0, 1,    0,     0;
+               0, 0,    0,     1];
         % INVERTIBLE !!!
         
-        AB6  = TB0*A04*A46;
+        A  = TB0*A04*A45;
     elseif params.mode == -1     % RIGHT FIXED
         % JOINT VARIABLES
         s7   = sin(q(7));
@@ -57,22 +57,23 @@ function [v6B] = rWaist(q, params)
         c12  = cos(q(12));
         s12  = sin(q(12));
         % INVERTIBLE !!!
-        A86 = [  -s7,     c7,   0,  0;
-              -c7*s8, -s7*s8, -c8,  S*(c8 + 1);
-              -c7*c8, -c8*s7,  s8, -S*s8;
-                   0,      0,   0,  1];
         A128 = [-s12*s901, s12*c901, -c12, (Lu*c101 +Ll*c11 +S)*s12;
                 -c12*s901, c12*c901,  s12, (Lu*c101 +Ll*c11 +S)*c12;
                      c901,     s901,    0, (Lu*s101 +Ll*s11);
                         0,        0,    0, 1];
+        A86 = [  -s7,     c7,   0,  0;
+              -c7*s8, -s7*s8, -c8,  S*(c8 + 1);
+              -c7*c8, -c8*s7,  s8, -S*s8;
+                   0,      0,   0,  1];
+        
         % INVERTIBLE !!!
         TB0   = [0,0,1,0; 0,1,0,0;
                 -1,0,0,0; 0,0,0,1];
         
-        AB6  = TB0*A128*A86;
+        A  = TB0*A128*A86;
     end
 
-    ABW = AB6*[eye(3),[-H;0;0];
-                0,0,0,      1];
-    v6B = ABW(1:3,4) - AB6(1:3,4);
+    Bb = A*[eye(3), [1;0;0];
+             0,0,0,      1];
+    vWhoriz = A(1:3,4) - Bb(1:3,4);
 end

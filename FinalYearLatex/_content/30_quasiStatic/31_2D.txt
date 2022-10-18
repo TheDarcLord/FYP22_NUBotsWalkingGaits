@@ -104,7 +104,7 @@ a function of time.
 
 The two dimensional model was initialised with $ \mathbf{q_{0}} = 
 [\frac{-\pi}{8}, \frac{2\pi}{8}, \frac{-\pi}{8}, \frac{\pi}{8}, \frac{-2\pi}{8}, \frac{\pi}{8}]^\top$. This
-resulted in the model standing with slightly bent knees, as seen in figure \ref{2D_init}. For simplicity, the rotations associated with
+resulted in the model standing with slightly bent knees, as seen in figure \ref{fig:2D_init}. For simplicity, the rotations associated with
 the end effector pose were set to zero. The model was then run at $40Hz$ for 24 seconds,
 with the steps at 0, 8 and 16 seconds. The width of the support polygon was chosen as $0.1$ metres.
 

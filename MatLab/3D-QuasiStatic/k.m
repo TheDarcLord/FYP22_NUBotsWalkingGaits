@@ -73,9 +73,7 @@ function [xe, TAE] = k(q, params)
         T12B  = [0,0,-1,0; 0,1,0,0;
                  1,0, 0,0; 0,0,0,1];
 
-        ABER = TB0*A04*A46*A68*A812*T12B;
-        TAE  = ABER;
-    
+        TAE  = TB0*A04*A46*A68*A812*T12B;
     elseif params.mode == -1     % LEFT FIXED
         T12B  = [0,0,-1,0; 0,1,0,0;
                  1,0, 0,0; 0,0,0,1];
@@ -100,8 +98,7 @@ function [xe, TAE] = k(q, params)
         TB0   = [0,0,1,0; 0,1,0,0;
                 -1,0,0,0; 0,0,0,1];
         
-        ABEL = TB0*A128*A86*A64*A40*T12B;
-        TAE  = ABEL;
+        TAE  = TB0*A128*A86*A64*A40*T12B;
     end
     
     %% End Effector Parameterisation X Y Z R₂Ψ Rᵧθ Rₓϕ

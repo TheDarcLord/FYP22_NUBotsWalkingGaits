@@ -1,13 +1,72 @@
 The three dimensional model offers new challenges and new options in terms of quasistatic
 locomotion. Modifications are made to the IKM and step trajectory generation in order to 
-exploit as much of the work completed in section \ref{sec:2D_QS} as possible. \\
+exploit as much of the work completed in section \ref{sec:2D_QS} as possible.\\
 
 Rather than walking in a straight line, the robot shall now `follow' a trajectory. The method 
 used to convert an arbitrary trajectory into a series of foot steps is found in section \ref{sec:NovelTraj}.
 
 \subsubsection*{Three Dimensional Inverse Kinematic Model}
-    - Vector across Waist
-    - Vector down from hip
+In three dimensions there are aspects of the robot's posture that are desirable to control. 
+The priority is to keep the robot's torso vertical. Ensuring its waist perpendicular to the trajectory 
+it is traveling along is desirable, but is not necessarily possible from the initial posture
+of the robot.\\
+
+A closer inspection of Figure \ref{fig:3D_1} is depicted in Figure \ref{fig:3D_pair}. On the
+left, in green, $\vec{r}^{B}_{5}(\mathbf{q})$ is the position vector associated with the transform 
+$\mathbf{T^B_5}(\mathbf{q})$. Additionally two unit vectors, $\mathbf{e_x}$ and $\mathbf{e_z}$, are projected 
+from the base coordinate system.
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.9\linewidth]{_content/30_quasiStatic/3D/fig_vPair.png}
+        \caption{$ \vec{r}^{B}_{5} (\mathbf{q}) $ and two positions systems constructed from it}
+        \label{fig:3D_pair}
+    \end{center}
+\end{figure}
+
+On the right, in purple, we have two additional vectors, $\vec{r}^{B}_{5a}$ and $\vec{r}^{B}_{5b}$ that 
+were constructed from $\mathbf{T^B_5}$ by multiplying $\mathbf{T^B_5}$ by the homogenous transforms
+found in equations \ref{eq:rbl5a} and \ref{eq:rbl5b}. Thus both $\vec{r}^{B}_{5a}$ and $\vec{r}^{B}_{5b}$
+share the orientation of $\mathbf{T^B_5}$.
+
+\begin{align}
+    \mathbf{T^B_5}_a &= \mathbf{T^B_5} \cdot \begin{bmatrix}
+        \mathbf{I}_{3 \times 3}     &   [0, 0, 1]^\top   \\
+        \mathbf{0}_{1 \times 3}     &   1
+    \end{bmatrix}   \label{eq:rbl5a} \\
+    \mathbf{T^B_5}_b &= \mathbf{T^B_5} \cdot \begin{bmatrix}
+        \mathbf{I}_{3 \times 3}     &   [1, 0, 0]^\top   \\
+        \mathbf{0}_{1 \times 3}     &   1
+    \end{bmatrix} \label{eq:rbl5b}
+\end{align}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.5\linewidth]{_content/30_quasiStatic/3D/fig_vResult.png}
+        \caption{$\vec{AB}_a(\mathbf{q})$ and $\vec{AB}_b(\mathbf{q})$}
+        \label{fig:3D_result}
+    \end{center}
+\end{figure}
+
+Figure \ref{fig:3D_result} includes all the vectors from the previous figure, and determines
+the vectors $\vec{AB}_a$ and $\vec{AB}_b$ by subtracting the corresponding position.
+
+Initially $\vec{AB}_a$ and $\vec{AB}_b$ are unit vectors constructed from $\vec{r}^{B}_{5}$.
+As $\vec{AB}_a$ and $\vec{AB}_b$ are constructed with respect to the 
+base coordinate system, they will cease to be unit vectors upon any change in orientation of $\vec{r}^{B}_{5}$. 
+Upon taking the dot product of $\vec{AB}_a$ and either unit vector, $\mathbf{e_x}$ or $\mathbf{e_z}$, if 
+the result is zero, then then $\vec{AB}_a$ is perpendicular to the corresponding unit vector.
+If $\vec{AB}_a$ is perpendicular to both, the torso of the robot is perpendicular to both 
+unit vectors. As $\vec{AB}_a$ is a function of $\mathbf{q}$, the result of the dot product 
+with the unit vectors was used as a pair of nonlinear equality constraints for the three 
+dimensional IKM. Thus the IKM is now subjected to the inequality constraint found in equation 
+\ref{eq:2D_ineq} in addition to the equality constraints found in equations \ref{eq:3D_eqc1} and \ref{eq:3D_eqc2}.
+
+\begin{align}
+    \mathbf{e_x}^{\top}\vec{AB}_a &= 0  \label{eq:3D_eqc1} \\
+    \mathbf{e_z}^{\top}\vec{AB}_a &= 0  \label{eq:3D_eqc2}
+\end{align}
+
 \subsubsection*{Footstep Trajectory Generation}
-    - novel trajectory method
+
 \subsubsection*{Implementation}

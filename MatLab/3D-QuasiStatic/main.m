@@ -41,7 +41,7 @@ clc
     model.r0CoMg = zeros(3,length(model.tspan));  % r0CoMg  [XYZ]ᵀ
     model.pREF   = zeros(2,length(model.tspan));  % stpREF  [XZ]ᵀ
 
-%% Initial Position & Orientation
+% ----> Initial Position & Orientation
     model.q0        = [  0;    % θ₁    
                     -pi/12;    % θ₂    ->  2D θ₁ Ankle
                    2*pi/12;    % θ₃    ->  2D θ₂ Knee
@@ -70,6 +70,8 @@ clc
         zlabel('{\bfY} (metres)');
         view(-165,50);
         [~] = plotRobot(1,model,params);
+
+
     % +-+-+-+-+-+-+-+-+-+-+-+
 
 %% Generate Trajectory
@@ -136,7 +138,9 @@ clc
 %                 ylabel('{\bfX} (metres)');
 %                 zlabel('{\bfY} (metres)');
 %                 view(-165,50);
-%                 plot3(Qstep(3,t_begin:t_end),Qstep(1,t_begin:t_end),Qstep(2,t_begin:t_end),'b-','LineWidth',2);
+%                 plot3(Qstep(3,t_begin:t_end), ...
+%                       Qstep(1,t_begin:t_end), ...
+%                       Qstep(2,t_begin:t_end),'b-','LineWidth',2);
 %                 [~] = plotRobot(t_begin-1,model,params);
 %                 [~] = plotSteps(model,t_begin:t_end);
             for j=t_begin:t_end
@@ -146,6 +150,22 @@ clc
                 model.q(:,j)  = k_Inv(model.q(:,jn), ...
                                       xeSTAR, j, model, params);
                 [model.xe(:,j), model.TBE] = k(model.q(:,j), params);
+%                 % DEBUG           
+%                 ROBOT_FRAME = figure(1);
+%                 cla(ROBOT_FRAME)
+%                 hold on
+%                 grid on
+%                 set(gca,'Color','#CCCCCC');
+%                 title("3D Model - ZMP Walking",'FontSize',12);
+%                 xlabel('{\bfZ} (metres)');
+%                 ylabel('{\bfX} (metres)');
+%                 zlabel('{\bfY} (metres)');
+%                 view(-165,50);
+%                 [~] = plotRobot(j,model,params);
+%                 [~] = plotSteps(model,t_begin:t_end);
+%                 plot3(Qstep(3,t_begin:t_end), ...
+%                       Qstep(1,t_begin:t_end), ...
+%                       Qstep(2,t_begin:t_end),'b-','LineWidth',2);
             end
 
             % CLEAN UP

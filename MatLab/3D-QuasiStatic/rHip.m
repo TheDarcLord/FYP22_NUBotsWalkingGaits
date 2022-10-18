@@ -1,4 +1,4 @@
-function [vHW] = rHip(q, params)
+function [vHvert] = rHip(q, params)
 % k(q)  [2D Model] Forward Kinematic Model - FKM
 %       
 %       Returns:    [xe, TAA, Transforms] for an array of 'q'
@@ -25,8 +25,6 @@ function [vHW] = rHip(q, params)
         s234 = sin(q(2)+q(3)+q(4));
         s5   = sin(q(5));
         c5   = cos(q(5));
-        s6   = sin(q(6));
-        c6   = cos(q(6));
 
         TB0   = [0,0,1,0; 0,1,0,0;
                 -1,0,0,0; 0,0,0,1];
@@ -35,13 +33,13 @@ function [vHW] = rHip(q, params)
                s1,  c1*c234,  c1*s234,  c1*(Lu*c23 +Ll*c2 +S*(c234+1));
                 0,    -s234,     c234,  -1*(Lu*s23 +Ll*s2 +S*s234);
                 0,        0,        0,   1];
-        A46 = [c5*c6, -c5*s6,  s5, (H*c5*c6 -S*s5);
-               s5*c6, -s5*s6, -c5, (H*s5*c6 +S*c5);
-                  s6,     c6,   0, (H*s6);
-                   0,      0,   0, 1];
+        A45 = [c5, 0,  s5, -S*s5;
+               s5, 0, -c5,  S*c5;
+               0, 1,    0,     0;
+               0, 0,    0,     1];
         % INVERTIBLE !!!
         
-        AB6  = TB0*A04*A46;
+        A  = TB0*A04*A45;
     elseif params.mode == -1     % RIGHT FIXED
         % JOINT VARIABLES
         s7   = sin(q(7));
@@ -69,10 +67,11 @@ function [vHW] = rHip(q, params)
         TB0   = [0,0,1,0; 0,1,0,0;
                 -1,0,0,0; 0,0,0,1];
         
-        AB6  = TB0*A128*A86;
+        A  = TB0*A128*A86;
+        
     end
 
-    ABH = AB6*[eye(3),[0;0;S];
-                0,0,0,     1];
-    vHW = AB6(1:3,4) - ABH(1:3,4);
+    Ba = A*[eye(3),[0;0;1];
+                  0,0,0,1];
+    vHvert = A(1:3,4) - Ba(1:3,4);
 end
