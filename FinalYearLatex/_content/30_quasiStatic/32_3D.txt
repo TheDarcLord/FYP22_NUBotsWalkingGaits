@@ -67,6 +67,33 @@ dimensional IKM. Thus the IKM is now subjected to the inequality constraint foun
     \mathbf{e_z}^{\top}\vec{AB}_a &= 0  \label{eq:3D_eqc2}
 \end{align}
 
+Figure \ref{fig:3D_cTraj} depicts the use of $\vec{AB}_b(\mathbf{q})$. As an arbitrary trajectory, 
+$\mathbf{Q}(t)$, is a function of time, a vector, $\vec{TJ}^{B}_{t}$, is formed from the difference 
+between the current column vector of $\mathbf{Q}(t)$ and the previous one $\mathbf{Q}(t-1)$.
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.5\linewidth]{_content/30_quasiStatic/3D/fig_vTraj.png}
+        \caption{Trajectory $\mathbf{Q}(t)$ and $\vec{AB}_b(\mathbf{q})$}
+        \label{fig:3D_cTraj}
+    \end{center}
+\end{figure}
+
+As the robot's waist will not necessarily start perpendicular to the trajectory, the weighted dot 
+product of $\vec{TJ}^{B}_{t}$ and $\vec{AB}_b(\mathbf{q})$ was added to the two dimensional IKM.
+If this was implemented as a nonlinear constraint the optimal array of joints values, $\mathbf{q^*}$,
+immediately following $\mathbf{q_0}$ would result in an instantaneous torque about the $Y$ axis.
+Thus to orientate the waist of the robot such that it is perpendicular to $\mathbf{Q}(t)$ the IKM
+becomes equation \ref{eq:3D_ikm}.
+
+\begin{equation}\label{eq:3D_ikm}
+    \mathbf{q^{*}} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
+    \mathbf{K_{e}}      \lVert  {   k(\mathbf{q}) - \mathbf{x_{e}^*}                         } \rVert \: + \\
+    \mathbf{K_{CoM}}    \lVert  {   \mathbf{r^{B}_{SP}} - \mathbf{r^{B}_{CoM}}(\mathbf{q})   } \rVert \: + \\
+    \mathbf{K_{q}}      \lVert  {   \mathbf{q_{0}} - \mathbf{q}                              } \rVert \: + \\
+    \mathbf{K_{tj}}     \lVert  {   (\vec{TJ}^{B}_{t})^{\top} \cdot \vec{AB}_b(\mathbf{q})   } \rVert
+\end{equation}
+
 \subsubsection*{Footstep Trajectory Generation}
 
 \subsubsection*{Implementation}
