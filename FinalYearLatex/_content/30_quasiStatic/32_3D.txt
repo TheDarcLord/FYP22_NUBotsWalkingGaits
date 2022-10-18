@@ -84,7 +84,9 @@ product of $\vec{TJ}^{B}_{t}$ and $\vec{AB}_b(\mathbf{q})$ was added to the two 
 If this was implemented as a nonlinear constraint the optimal array of joints values, $\mathbf{q^*}$,
 immediately following $\mathbf{q_0}$ would result in an instantaneous torque about the $Y$ axis.
 Thus to orientate the waist of the robot such that it is perpendicular to $\mathbf{Q}(t)$ the IKM
-becomes equation \ref{eq:3D_ikm}.
+becomes equation \ref{eq:3D_ikm}. The higher weights of $\mathbf{K_{tj}}$ result in an initial
+angular velocity of the torso about the $y$ axis, however, this angular velocity immediately 
+decelerates to the angular velocity of the trajectory about the $y$ axis.
 
 \begin{equation}\label{eq:3D_ikm}
     \mathbf{q^{*}} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
