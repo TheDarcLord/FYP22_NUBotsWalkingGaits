@@ -89,11 +89,13 @@ angular velocity of the torso about the $Y$ axis, however, this angular velocity
 decelerates to the angular velocity of the trajectory about the $Y$ axis.
 
 \begin{equation}\label{eq:3D_ikm}
-    \mathbf{q^{*}} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
-    \mathbf{K_{e}}      \lVert  {   k(\mathbf{q}) - \mathbf{x_{e}^*}                         }   \rVert \: + \\
-    \mathbf{K_{CoM}}    \lVert  {   \mathbf{r^{B}_{SP}} - \mathbf{r^{B}_{CoM}}(\mathbf{q})   }   \rVert \: + \\
-    \mathbf{K_{q}}      \lVert  {   \mathbf{q_{0}} - \mathbf{q}                              }   \rVert \: + \\
-    \mathbf{K_{tj}}     \lVert\:{   (\vec{TJ}^{B}_{t})^{\top} \cdot \vec{AB}_b(\mathbf{q})   } \:\rVert
+    \begin{split}
+        \mathbf{q^{*}} = \underset{\mathbf{q}}{\mathrm{arg\:min}}\:\:
+        &\mathbf{K_{e}}      \lVert  {   k(\mathbf{q}) - \mathbf{x_{e}^*}                         }   \rVert \: + \\
+        &\mathbf{K_{CoM}}    \lVert  {   \mathbf{r^{B}_{SP}} - \mathbf{r^{B}_{CoM}}(\mathbf{q})   }   \rVert \: + \\
+        &\mathbf{K_{q}}      \lVert  {   \mathbf{q_{0}} - \mathbf{q}                              }   \rVert \: + \\
+        &\mathbf{K_{tj}}     \lVert\:{   (\vec{TJ}^{B}_{(t)})^{\top} \cdot \vec{AB}_b(\mathbf{q})   } \:\rVert
+    \end{split}
 \end{equation}
 
 \subsubsection*{Footstep Trajectory Generation}
