@@ -1,5 +1,5 @@
 function Q = trajGen_sin(tspan, init)
-    wavelength  = 1.5;
+    wavelength  = 2;
     velocity    = 0.12/12;
     amplitude   = 0.5;
     frequency   = velocity/wavelength;
