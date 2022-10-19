@@ -57,7 +57,6 @@ clc
                  pi/10;    % θ₁₁   ->  2D θ₆ Ankle
                      0];   % θ₁₂
 
-    %model.q0(5) = pi/2;
     webotsMod   = [-1;  % θ₁
                     1;  % θ₂
                     1;  % θ₃
@@ -97,16 +96,17 @@ clc
         zlabel('{\bfY} (metres)');
         [~] = plotRobot(1,model,params);
     % +-+-+-+-+-+-+-+-+-+-+-+
-    for i=1:19
+    for i=1:5
         commJointValues("10.0.0.127","10013",...
-            [webotsMod.*model.q(:,1); arms]...
+            [webotsMod.*model.q(:,1); arms./(5 - i)]...
         );
     end
 
 %% Generate Trajectory
-   [model.glbTrj,~,~] = ...
-       trajGenC(1/params.framerate, ...       % Time Span
-                model.xe(1:3,1)./2); % Init Position
+    model.glbTrj = ...
+       trajGen_cir(model.tspan, model.xe(1:3,1)./2);
+%        trajGenC(1/params.framerate, ...       % Time Span
+%                 model.xe(1:3,1)./2);          % Init Position
     [~] = plotSteps(model);
 %% STEPPING
     % Helper Functions
@@ -225,6 +225,19 @@ clc
         
         IMAGE(i) = getframe(gcf);
     end
+
+%% RESEND q(t)
+
+for i=1:5
+    commJointValues("10.0.0.127","10013",...
+        [webotsMod.*model.q(:,1); arms]...
+    );
+end
+for i=1:length(model.tspan)
+        commJointValues("10.0.0.127","10013",...
+        [webotsMod.*model.q(:,i); arms]...
+    );
+end
 
 %% VIDEO
 videoWriterObj           = VideoWriter('3D_Step.mp4','MPEG-4');
