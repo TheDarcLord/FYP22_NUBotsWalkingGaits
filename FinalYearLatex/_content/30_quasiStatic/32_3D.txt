@@ -99,5 +99,28 @@ decelerates to the angular velocity of the trajectory about the $Y$ axis.
 \end{equation}
 
 \subsubsection*{Footstep Trajectory Generation}
+In three dimensions the method for generating a trajectory for the end effector, the stepping foot,
+is largely the same as the two dimensional method, found in equation \ref{eq:2D_pos}. 
+In order to traverse an arbitrary trajectory, $\mathbf{Q}(t)$, the rotation of the end effector
+about the base $Y$ axis must be updated to be parallel with $\mathbf{Q}(t_{f})$, where
+$t_f$ is the moment at which the end effector returns to the ground. Figure \ref{fig:3D_angTraj}
+presents the arbitrary trajectory in green, with two $\mathbf{r}(x,z)$ positions.
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.8\linewidth]{_content/30_quasiStatic/3D/fig_trajAngReal.png}
+        \caption{Trajectory $\mathbf{Q}(t)$ and $t_f$, final step time}
+        \label{fig:3D_angTraj}
+    \end{center}
+\end{figure}
+
+Taking the gradient of the line between $mathbf{r}_{(t_f)}$ and $mathbf{r}_{(t_f - 1)}$ and using
+the $atan2(Y,X)$ in the manner seen in equation \ref{eq:aTan} yields the necessary end effector 
+yaw angle.
+
+\begin{equation}\label{eq:aTan}
+    \theta = 
+\end{equation}
+
 
 \subsubsection*{Implementation}
