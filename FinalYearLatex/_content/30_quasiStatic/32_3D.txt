@@ -1,5 +1,5 @@
 The three dimensional model offers new challenges and new options in terms of quasistatic
-locomotion. Modifications are made to the IKM and step trajectory generation in order to 
+locomotion. Modifications were made to the IKM and step trajectory generation in order to 
 exploit as much of the work completed in section \ref{sec:2D_QS} as possible.\\
 
 Rather than walking in a straight line, the robot shall now `follow' a trajectory. The method 
@@ -13,7 +13,7 @@ of the robot.\\
 
 A closer inspection of Figure \ref{fig:3D_1} is depicted in Figure \ref{fig:3D_pair}. On the
 left, in green, $\vec{r}^{B}_{5}(\mathbf{q})$ is the position vector associated with the transform 
-$\mathbf{T^B_5}(\mathbf{q})$. Additionally two unit vectors, $\mathbf{e_x}$ and $\mathbf{e_z}$, are projected 
+$\mathbf{T^B_5}(\mathbf{q})$. Additionally two unit vectors, $\mathbf{e_x}$ and $\mathbf{e_z}$, were projected 
 from the base coordinate system.
 
 \begin{figure}[!h]
@@ -103,24 +103,53 @@ In three dimensions the method for generating a trajectory for the end effector,
 is largely the same as the two dimensional method, found in equation \ref{eq:2D_pos}. 
 In order to traverse an arbitrary trajectory, $\mathbf{Q}(t)$, the rotation of the end effector
 about the base $Y$ axis must be updated to be parallel with $\mathbf{Q}(t_{f})$, where
-$t_f$ is the moment at which the end effector returns to the ground. Figure \ref{fig:3D_angTraj}
+$t_f$ is the time instant at which the end effector returns to the ground. Figure \ref{fig:3D_angTraj}
 presents the arbitrary trajectory in green, with two $\mathbf{r}(x,z)$ positions.
 
 \begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=.8\linewidth]{_content/30_quasiStatic/3D/fig_trajAngReal.png}
-        \caption{Trajectory $\mathbf{Q}(t)$ and $t_f$, final step time}
+        \includegraphics[width=.8\linewidth]{_content/30_quasiStatic/3D/fig_trajAngReal2.png}
+        \caption{Trajectory $\mathbf{Q}(t)$, final step time $t_f$, and its gradient $\nabla$}
         \label{fig:3D_angTraj}
     \end{center}
 \end{figure}
 
-Taking the gradient of the line between $mathbf{r}_{(t_f)}$ and $mathbf{r}_{(t_f - 1)}$ and using
-the $atan2(Y,X)$ in the manner seen in equation \ref{eq:aTan} yields the necessary end effector 
-yaw angle.
+To determine the the angle between the $Z$ axis of the base, $Z_{b}$, and the line segment
+$\mathbf{r}_{(t_f-1)}\, \to \,\mathbf{r}_{(t_f)}$ the $atan2(\nabla,1)$ function was used.
+However, as the `toe' of the robot's foot was defined along $X$ axis of the end effector, $X_{e}$,
+the priority was ensuring that $X_{e}$ was parallel to line segment 
+$\mathbf{r}_{(t_f-1)}\, \to \,\mathbf{r}_{(t_f)}$. Thus, the desired yaw angle of the end effector 
+about $Y_b$ is $atan2(-(\nabla)^{-1},1)$, seen in blue. This lead to equation \ref{eq:aTan}, 
+which defines the yaw angle of the end effector at $t_{f}$.
 
 \begin{equation}\label{eq:aTan}
-    \theta = 
+    \theta_{t_f} = atan2(-\frac{(z_{t_f} - z_{t_{t_{f} - 1} })}{(x_{t_f} - x_{t_{t_{f} - 1} })},1)
 \end{equation}
 
+Thus equation \ref{eq:2D_pos} is extended to equation \ref{eq:3D_pos} to define the 
+trajectory of the end effector from the inital step time, to the final step time.
+
+\begin{equation}\label{eq:3D_pos}
+    \mathbf{x_{e}}(t) = \begin{bmatrix}
+        x(t)        \\
+        y(t)        \\
+        z(t)        \\
+        \phi(t)     \\
+        \theta(t)   \\
+        \psi(t)
+    \end{bmatrix} = \mathbf{r_i} + \begin{bmatrix}
+        t \, \frac{x_f - x_i}{t_f - t_i}                        \\
+        4 t \frac{y_{d}}{(t_i + t_f)} (1 - \frac{t}{t_i + t_f}) \\
+        t \, \frac{z_f - z_i}{t_f - t_i}                        \\
+        0t                                                      \\
+        t \, \frac{\theta_f - \theta_i}{t_f - t_i}               \\
+        0t
+    \end{bmatrix}
+\end{equation}
+
+Algorithm \ref{alg:2D_trajGen} can thus to extended and simplified to Algorithm 
+\ref{alg:3D_trajGen}.
+
+\input{_content/30_quasiStatic/AlgTrajgen3D.txt}
 
 \subsubsection*{Implementation}
