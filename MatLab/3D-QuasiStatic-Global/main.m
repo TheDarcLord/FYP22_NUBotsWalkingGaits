@@ -3,9 +3,9 @@ close all
 clc 
 
 %% Video & Time Parameters
-    params.framerate  = 10;                             % FPS
+    params.framerate  = 25;                             % FPS
     model.timestp     = params.framerate^(-1);          % Seconds
-    model.tspan       = 0 : model.timestp : 150;        % [ time ]
+    model.tspan       = 0 : model.timestp : 200;        % [ time ]
  % Physical Parameters - Affect CoM or FKM
     params.zc        = 0.5;     % m    - Height of the CoM ^         |
     params.g         = 9.81;     % ms⁻² - Acceleration due to Gravity |
@@ -155,7 +155,7 @@ clc
     zlabel('{\bfY} (metres)');
     axis equal
     view(145,30);
-    [~] = plotRobot(i,model,params);
+    [~] = plotRobot(1,model,params);
 
     for i=1:length(model.tspan)
         cla(ROBOT_FRAME)
