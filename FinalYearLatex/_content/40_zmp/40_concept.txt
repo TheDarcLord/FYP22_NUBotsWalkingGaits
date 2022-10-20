@@ -1,0 +1,4 @@
+\citep{vukobratovi_1968_contribution} first proposal of ZMP
+
+Torque equivalence
+\citep{kajita_2003_biped} Kajita Patteern Generation with Preview control
