@@ -17,7 +17,7 @@ clc
  % Displacements
     params.fibula     = 0.19942;  % m    - Lower leg NUgus
     params.femur      = 0.19954;  % m    - Upper Leg NUgus
-    params.HipWidth   = 0.16;     % m    - Pelvis
+    params.HipWidth   = 0.16;     % m    - Pelvis   WAS 0.11 -> FALLOVER
     params.heel2ankle = 0.038;    % m    - Tarsal
     params.ankle2knee = [0.005669; 0.19942; -0.0002];
     params.knee2hip   = [       0; 0.19954; -0.0015];
