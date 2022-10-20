@@ -9,7 +9,7 @@ clc
     model.timeHrzn    = 0;                            % Seconds
     model.Nl          = model.timeHrzn / params.timestp; % INTEGER
  % Physical Parameters - Affect CoM or FKM   |
-    params.zc           = 0.40;    % m    - Height of the CoM ^         |
+    params.zc           = 0.45;    % m    - Height of the CoM ^         |
     params.m            = 7.4248;  % kg   - Total Mass of a NuGus       |
     params.StepLength   = 0.15;    % m    - 15 cm Step Forward          |
     params.StepHeight   = 0.07;    % m    - 7 cm Step Height           |
@@ -26,9 +26,9 @@ clc
  % Masses
     params.mass.fibula = 0.1719;                    % Paired with `tibia`
     params.mass.femur  = 0.3423;                    % Thigh Bone
-    params.mass.joint  = 0.300  + 0.7;              % Knee Bone / Joints
+    params.mass.joint  = 0.300;                     % Knee Bone / Joints
     params.mass.pelvis = 2.9549 + 697.6 + 753.5;    % Waist
-    params.mass.foot   = 0.2023 + 0.5;              % Foot
+    params.mass.foot   = 0.2023;                    % Foot
 
 %% Model setup
  % Steps
@@ -94,11 +94,11 @@ clc
         zlabel('{\bfY} (metres)');
         [~] = plotRobot(1,model,params);
     % +-+-+-+-+-+-+-+-+-+-+-+
-%     for i=1:5
-%         commJointValues("10.0.0.127","10013",...
-%             [webotsMod.*model.q(:,1); arms./(6 - i)]...
-%         );
-%     end
+    for i=1:49
+        commJointValues("10.0.0.127","10013",...
+            [webotsMod.*model.q(:,1); arms./(50 - i)]...
+        );
+    end
     % +-+-+-+-+-+-+-+-+-+-+-+
 
 
@@ -167,9 +167,9 @@ clc
                 [model.xe(:,j), model.TBE] = k(model.q(:,j), params);
                 DEBUG(j,t_begin,t_end,Qstep,model,params);
                 % Send qᵢ
-%                 commJointValues("10.0.0.127","10013",...
-%                     [webotsMod.*model.q(:,j); arms]...
-%                 );
+                commJointValues("10.0.0.127","10013",...
+                    [webotsMod.*model.q(:,j); arms]...
+                );
             end
 
             % CLEAN UP
