@@ -13,7 +13,6 @@ clc
     params.g         = 9.81;     % ms⁻² - Acceleration due to Gravity |
     params.m         = 7.4248;   % kg   - Total Mass of a NuGus       |
  % -------------------------------------------------------------------|
-
     params.fibula       = 0.4;      % m    - Lower leg
     params.femur        = 0.4;      % m    - Upper Leg
     params.HipWidth     = 0.2;      % m    - Pelvis

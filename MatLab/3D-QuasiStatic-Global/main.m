@@ -5,21 +5,18 @@ clc
 %% Video & Time Parameters
     params.framerate  = 10;                             % FPS
     model.timestp     = params.framerate^(-1);          % Seconds
-    model.tspan       = 0 : model.timestp : 100;         % [ time ]
+    model.tspan       = 0 : model.timestp : 150;        % [ time ]
  % Physical Parameters - Affect CoM or FKM
-    params.kx        = 0;        % These affect the plane to which    |
-    params.ky        = 0;        % ... the CoM is constrained         |
-    params.zc        = 0.28;   % m    - Height of the CoM ^         |
+    params.zc        = 0.28;     % m    - Height of the CoM ^         |
     params.g         = 9.81;     % ms⁻² - Acceleration due to Gravity |
     params.m         = 7.4248;   % kg   - Total Mass of a NuGus       |
  % -------------------------------------------------------------------|
-    params.fibula     = 0.19942;  % m    - Lower leg NUgus
-    params.femur      = 0.19954;  % m    - Upper Leg NUgus
-    params.HipWidth   = 0.11;     % m    - Pelvis
-    params.heel2ankle = 0.038;    % m    - Tarsal
-    params.ServoSize  = 0.05;     % m    - Approximation/Spacing
-    params.StepLength = 0.15;     % m    - 15 cm Step forward
-    params.StepHeight = 0.1;      % m    - 10 cm Step upward
+    params.fibula       = 0.4;      % m    - Lower leg
+    params.femur        = 0.4;      % m    - Upper Leg
+    params.HipWidth     = 0.2;      % m    - Pelvis
+    params.ServoSize    = 0.05;     % m    - Approximation/Spacing
+    params.StepLength   = 0.15;     % m    - 15 cm Step Forwards
+    params.StepHeight   = 0.08;     % m    - 8 cm Step Upwards
  % Masses
     params.mass.fibula = 1.5;    % Paired with `tibia`
     params.mass.femur  = 1.5;    % Thigh Bone
@@ -79,7 +76,7 @@ clc
     % +-+-+-+-+-+-+-+-+-+-+-+
 
 %% Generate Trajectory
-   model.glbTrj = trajGen_cir(model.tspan, ...     % Time Span
+   model.glbTrj = trajGen_sin(model.tspan, ...     % Time Span
                               model.xe(1:3,1)/2);  % Init Position
         [~] = plotSteps(model);
 
