@@ -115,41 +115,36 @@ presents the arbitrary trajectory in green, with two $\mathbf{r}(x,z)$ positions
 \end{figure}
 
 To determine the the angle between the $Z$ axis of the base, $Z_{b}$, and the line segment
-$\mathbf{r}_{(t_f-1)}\, \to \,\mathbf{r}_{(t_f)}$ the $atan2(\nabla,1)$ function was used.
-However, as the `toe' of the robot's foot was defined along $X$ axis of the end effector, $X_{e}$,
-the priority was ensuring that $X_{e}$ was parallel to line segment 
+$\mathbf{r}_{(t_f-1)}\, \to \,\mathbf{r}_{(t_f)}$ the $atan2(\nabla,1)$ function is used.
+However, as the `toe' of the robot's foot is defined along $X$ axis of the end effector, $X_{e}$,
+the priority was ensuring that $X_{e}$ was parallel to the line segment 
 $\mathbf{r}_{(t_f-1)}\, \to \,\mathbf{r}_{(t_f)}$. Thus, the desired yaw angle of the end effector 
-about $Y_b$ is $atan2(-(\nabla)^{-1},1)$, seen in blue. This lead to equation \ref{eq:aTan}, 
+about $Y_b$ is $atan2(-(\nabla)^{-1},1)$. This lead to equation \ref{eq:aTan}, 
 which defines the yaw angle of the end effector at $t_{f}$.
 
 \begin{equation}\label{eq:aTan}
     \theta_{t_f} = atan2(-\frac{(z_{t_f} - z_{t_{t_{f} - 1} })}{(x_{t_f} - x_{t_{t_{f} - 1} })},1)
 \end{equation}
 
-Thus equation \ref{eq:2D_pos} is extended to equation \ref{eq:3D_pos} to define the 
-trajectory of the end effector from the inital step time, to the final step time.
+Thus equation \ref{eq:2D_qt} was extended to form equation \ref{eq:3D_qt} which defines the 
+path and orientation of the end effector from the inital step time, to the final step time.
 
-\begin{equation}\label{eq:3D_pos}
-    \mathbf{x_{e}}(t) = \begin{bmatrix}
+\begin{equation}\label{eq:3D_qt}
+    \mathbf{x_{e}}(0 \: \to \: t_d) = \begin{bmatrix}
         x(t)        \\
         y(t)        \\
         z(t)        \\
         \phi(t)     \\
         \theta(t)   \\
         \psi(t)
-    \end{bmatrix} = \mathbf{r_i} + \begin{bmatrix}
-        t \, \frac{x_f - x_i}{t_f - t_i}                        \\
-        4 t \frac{y_{d}}{(t_i + t_f)} (1 - \frac{t}{t_i + t_f}) \\
-        t \, \frac{z_f - z_i}{t_f - t_i}                        \\
-        0t                                                      \\
-        t \, \frac{\theta_f - \theta_i}{t_f - t_i}               \\
+    \end{bmatrix} = \mathbf{x_e}(t_i) + \begin{bmatrix}
+        t \, \frac{x_f - x_i}{t_d}                      \\
+        4 t \frac{y_{d}}{(t_d)} (1 - \frac{t}{t_d})     \\
+        t \, \frac{z_f - z_i}{t_d}                      \\
+        0t                                              \\
+        t \, \frac{\theta_f - \theta_i}{t_d}            \\
         0t
     \end{bmatrix}
 \end{equation}
-
-Algorithm \ref{alg:2D_trajGen} can thus to extended and simplified to Algorithm 
-\ref{alg:3D_trajGen}.
-
-\input{_content/30_quasiStatic/AlgTrajgen3D.txt}
 
 \subsubsection*{Implementation}

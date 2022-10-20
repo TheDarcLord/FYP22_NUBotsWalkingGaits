@@ -3,9 +3,9 @@ close all
 clc 
 
 %% Video & Time Parameters
-    params.framerate  = 20;                             % FPS
+    params.framerate  = 10;                             % FPS
     params.timestp    = params.framerate^(-1);          % Seconds
-    model.tspan       = 0 : params.timestp : 24;        % [ time ]
+    model.tspan       = 0 : params.timestp : 48;        % [ time ]
  % Physical Parameters - Affect CoM or FKM
     params.kx        = 0;        % These affect the plane to which    |
     params.ky        = 0;        % ... the CoM is constrained         |
@@ -41,7 +41,7 @@ clc
     model.r0CoMg = zeros(3,length(model.tspan));  % r0CoMg  [XYZ]ᵀ
     model.pREF   = zeros(2,length(model.tspan));  % stpREF  [XZ]ᵀ
 
-% ----> Initial Position & Orientation
+%% Initial Position & Orientation
     model.q0        = [  0;    % θ₁    
                     -pi/12;    % θ₂    ->  2D θ₁ Ankle
                    2*pi/12;    % θ₃    ->  2D θ₂ Knee
@@ -70,13 +70,12 @@ clc
         zlabel('{\bfY} (metres)');
         view(-165,50);
         [~] = plotRobot(1,model,params);
-
-
     % +-+-+-+-+-+-+-+-+-+-+-+
 
 %% Generate Trajectory
-    %model.glbTrj = trajGenC(params.timestp, model.xe(1:3,1)./2);
-    model.glbTrj = trajGen_cir(model.tspan, model.xe(1:3,1)./2);
+%     model.glbTrj = trajGenC(params.timestp, model.xe(1:3,1)./2);
+%     model.glbTrj = trajGen_cir(model.tspan, model.xe(1:3,1)./2);
+    model.glbTrj = trajGen_sin(model.tspan, model.xe(1:3,1)./2);
         [~] = plotSteps(model,1:length(model.tspan));
 
 %% STEPPING

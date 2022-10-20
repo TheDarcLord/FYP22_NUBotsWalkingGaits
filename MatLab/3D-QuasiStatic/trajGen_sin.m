@@ -1,9 +1,10 @@
 function Q = trajGen_sin(tspan, init)
-    wavelength  = 2;
-    frequency   = 0.0625;
+    wavelength  = 1.5;
+    velocity    = 0.12/12;
     amplitude   = 0.5;
+    frequency   = velocity/wavelength;
     omega       = 2*pi*frequency;
-    velocity    = frequency*wavelength;
+    
 
     Q = init + [velocity*tspan;
                 zeros(size(tspan));

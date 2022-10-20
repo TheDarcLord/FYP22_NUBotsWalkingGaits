@@ -94,9 +94,22 @@ a function of time.
     \mathbf{r}(t) = \begin{bmatrix}
         x(t)    \\
         y(t)    
-    \end{bmatrix} = \mathbf{r_i} + \begin{bmatrix}
+    \end{bmatrix} = \mathbf{r_i}(t_i) + \begin{bmatrix}
         t \, \frac{x_f - x_i}{t_f - t_i}     \\
         4 t \frac{y_{d}}{(t_i + t_f)} (1 - \frac{t}{t_i + t_f}) 
+    \end{bmatrix}
+\end{equation}
+
+Initialising $t_i$ as zero and $t_f$ as the duration of the step, $t_d$, leads to \ref{eq:2D_qt}.
+During footstep trajectory generation the time span must now begin at zero time, and finishes
+at time $t_d$. The trajectory matrix, $\mathbf{Q_s}_{2 \times n}(t)$, consists of rows of position vectors describing
+the path with respect to some origin. This path can be iterated through at any time, and 
+can be shifted in time, during the execution of the walking cycle.
+
+\begin{equation}\label{eq:2D_qt}
+    \mathbf{Q_s}(0 \: \to \: t_d) = \mathbf{r_i}(t_i) + \begin{bmatrix}
+        t \, \frac{x_f - x_i}{t_d}     \\
+        4 t \frac{y_{d}}{(t_d)} (1 - \frac{t}{t_d}) 
     \end{bmatrix}
 \end{equation}
 
