@@ -7,7 +7,7 @@ clc
     model.timestp     = params.framerate^(-1);          % Seconds
     model.tspan       = 0 : model.timestp : 150;        % [ time ]
  % Physical Parameters - Affect CoM or FKM
-    params.zc        = 0.28;     % m    - Height of the CoM ^         |
+    params.zc        = 0.5;     % m    - Height of the CoM ^         |
     params.g         = 9.81;     % ms⁻² - Acceleration due to Gravity |
     params.m         = 7.4248;   % kg   - Total Mass of a NuGus       |
  % -------------------------------------------------------------------|
