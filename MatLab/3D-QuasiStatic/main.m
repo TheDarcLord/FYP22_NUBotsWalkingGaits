@@ -3,9 +3,9 @@ close all
 clc 
 
 %% Video & Time Parameters
-    params.framerate  = 10;                             % FPS
+    params.framerate  = 25;                             % FPS
     params.timestp    = params.framerate^(-1);          % Seconds
-    model.tspan       = 0 : params.timestp : 48;        % [ time ]
+    model.tspan       = 0 : params.timestp : 200;       % [ time ]
  % Physical Parameters - Affect CoM or FKM
     params.kx        = 0;        % These affect the plane to which    |
     params.ky        = 0;        % ... the CoM is constrained         |
@@ -21,7 +21,7 @@ clc
     params.StepHeight   = 0.08;     % m    - 8 cm Step Upwards
 
  % Masses
-    params.mass.foot   = 0.25;   % foot
+    params.mass.foot   = 0.0;   % foot
     params.mass.fibula = 1.5;    % Paired with `tibia`
     params.mass.femur  = 1.5;    % Thigh Bone
     params.mass.joint  = 0.5;    % Knee Bone / Joints
