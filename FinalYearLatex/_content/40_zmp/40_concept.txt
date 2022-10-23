@@ -1,4 +1,13 @@
 \citep{vukobratovi_1968_contribution} first proposal of ZMP
 
-Torque equivalence
+vukobravtoci & co  "dynamic equilibrium" in X Z plane
+Using statics to derive a continous time equilibrium equatiosns, based on
+the foot / extremity being in contact with the ground.
+
+1972 - ZMP -> Torque equivalence
+
+Preview Control - US 1960s
+
+2003 - kajita_2003_biped 
+Preview Control pattern generator 
 \citep{kajita_2003_biped} Kajita Patteern Generation with Preview control
