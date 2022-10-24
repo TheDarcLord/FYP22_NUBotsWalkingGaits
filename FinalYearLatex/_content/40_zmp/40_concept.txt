@@ -41,3 +41,7 @@ by the sole of the planted foot. If the ZMP is outside the support polygon, then
 will cause the foot to lift from the ground, thus causing the robot to fall. Naturally, this
 occurs when either of the restoring torques is zero while the floor projected CoM is displaced 
 from the support polygon.
+
+It should be noted that the above is a simplified approach to Vukobratović's ZMP calculation (cite 35 years in its life),
+assuming that the `ankle' about which the restoring torques are applied is in the $XZ$ plane at $Y = 0$, and 
+defining the coordinate system from this `ankle'.
