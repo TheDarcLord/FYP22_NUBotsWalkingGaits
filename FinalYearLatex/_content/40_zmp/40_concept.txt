@@ -10,13 +10,13 @@ the system is in some form of static equilibrium. If the CoM is not within
 the bounds of the support polygon then the system is unstable, as the mass of the
 robot will generate unbalanced torques about the $X$ and $Z$ axes. This is demonstrated
 in figure \ref{fig:ZMP}, with the weight force $mg$ through the CoM and the resulting 
-torques, $\mathbf{\tau}_{mgz}$ and $\mathbf{\tau}_{mgx}$, shown red. Additional torques due
-to the movement of the CoM in the $XZ$ plane have been neglected for clarity, but contribute
+torques, ${\tau}_{mgz}$ and ${\tau}_{mgx}$, shown red. Additional torques due
+to the movement of the CoM in the $XZ$ plane have been omitted for clarity, but contribute
 to the destabilising torques shown in red.
 
 \begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=.6\linewidth]{_content/40_zmp/fig_zmp_labelled.png}
+        \includegraphics[width=.65\linewidth]{_content/40_zmp/fig_zmp_labelled.png}
         \caption{Zero Moment Point}\label{fig:ZMP}
     \end{center}
 \end{figure}
@@ -24,7 +24,20 @@ to the destabilising torques shown in red.
 In order to return the system to `dynamic equilibrium', opposing torques 
 must be applied about the $X$ and $Z$ axes. These, alongside their equivalent CoM accelerations,
 $a_z$ and $a_x$, are shown in blue. The Zero Moment Point (ZMP), depicted in purple, is the $(x,z)$ position 
-at which the sum of moments about the $X$ and $Z$ is zero. The system is only dynamically
+at which the sum of moments about the $X$ axis is zero and the sum of moments about the $Z$ axis is zero. 
+Equation \ref{eq:ZMP} includes the omitted planar accelerations of the CoM, $\ddot x$ and $\ddot z$, in the 
+determination of the ZMP as a function of restoring torques, ${\tau}_{z} = a_{x} y $ and ${\tau}_{x} = a_{z} y$.
+
+\begin{equation}\label{eq:ZMP}
+    \mathbf{P_{ZMP}} \begin{bmatrix} x \\ z \end{bmatrix} = \begin{bmatrix}
+        {(mg)}^{-1} {(a_x y - m y \ddot x)}   \\
+        {(mg)}^{-1} {(a_z y - m y \ddot z)}
+    \end{bmatrix}
+\end{equation}
+
+The system is only dynamically
 stable if the ZMP exists within the support polygon, shown in green, which is the area defined 
 by the sole of the planted foot. If the ZMP is outside the support polygon, then the net torque
-will cause the foot to lift from the ground, thus causing the robot to fall.
+will cause the foot to lift from the ground, thus causing the robot to fall. Naturally, this
+occurs when either of the restoring torques is zero while the floor projected CoM is displaced 
+from the support polygon.
