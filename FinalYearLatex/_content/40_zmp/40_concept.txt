@@ -1,13 +1,30 @@
-\citep{vukobratovi_1968_contribution} first proposal of ZMP
+Zero Moment Point locomotion stems from the dynamic analysis of a humanoid robot walking.
+This was first explored by Miomir Vukobratović in 1968 \citep{vukobratovi_1968_contribution}. 
+Vukobratović later simplified this work to a static analysis of the relationship between
+the robot's foot and the ground, coining the term `Zero Moment Point' in the process
+\citep{vukobratovi_1968_contribution} (1971 ...).
 
-vukobravtoci & co  "dynamic equilibrium" in X Z plane
-Using statics to derive a continous time equilibrium equatiosns, based on
-the foot / extremity being in contact with the ground.
+Given a robot's foot planted firmly upon the ground with the entire sole in contact, it
+is assumed that there is sufficient friction to prevent the foot from moving. Thus, 
+the system is in some form of static equilibrium. If the CoM is not within
+the bounds of the support polygon then the system is unstable, as the mass of the
+robot will generate unbalanced torques about the $X$ and $Z$ axes. This is demonstrated
+in figure \ref{fig:ZMP}, with the weight force $mg$ through the CoM and the resulting 
+torques, $\mathbf{\tau}_{mgz}$ and $\mathbf{\tau}_{mgx}$, shown red. Additional torques due
+to the movement of the CoM in the $XZ$ plane have been neglected for clarity, but contribute
+to the destabilising torques shown in red.
 
-1972 - ZMP -> Torque equivalence
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.6\linewidth]{_content/40_zmp/fig_zmp_labelled.png}
+        \caption{Zero Moment Point}\label{fig:ZMP}
+    \end{center}
+\end{figure}
 
-Preview Control - US 1960s
-
-2003 - kajita_2003_biped 
-Preview Control pattern generator 
-\citep{kajita_2003_biped} Kajita Patteern Generation with Preview control
+In order to return the system to `dynamic equilibrium', opposing torques 
+must be applied about $X$ and $Z$ axes. These, alongside their equivalent accelerations, 
+are shown in blue. The Zero Moment Point, ZMP, is the $(x,z)$ at which the 
+sum of moments about the $X$ and $Z$ is zero, depicted in purple. The system is only dynamically
+stable if the ZMP exists within the support polygon, shown in green, which is the area defined 
+by the sole of the planted foot. If the ZMP is outside the support polygon, then the net torque
+will cause the foot to lift from the ground, thus causing the robot to fall.
