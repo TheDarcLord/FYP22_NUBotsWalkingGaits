@@ -29,7 +29,7 @@ Equation \ref{eq:ZMP} includes the omitted planar accelerations of the CoM, $\dd
 determination of the ZMP as a function of restoring torques, ${\tau}_{z} = a_{x} y $ and ${\tau}_{x} = a_{z} y$.
 
 \begin{equation}\label{eq:ZMP}
-    \mathbf{P_{ZMP}} \begin{bmatrix} x \\ z \end{bmatrix} = \begin{bmatrix}
+    \mathbf{P_{ZMP}}{(x,z)} = \begin{bmatrix}
         {(mg)}^{-1} {(a_x y - m y \ddot x)}   \\
         {(mg)}^{-1} {(a_z y - m y \ddot z)}
     \end{bmatrix}

@@ -1,3 +1,15 @@
+Given the concept of the Zero Moment Point is the control of a mass
+about a single point, the most strikingly similar system is an inverted pendulum.
+Thus, rather than constraining the CoM of the robot during motion a better approach is 
+to control it. This approached was developed and implemented by Shuuji Kajita \citep{kajita_2003_biped}
+in the early 2000s. 
+
+The inverted pendulum simplifies Vukobratović's ZMP by assuming that the joint 
+about which the torque is applied intersects with the ground. Additionally,
+it is assumed that the robot is capable of generating sufficient torque about the 
+ankle in order to position the CoM. Finally the CoM is constrained to move in the 
+$XZ$ plane at some height, $y_c$.
+
 \begin{equation}\label{eq:LIPM_stateCT}
     \begin{split}
         \frac{\delta}{\delta t}
@@ -23,7 +35,7 @@
         \end{bmatrix} u_{(x,y)}\\
         \mathbf{p}_{(x,y)}&= 
         \begin{bmatrix}
-            1 & 0 & \frac{-z_{c}}{g}
+            1 & 0 & \frac{-y_{c}}{g}
         \end{bmatrix}
         \begin{bmatrix}
             x           \\
@@ -58,7 +70,7 @@
     \begin{aligned}
         \mathbf{C_d} =
         \begin{bmatrix}
-            1 & 0 & \frac{-z_{c}}{g}
+            1 & 0 & \frac{-y_{c}}{g}
         \end{bmatrix}
     \end{aligned}
 \end{equation}
