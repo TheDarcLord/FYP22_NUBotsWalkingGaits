@@ -1,7 +1,7 @@
 Zero Moment Point locomotion stems from the dynamic analysis of a humanoid robot walking.
 This was first explored by Miomir Vukobratović in 1968 \citep{vukobratovi_1968_contribution}. 
 Vukobratović later simplified this work to a static analysis of the relationship between
-the robot's foot and the ground, coining the term `Zero Moment Point' in the process
+the robot's foot and the ground, coining the term `Zero Moment Point'
 \citep{vukobratovi_1972_on}. The following is the process 
 of deriving the `Zero Moment Point' (ZMP), sourced from Vukobratović's reflection 
 on his development \citep{vukobratovi_2004_zeromoment} and the impact it has had on the field of 

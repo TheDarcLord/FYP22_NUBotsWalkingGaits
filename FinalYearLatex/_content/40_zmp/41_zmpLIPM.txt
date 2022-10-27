@@ -1,42 +1,63 @@
-Given the concept of the Zero Moment Point is the control of a mass
-about a single point, the most strikingly similar system is an inverted pendulum.
-Rather than constraining the CoM of the robot during locomotion the better approach is 
-to control it, using the position output of an inverted pendulum. This approached was developed and 
+Rather than constraining the CoM of the robot during locomotion, the better approach is 
+to control it, using the position of an inverted pendulum. This approached was developed and 
 implemented by Shuuji Kajita \citep{kajita_2003_biped} in the early 2000s. 
 
-The inverted pendulum simplifies Vukobratović's ZMP by assuming that the joint 
-about which the torque is applied intersects with the ground. Additionally,
-it is assumed that the robot is capable of generating sufficient torque about the 
-ankle in order to position the CoM. Finally the CoM is constrained to move in the 
-$XZ$ plane at some height, $y_c$.
+\subsubsection*{ZMP simplification}
 
-If the CoM is not within the bounds of the support polygon then the system is unstable, as the mass of the
-pendulum will generate unbalanced torques about the $X$ and $Z$ axes. This is demonstrated
-in figure \ref{fig:LIPM}, with the weight force $mg$ through the CoM and the resulting 
+The inverted pendulum simplifies Vukobratović's ZMP by assuming that the ankle 
+about which the torque is applied intersects with the ground. This intersection forms the base of the
+pendulum and origin of the coordinate system in which the pendulum is defined. 
+It is also assumed that the robot is capable of generating sufficient torque about 
+the ankle in order to shift the position of the CoM. The mass of the foot is ignored, while the assumption
+that friction holds the foot in place is retained. These simplifications yield equation 
+\ref{eq:simpZMP} from \ref{eq:ZMP_F} and \ref{eq:ZMP_M}.
+
+\begin{equation}
+    \mathbf{0} = \vec{BP} \times \mathbf{R_{xyz}} + \mathbf{M_{A}}
+\end{equation}\label{eq:simpZMP}
+
+$\mathbf{A}$ intersects with the ground, becoming the fulcrum of the pendulum. 
+$R_{y}$ balances $F_{\mathbf{A}y}$ and thus $R_{y} = mg$, where $m$ is the mass of the robot. 
+As the horizontal components of $\mathbf{F_{A}}$ are balanced by the horizontal friction components 
+of $\mathbf{R_{xyz}}$, equation \ref{eq:simpZMP} can be solved for the ZMP$(x,z)$ as follows:
+
+\begin{align}
+    p_x &= \frac{-\tau_z}{mg}   \label{eq:zmpx} \\
+    p_z &= \frac{\tau_x}{mg}    \label{eq:zmpz}   
+\end{align}
+
+Equations \ref{eq:zmpx} and \ref{eq:zmpz} determine the relationship between the horizontal components
+of $\mathbf{M_{A}}$ ($\tau_x, \tau_z$), the mass of the robot, and the Zero Moment Point, with respect to the fulcrum of
+a pendulum.
+
+\subsubsection*{Inverted Pendulum Derivation}
+
+The mass of the pendulum generates unbalanced torques about the $X$ and $Z$ axes. This is demonstrated
+in figure \ref{fig:LIPM}, with the weight force $mg$ passing through the pendulum and the resulting 
 torques, ${\tau}_{mgz}$ and ${\tau}_{mgx}$, shown red. Additional torques due
-to the movement of the CoM in the $XZ$ plane have been omitted for clarity, but contribute
+to the movement of the pendulum in the $XZ$ plane have been omitted for clarity, but contribute
 to the destabilising torques shown in red.
 
 \begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=.65\linewidth]{_content/40_zmp/fig_LIPM_labelled.png}
-        \caption{Inverted Pendulum approach}\label{fig:LIPM}
+        \includegraphics[width=.65\linewidth]{_content/40_zmp/fig_LIPM_labelled_true.png}
+        \caption{Inverted Pendulum}\label{fig:LIPM}
     \end{center}
 \end{figure}
 
-In order to return the system to `dynamic equilibrium', opposing torques 
-must be applied about the $X$ and $Z$ axes. These, alongside their equivalent CoM accelerations,
-$a_z$ and $a_x$, are shown in blue. The Zero Moment Point (ZMP), depicted in purple, is the $(x,z)$ position 
-at which the sum of moments about the $X$ axis is zero and the sum of moments about the $Z$ axis is zero. 
-Equation \ref{eq:Init_LIPM} includes the omitted planar accelerations of the CoM, $\ddot x$ and $\ddot z$, in the 
-determination of the ZMP as a function of restoring torques, ${\tau}_{z} = a_{x} y $ and ${\tau}_{x} = a_{z} y$.
+In order to return the pendulum to vertical equilibrium, opposing torques 
+must be applied about the $X$ and $Z$ axes. These, alongside their equivalent accelerations,
+$a_z$ and $a_x$, are shown in blue. The point $\mathbf{P}$, depicted in purple, is the $(x,z)$ position of 
+the pendulum. Equation \ref{eq:Init_LIPM} includes the omitted planar accelerations of the pendulum, 
+$\ddot x$ and $\ddot z$, in the determination of the $\mathbf{P}(x,z)$ as a function of restoring torques, 
+${\tau}_{z} = a_{x} y $ and ${\tau}_{x} = a_{z} y$.
 
-\begin{equation}\label{eq:Init_LIPM}
-    \mathbf{P_{ZMP}}{(x,z)} = \begin{bmatrix}
+\begin{align}\label{eq:Init_LIPM}
+    \mathbf{P}{(x,z)} = \begin{bmatrix}
         {(mg)}^{-1} {({\tau}_{z} - m y \ddot x)}   \\
         {(mg)}^{-1} {({\tau}_{x} - m y \ddot z)}
     \end{bmatrix}
-\end{equation}
+\end{align}
 
 \begin{equation}\label{eq:LIPM_stateCT}
     \begin{split}
