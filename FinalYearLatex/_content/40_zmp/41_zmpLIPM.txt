@@ -1,14 +1,42 @@
 Given the concept of the Zero Moment Point is the control of a mass
 about a single point, the most strikingly similar system is an inverted pendulum.
-Thus, rather than constraining the CoM of the robot during motion a better approach is 
-to control it. This approached was developed and implemented by Shuuji Kajita \citep{kajita_2003_biped}
-in the early 2000s. 
+Rather than constraining the CoM of the robot during locomotion the better approach is 
+to control it, using the position output of an inverted pendulum. This approached was developed and 
+implemented by Shuuji Kajita \citep{kajita_2003_biped} in the early 2000s. 
 
 The inverted pendulum simplifies Vukobratović's ZMP by assuming that the joint 
 about which the torque is applied intersects with the ground. Additionally,
 it is assumed that the robot is capable of generating sufficient torque about the 
 ankle in order to position the CoM. Finally the CoM is constrained to move in the 
 $XZ$ plane at some height, $y_c$.
+
+If the CoM is not within the bounds of the support polygon then the system is unstable, as the mass of the
+pendulum will generate unbalanced torques about the $X$ and $Z$ axes. This is demonstrated
+in figure \ref{fig:LIPM}, with the weight force $mg$ through the CoM and the resulting 
+torques, ${\tau}_{mgz}$ and ${\tau}_{mgx}$, shown red. Additional torques due
+to the movement of the CoM in the $XZ$ plane have been omitted for clarity, but contribute
+to the destabilising torques shown in red.
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.65\linewidth]{_content/40_zmp/fig_LIPM_labelled.png}
+        \caption{Inverted Pendulum approach}\label{fig:LIPM}
+    \end{center}
+\end{figure}
+
+In order to return the system to `dynamic equilibrium', opposing torques 
+must be applied about the $X$ and $Z$ axes. These, alongside their equivalent CoM accelerations,
+$a_z$ and $a_x$, are shown in blue. The Zero Moment Point (ZMP), depicted in purple, is the $(x,z)$ position 
+at which the sum of moments about the $X$ axis is zero and the sum of moments about the $Z$ axis is zero. 
+Equation \ref{eq:Init_LIPM} includes the omitted planar accelerations of the CoM, $\ddot x$ and $\ddot z$, in the 
+determination of the ZMP as a function of restoring torques, ${\tau}_{z} = a_{x} y $ and ${\tau}_{x} = a_{z} y$.
+
+\begin{equation}\label{eq:Init_LIPM}
+    \mathbf{P_{ZMP}}{(x,z)} = \begin{bmatrix}
+        {(mg)}^{-1} {({\tau}_{z} - m y \ddot x)}   \\
+        {(mg)}^{-1} {({\tau}_{x} - m y \ddot z)}
+    \end{bmatrix}
+\end{equation}
 
 \begin{equation}\label{eq:LIPM_stateCT}
     \begin{split}
