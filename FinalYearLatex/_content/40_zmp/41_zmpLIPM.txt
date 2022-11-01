@@ -5,7 +5,7 @@ implemented by Shuuji Kajita \citep{kajita_2003_biped} in the early 2000s.
 \subsubsection*{ZMP simplification}
 
 The inverted pendulum simplifies Vukobratović's ZMP by assuming that the ankle 
-about which the torque is applied intersects with the ground. This intersection forms the base of the
+about which the torque is applied intersecT with the ground. This intersection forms the base of the
 pendulum and origin of the coordinate system in which the pendulum is defined. 
 It is also assumed that the robot is capable of generating sufficient torque about 
 the ankle in order to shift the position of the CoM. The mass of the foot is ignored, while the assumption
@@ -16,9 +16,9 @@ that friction holds the foot in place is retained. These simplifications yield e
     \mathbf{0} = \vec{BP} \times \mathbf{R_{xyz}} - \mathbf{M_{A}}  \label{eq:simpZMP}
 \end{equation}
 
-$\mathbf{A}$ intersects with the ground, becoming the fulcrum of the pendulum. 
+$\mathbf{A}$ intersecT with the ground, becoming the fulcrum of the pendulum. 
 $R_{y}$ balances $F_{\mathbf{A}y}$ and thus $R_{y} = mg$, where $m$ is the mass of the robot. 
-As the horizontal components of $\mathbf{F_{A}}$ are balanced by the horizontal friction components 
+As the horizontal componenT of $\mathbf{F_{A}}$ are balanced by the horizontal friction componenT 
 of $\mathbf{R_{xyz}}$, equation \ref{eq:simpZMP} can be solved for the $\mathbf{ZMP}(p_x,p_z)$ as follows:
 
 \begin{align}
@@ -26,7 +26,7 @@ of $\mathbf{R_{xyz}}$, equation \ref{eq:simpZMP} can be solved for the $\mathbf{
     p_z &= \frac{-\tau_x}{mg}  \label{eq:zmpz}   
 \end{align}
 
-Equations \ref{eq:zmpx} and \ref{eq:zmpz} determine the relationship between the horizontal components
+Equations \ref{eq:zmpx} and \ref{eq:zmpz} determine the relationship between the horizontal componenT
 of $\mathbf{M_{A}}$ ($\tau_x, \tau_z$), the mass of the robot, and the Zero Moment Point, with respect to the fulcrum of
 a pendulum.
 
@@ -40,11 +40,11 @@ a pendulum.
 \end{figure}
 
 The mass of an inverted pendulum of mass $m$ generates torques about the $X$ and $Z$ axes. 
-These are seen in red in figure \ref{fig:LIPM}. In this instance, the pendulum is constrained
+These are seen in red in figure \ref{fig:LIPM}. The pendulum is constrained
 to move in the $XZ$ plane at constant height $y_c$.
-Two input torques, $\tau_x$ and $\tau_z$, are applied at the base of the pendulum, along the $X$ and $Z$ axes,
-in order to control the position of the pendulum.
-The point $\mathbf{P}$, depicted in purple, is the $(x,z)$ position of the pendulum.
+The point $\mathbf{P}$, depicted in purple, is the $(x,z)$ position of the pendulum's mass and is 
+controlled by two axially applied input torques, $\tau_x$ and $\tau_z$. These input torques 
+are shown in blue.
 The acceleration of the pendulum is thus given by equations \ref{eq:lipmx} and \ref{eq:lipmz}.
 
 \begin{align}
@@ -56,85 +56,121 @@ The acceleration of the pendulum is thus given by equations \ref{eq:lipmx} and \
 
 Rearranging the ZMP equations \ref{eq:zmpx} and \ref{eq:zmpz} for torque and then substituting into the
 linear inverted pendulum equations \ref{eq:lipmx} and \ref{eq:lipmz}, yields a relationship between the ZMP and the CoM.
-This model, seen in equation \ref{eq:ZMP_LIPM}, is used to drive the CoM's position during locomotion. $\mathbf{x}$
-represents the vector of the position components that form the ZMP.
+This relationship, seen in equations \ref{eq:ZMP_LIPMx} and \ref{eq:ZMP_LIPMz}, is used to drive the CoM's position during locomotion.
 
-\begin{equation}
-    \mathbf{X} = 
-    \begin{bmatrix} p_x \\ p_z \end{bmatrix} =
-    \begin{bmatrix}
-        x - y_{c} g^{-1} \ddot{x} \\
-        z - y_{c} g^{-1} \ddot{z} 
-    \end{bmatrix}
-\end{equation}\label{eq:ZMP_LIPM}
+\begin{align}
+    p_x &= x - \frac{y_{c}}{g} \ddot{x} \label{eq:ZMP_LIPMx} \\
+    p_z &= z - \frac{y_{c}}{g} \ddot{z} \label{eq:ZMP_LIPMz}
+\end{align}
 
+An input, $\mathbf{u}$, is defined as the time derivative of the acceleration of the CoM, seen as
+equation \ref{eq:jerk}.
 
+\begin{equation}\label{eq:jerk}
+    \frac{d}{dt} \: \mathbf{\ddot{x}} = \begin{bmatrix} u_x \\ u_z \end{bmatrix}
+\end{equation}
 
-In order to use the model, the it must be discretized
-
-
+Given this input, the dynamics of the pendulum can be converted to a strictly proper,  
+state space representation, given by the equation \ref{eq:LIPM_stateCT}.
 
 \begin{equation}\label{eq:LIPM_stateCT}
     \begin{split}
         \frac{\delta}{\delta t}
         \begin{bmatrix}
-            \mathbf{X}           \\
-            \dot{\mathbf{X}}     \\ 
-            \ddot{\mathbf{X}} 
-        \end{bmatrix}&=
+            x           \\
+            \dot{x}     \\
+            \ddot{x}    \\
+            z           \\
+            \dot{z}     \\ 
+            \ddot{z}    \\
+        \end{bmatrix}&= \underbrace{
         \begin{bmatrix}
-            0 & 1 & 0   \\
-            0 & 0 & 1   \\ 
-            0 & 0 & 0
-        \end{bmatrix}
-        \begin{bmatrix}
-            \mathbf{X}           \\
-            \dot{\mathbf{X}}     \\ 
-            \ddot{\mathbf{X}} 
-        \end{bmatrix} + 
-        \begin{bmatrix}
-            0   \\
-            0   \\ 
-            1 
-        \end{bmatrix} u_{(x,y)}\\
-        \mathbf{p}_{(x,y)}&= 
-        \begin{bmatrix}
-            1 & 0 & \frac{-y_{c}}{g}
-        \end{bmatrix}
+            0 & 1 & 0 & 0 & 0 & 0 \\
+            0 & 0 & 1 & 0 & 0 & 0 \\
+            0 & 0 & 0 & 0 & 0 & 0 \\ 
+            0 & 0 & 0 & 1 & 0 & 0 \\ 
+            0 & 0 & 0 & 0 & 1 & 0 \\
+            0 & 0 & 0 & 0 & 0 & 0 \\
+        \end{bmatrix}}_{= \:\mathbf{A}}
         \begin{bmatrix}
             x           \\
-            \dot{x}     \\ 
-            \ddot{x} 
+            \dot{x}     \\
+            \ddot{x}    \\
+            z           \\
+            \dot{z}     \\ 
+            \ddot{z}    \\
+        \end{bmatrix} + \underbrace{
+        \begin{bmatrix}
+            0 & 0  \\
+            0 & 0  \\
+            1 & 0  \\
+            0 & 0  \\ 
+            0 & 0  \\
+            0 & 1  \\
+        \end{bmatrix}}_{= \:\mathbf{B}}
+        \begin{bmatrix}
+            u_x \\ u_z
+        \end{bmatrix} \\
+        \begin{bmatrix}
+            p_x \\ p_z \\
+        \end{bmatrix}&= \underbrace{
+        \begin{bmatrix}
+            1 & 0 & \frac{-y_{c}}{g} & 0 & 0 & 0 \\
+            0 & 0 & 0 & 1 & 0 & \frac{-y_{c}}{g} \\
+        \end{bmatrix}}_{= \:\mathbf{C}}
+        \begin{bmatrix}
+            x           \\
+            \dot{x}     \\
+            \ddot{x}    \\
+            z           \\
+            \dot{z}     \\
+            \ddot{z}    \\
         \end{bmatrix}
     \end{split}
 \end{equation}
 
+The continuous time system, equation \ref{eq:LIPM_stateCT}, must be discretized with sampling 
+time $T$ in order drive the position of the CoM as the robot model is simulated in discrete time.
+The discrete time model should be of the form found in equation \ref{eq:LIPM_stateDT}. 
+
 \begin{equation}\label{eq:LIPM_stateDT}
     \begin{split}
-        \mathbf{x}_{(k+1)} &= \mathbf{A_d}\mathbf{x}_k+\mathbf{B_d}\mathbf{u}_k\\
-        \mathbf{p}_k &= \mathbf{C_d}\mathbf{x}_k \\
+        \mathbf{x}(k+1) &= \mathbf{A_d}\mathbf{x}(k) + \mathbf{B_d}\mathbf{u}(k) \\
+        \mathbf{y}(k)   &= \mathbf{C_d}\mathbf{x}(k)                             \\
     \end{split}
 \end{equation}
-... where:
+... where;
+\begin{equation}
+    \begin{split}
+        \mathbf{x}(k) = [x(kT) \dot{x}(kT) \ddot{x}(kT) z(kT) \dot{z}(kT) \ddot{z}(kT)]^\top \\
+        \mathbf{u}(k) = [u_x(kT) u_z(kT)]^\top  \\
+    \end{split}
+\end{equation}
+Matrices $\mathbf{A_d}$ and $\mathbf{B_d}$ are found in equation \ref{eq:LIPM_discrete}, 
+while matrix $\mathbf{C_d}$ is equal to $\mathbf{C}$ which 
+is found in \ref{eq:LIPM_stateCT}.
+
 \begin{equation}\label{eq:LIPM_discrete}
     \begin{aligned}
         \mathbf{A_d} =
         \begin{bmatrix}
-            1 & T & \frac{T^{2}}{2} \\
-            0 & 1 & T               \\ 
-            0 & 0 & 1
+            1 & T & \frac{T^{2}}{2} & 0 & 0 & 0   \\
+            0 & 1 &               T & 0 & 0 & 0   \\ 
+            0 & 0 &               1 & 0 & 0 & 0   \\
+            0 & 0 & 0 & 1 & T & \frac{T^{2}}{2}   \\
+            0 & 0 & 0 & 0 &  1 &              T   \\
+            0 & 0 & 0 & 0 &  0 &              1   \\
         \end{bmatrix}
     \end{aligned} \:\:
     \begin{aligned}
         \mathbf{B_d} =
         \begin{bmatrix}
-            \frac{T^{3}}{6} \\ \frac{T^{2}}{2} \\ T
+            \frac{T^{3}}{6} & 0 \\ 
+            \frac{T^{2}}{2} & 0 \\ 
+            T               & 0 \\
+            0 & \frac{T^{3}}{6} \\
+            0 & \frac{T^{2}}{2} \\
+            0 & T               \\
         \end{bmatrix}
     \end{aligned} \:\:
-    \begin{aligned}
-        \mathbf{C_d} =
-        \begin{bmatrix}
-            1 & 0 & \frac{-y_{c}}{g}
-        \end{bmatrix}
-    \end{aligned}
 \end{equation}
