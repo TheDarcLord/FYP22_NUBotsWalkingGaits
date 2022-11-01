@@ -3,21 +3,22 @@ close all
 clc 
 
 %% Video & Time Parameters
-    params.framerate  = 25;                             % FPS
-    params.timestp    = params.framerate^(-1);          % Seconds
-    model.tspan       = 0 : params.timestp : 120;       % [ time ]
+    params.framerate  = 100;                          % FPS
+    params.timestp    = params.framerate^(-1);        % Seconds
+    model.tspan       = 0 : params.timestp : 30;      % [ time ]
     model.timeHrzn    = 0;                            % Seconds
     model.Nl          = model.timeHrzn / params.timestp; % INTEGER
  % Physical Parameters - Affect CoM or FKM   |
-    params.zc           = 0.45;    % m    - Height of the CoM ^         |
+    params.vMax         = 0.2;    % m/s  - Norm vCoM Max
+    params.zc           = 0.42;    % m    - Height of the CoM ^         |
     params.m            = 7.4248;  % kg   - Total Mass of a NuGus       |
-    params.StepLength   = 0.15;    % m    - 15 cm Step Forward          |
-    params.StepHeight   = 0.07;    % m    - 7 cm Step Height           |
+    params.StepLength   = 0.05;    % m    - 15 cm Step Forward          |
+    params.StepHeight   = 0.06;    % m    - 7 cm Step Height           |
  % ----------------------------------------------------------------------|
  % Displacements
     params.fibula     = 0.19942;  % m    - Lower leg NUgus
     params.femur      = 0.19954;  % m    - Upper Leg NUgus
-    params.HipWidth   = 0.16;     % m    - Pelvis   WAS 0.11 -> FALLOVER
+    params.HipWidth   = 0.15;     % m    - Pelvis   WAS 0.11 -> FALLOVER
     params.heel2ankle = 0.038;    % m    - Tarsal
     params.ankle2knee = [0.005669; 0.19942; -0.0002];
     params.knee2hip   = [       0; 0.19954; -0.0015];
@@ -43,18 +44,21 @@ clc
     model.pREF   = zeros(2,length(model.tspan));  % pREF [REFx REFy REFz]ᵀ      
 
 %% Initial Position & Orientation
-    model.q0      = [0;    % θ₁    
-                -pi/10;    % θ₂    ->  2D θ₁ Ankle
-               2*pi/10;    % θ₃    ->  2D θ₂ Knee
-                -pi/10;    % θ₄    ->  2D θ₃ Hip
-                     0;    % θ₅
-                     0;    % θ₆
-                     0;    % θ₇
-                     0;    % θ₈
-                 pi/10;    % θ₉    ->  2D θ₄ Hip
-              -2*pi/10;    % θ₁₀   ->  2D θ₅ Knee
-                 pi/10;    % θ₁₁   ->  2D θ₆ Ankle
-                     0];   % θ₁₂
+    ANK = 5*pi/180;
+    model.q1 = [ -0.0919; -0.6874; 0.9830; -0.2956; 0.0919;  0.0001;
+                 -0.0001;  0.1015; 0.2967; -0.9858; 0.6891; -0.1015];
+    model.q0      = [-ANK;    % θ₁    
+                   -pi/10;    % θ₂    ->  2D θ₁ Ankle
+                  2*pi/10;    % θ₃    ->  2D θ₂ Knee
+                   -pi/10;    % θ₄    ->  2D θ₃ Hip
+                      ANK;    % θ₅
+                        0;    % θ₆
+                        0;    % θ₇
+                      ANK;    % θ₈
+                    pi/10;    % θ₉    ->  2D θ₄ Hip
+                 -2*pi/10;    % θ₁₀   ->  2D θ₅ Knee
+                    pi/10;    % θ₁₁   ->  2D θ₆ Ankle
+                     -ANK];   % θ₁₂
 
     webotsMod   = [-1;  % θ₁
                     1;  % θ₂
@@ -69,9 +73,10 @@ clc
                    -1;  % θ₁₁
                     1]; % θ₁₂
 
-    model.q(:,1)      = model.q0;
-    model.xe(:,1)     = k(model.q0, params);
-    model.r0CoMg(:,1) = rCoM(model.q0,params);
+    model.q(:,1)      = model.q1;
+    model.q(:,2)      = model.q1;
+    model.xe(:,1)     = k(model.q1, params);
+    model.r0CoMg(:,1) = rCoM(model.q1,params);
     model.mode(1)     = params.mode;
     arms = [deg2rad(105);
             deg2rad(-10);
@@ -80,6 +85,9 @@ clc
             deg2rad(10);
             deg2rad(105)];
 
+    init_Xe   = model.xe(:,1);
+    init_rCoM = model.r0CoMg(:,1);
+    
     % +-+-+-+-+-+-+-+-+-+-+-+
     ROBOT_FRAME = figure(1);
         cla(ROBOT_FRAME)
@@ -94,9 +102,9 @@ clc
         zlabel('{\bfY} (metres)');
         [~] = plotRobot(1,model,params);
     % +-+-+-+-+-+-+-+-+-+-+-+
-    for i=1:49
-        commJointValues("10.0.0.127","10013",...
-            [webotsMod.*model.q(:,1); arms./(50 - i)]...
+    for i=1:5
+        commJointValues("10.1.1.3","10013",...
+            [webotsMod.*model.q(:,1); arms]...
         );
     end
     % +-+-+-+-+-+-+-+-+-+-+-+
@@ -104,9 +112,10 @@ clc
 
 %% Generate Trajectory
     model.glbTrj = ...
-       trajGen_cir(model.tspan, model.xe(1:3,1)./2);
+        trajGen_cir(model.tspan, model.xe(1:3,1)./2);
 %        trajGenC(1/params.framerate, ...       % Time Span
 %                 model.xe(1:3,1)./2);          % Init Position
+
     [~] = plotSteps(model);
 %% STEPPING
     % Helper Functions
@@ -116,7 +125,7 @@ clc
     stpLngth = params.StepLength;              % Step Size:   m
     Q        = model.glbTrj;                   % Q:         [x y z]ᵀ
     Qstep    = zeros(6,length(model.glbTrj));  % Qstep:     [xe]
-    r        = (params.HipWidth/2) + 0.02;     % Radius of Circle + shim
+    r        = (params.HipWidth/2) + 0.05;     % Radius of Circle + shim
     STEP     = params.mode;           % DEFINE MODE:  1 RIGHT Step 
                                       %              -1 LEFT  Step
     accuDist        = 0;                 % Accumulated Distance
@@ -132,7 +141,7 @@ clc
             t_end           = i;       % Index of Step Ending
             params.mode     = STEP;    % Mode
             j               = t_begin; % `j` runs the step
-            model.xe(:,j) = k(model.q(:,j), params); % Update Xe
+            model.xe(:,j)   = k(model.q(:,j), params); % Update Xe
             
             A = updateCoord(model.TBE, A);
 
@@ -165,9 +174,9 @@ clc
                 model.q(:,j)  = k_Inv(model.q(:,jn), ...
                                         xeSTAR, j, model, params);
                 [model.xe(:,j), model.TBE] = k(model.q(:,j), params);
-                DEBUG(j,t_begin,t_end,Qstep,model,params);
+%                DEBUG(j,t_begin,t_end,Qstep,model,params);
                 % Send qᵢ
-                commJointValues("10.0.0.127","10013",...
+                commJointValues("10.1.1.3","10013",...
                     [webotsMod.*model.q(:,j); arms]...
                 );
             end
@@ -197,7 +206,7 @@ clc
     axis equal
     view(-165,45);
 
-    for i=1:length(model.tspan)
+    for i=1:t_end
         cla(ROBOT_FRAME)
         params.mode = model.mode(i);
         [~] = plotRobot(i,model,params);
@@ -208,16 +217,17 @@ clc
 
 %% RESEND q(t)
 
-% for i=1:5
-%     commJointValues("10.0.0.127","10013",...
-%         [webotsMod.*model.q(:,1); arms]...
-%     );
-% end
-% for i=1:length(model.tspan)
-%         commJointValues("10.0.0.127","10013",...
-%         [webotsMod.*model.q(:,i); arms./(6 - i)]...
-%     );
-% end
+for i=1:5
+    commJointValues("10.1.1.2","10013",...
+        [webotsMod.*model.q(:,1); arms]...
+    );
+end
+%%
+for i=1:t_end
+        commJointValues("10.1.1.2","10013",...
+        [webotsMod.*model.q(:,i); arms]...
+    );
+end
 
 %% VIDEO
 videoWriterObj           = VideoWriter('3D_Step.mp4','MPEG-4');

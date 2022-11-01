@@ -10,20 +10,20 @@ pendulum and origin of the coordinate system in which the pendulum is defined.
 It is also assumed that the robot is capable of generating sufficient torque about 
 the ankle in order to shift the position of the CoM. The mass of the foot is ignored, while the assumption
 that friction holds the foot in place is retained. These simplifications yield equation 
-\ref{eq:simpZMP} from \ref{eq:ZMP_F} and \ref{eq:ZMP_M}.
+\ref{eq:simpZMP} from equations \ref{eq:ZMPF} and \ref{eq:ZMPM}.
 
 \begin{equation}
-    \mathbf{0} = \vec{BP} \times \mathbf{R_{xyz}} + \mathbf{M_{A}}
-\end{equation}\label{eq:simpZMP}
+    \mathbf{0} = \vec{BP} \times \mathbf{R_{xyz}} - \mathbf{M_{A}}  \label{eq:simpZMP}
+\end{equation}
 
 $\mathbf{A}$ intersects with the ground, becoming the fulcrum of the pendulum. 
 $R_{y}$ balances $F_{\mathbf{A}y}$ and thus $R_{y} = mg$, where $m$ is the mass of the robot. 
 As the horizontal components of $\mathbf{F_{A}}$ are balanced by the horizontal friction components 
-of $\mathbf{R_{xyz}}$, equation \ref{eq:simpZMP} can be solved for the ZMP$(x,z)$ as follows:
+of $\mathbf{R_{xyz}}$, equation \ref{eq:simpZMP} can be solved for the $\mathbf{ZMP}(p_x,p_z)$ as follows:
 
 \begin{align}
-    p_x &= \frac{-\tau_z}{mg}   \label{eq:zmpx} \\
-    p_z &= \frac{\tau_x}{mg}    \label{eq:zmpz}   
+    p_x &= \frac{\tau_z}{mg}   \label{eq:zmpx} \\
+    p_z &= \frac{-\tau_x}{mg}  \label{eq:zmpz}   
 \end{align}
 
 Equations \ref{eq:zmpx} and \ref{eq:zmpz} determine the relationship between the horizontal components
@@ -32,40 +32,55 @@ a pendulum.
 
 \subsubsection*{Inverted Pendulum Derivation}
 
-The mass of the pendulum generates unbalanced torques about the $X$ and $Z$ axes. This is demonstrated
-in figure \ref{fig:LIPM}, with the weight force $mg$ passing through the pendulum and the resulting 
-torques, ${\tau}_{mgz}$ and ${\tau}_{mgx}$, shown red. Additional torques due
-to the movement of the pendulum in the $XZ$ plane have been omitted for clarity, but contribute
-to the destabilising torques shown in red.
-
 \begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=.65\linewidth]{_content/40_zmp/fig_LIPM_labelled_true.png}
-        \caption{Inverted Pendulum}\label{fig:LIPM}
+        \includegraphics[width=.45\linewidth]{_content/40_zmp/fig_LIPM_labelled_true.png}
+        \caption{Inverted Pendulum $XZ$ view from above}\label{fig:LIPM}
     \end{center}
 \end{figure}
 
-In order to return the pendulum to vertical equilibrium, opposing torques 
-must be applied about the $X$ and $Z$ axes. These, alongside their equivalent accelerations,
-$a_z$ and $a_x$, are shown in blue. The point $\mathbf{P}$, depicted in purple, is the $(x,z)$ position of 
-the pendulum. Equation \ref{eq:Init_LIPM} includes the omitted planar accelerations of the pendulum, 
-$\ddot x$ and $\ddot z$, in the determination of the $\mathbf{P}(x,z)$ as a function of restoring torques, 
-${\tau}_{z} = a_{x} y $ and ${\tau}_{x} = a_{z} y$.
+The mass of an inverted pendulum of mass $m$ generates torques about the $X$ and $Z$ axes. 
+These are seen in red in figure \ref{fig:LIPM}. In this instance, the pendulum is constrained
+to move in the $XZ$ plane at constant height $y_c$.
+Two input torques, $\tau_x$ and $\tau_z$, are applied at the base of the pendulum, along the $X$ and $Z$ axes,
+in order to control the position of the pendulum.
+The point $\mathbf{P}$, depicted in purple, is the $(x,z)$ position of the pendulum.
+The acceleration of the pendulum is thus given by equations \ref{eq:lipmx} and \ref{eq:lipmz}.
 
-\begin{align}\label{eq:Init_LIPM}
-    \mathbf{P}{(x,z)} = \begin{bmatrix}
-        {(mg)}^{-1} {({\tau}_{z} - m y \ddot x)}   \\
-        {(mg)}^{-1} {({\tau}_{x} - m y \ddot z)}
-    \end{bmatrix}
+\begin{align}
+    \ddot{x} &= \frac{g}{y_c}x - \frac{1}{my_c}\tau_z   \label{eq:lipmx} \\
+    \ddot{z} &= \frac{g}{y_c}z + \frac{1}{my_c}\tau_x   \label{eq:lipmz}   
 \end{align}
+
+\subsubsection*{Linear Inverted Pendulum and Zero Moment Point Model}
+
+Rearranging the ZMP equations \ref{eq:zmpx} and \ref{eq:zmpz} for torque and then substituting into the
+linear inverted pendulum equations \ref{eq:lipmx} and \ref{eq:lipmz}, yields a relationship between the ZMP and the CoM.
+This model, seen in equation \ref{eq:ZMP_LIPM}, is used to drive the CoM's position during locomotion. $\mathbf{x}$
+represents the vector of the position components that form the ZMP.
+
+\begin{equation}
+    \mathbf{X} = 
+    \begin{bmatrix} p_x \\ p_z \end{bmatrix} =
+    \begin{bmatrix}
+        x - y_{c} g^{-1} \ddot{x} \\
+        z - y_{c} g^{-1} \ddot{z} 
+    \end{bmatrix}
+\end{equation}\label{eq:ZMP_LIPM}
+
+
+
+In order to use the model, the it must be discretized
+
+
 
 \begin{equation}\label{eq:LIPM_stateCT}
     \begin{split}
         \frac{\delta}{\delta t}
         \begin{bmatrix}
-            x           \\
-            \dot{x}     \\ 
-            \ddot{x} 
+            \mathbf{X}           \\
+            \dot{\mathbf{X}}     \\ 
+            \ddot{\mathbf{X}} 
         \end{bmatrix}&=
         \begin{bmatrix}
             0 & 1 & 0   \\
@@ -73,9 +88,9 @@ ${\tau}_{z} = a_{x} y $ and ${\tau}_{x} = a_{z} y$.
             0 & 0 & 0
         \end{bmatrix}
         \begin{bmatrix}
-            x           \\
-            \dot{x}     \\ 
-            \ddot{x} 
+            \mathbf{X}           \\
+            \dot{\mathbf{X}}     \\ 
+            \ddot{\mathbf{X}} 
         \end{bmatrix} + 
         \begin{bmatrix}
             0   \\

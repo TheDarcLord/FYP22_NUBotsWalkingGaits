@@ -143,6 +143,6 @@ function [r0CoM] = rCoM(q, params)
             (AB9(1:3,4) + AB8(1:3,4)) *(mLu/2) ...
             )/sigmaMass;
 
-    %r0CoM = (AB5(1:3,4) + AB6(1:3,4))/2;
+    r0CoM(1) = r0CoM(1) - 0.05;
 end
 
