@@ -75,7 +75,7 @@ state space representation, given by the equation \ref{eq:LIPM_stateCT}.
 
 \begin{equation}\label{eq:LIPM_stateCT}
     \begin{split}
-        \frac{\delta}{\delta t}
+        \overbrace{\frac{\delta}{\delta t}
         \begin{bmatrix}
             x           \\
             \dot{x}     \\
@@ -83,41 +83,41 @@ state space representation, given by the equation \ref{eq:LIPM_stateCT}.
             z           \\
             \dot{z}     \\ 
             \ddot{z}    \\
-        \end{bmatrix}&= \underbrace{
-        \begin{bmatrix}
+        \end{bmatrix}}^{\mathbf{\dot{x}}} &= 
+        \overbrace{\begin{bmatrix}
             0 & 1 & 0 & 0 & 0 & 0 \\
             0 & 0 & 1 & 0 & 0 & 0 \\
             0 & 0 & 0 & 0 & 0 & 0 \\ 
             0 & 0 & 0 & 1 & 0 & 0 \\ 
             0 & 0 & 0 & 0 & 1 & 0 \\
             0 & 0 & 0 & 0 & 0 & 0 \\
-        \end{bmatrix}}_{= \:\mathbf{A}}
-        \begin{bmatrix}
+        \end{bmatrix}}^{\mathbf{A}}
+        \overbrace{\begin{bmatrix}
             x           \\
             \dot{x}     \\
             \ddot{x}    \\
             z           \\
             \dot{z}     \\ 
             \ddot{z}    \\
-        \end{bmatrix} + \underbrace{
-        \begin{bmatrix}
+        \end{bmatrix}}^{\mathbf{x}} + 
+        \overbrace{\begin{bmatrix}
             0 & 0  \\
             0 & 0  \\
             1 & 0  \\
             0 & 0  \\ 
             0 & 0  \\
             0 & 1  \\
-        \end{bmatrix}}_{= \:\mathbf{B}}
-        \begin{bmatrix}
+        \end{bmatrix}}^{\mathbf{B}}
+        \overbrace{\begin{bmatrix}
             u_x \\ u_z
-        \end{bmatrix} \\
-        \begin{bmatrix}
+        \end{bmatrix}}^{\mathbf{u}} \\
+        \overbrace{\begin{bmatrix}
             p_x \\ p_z \\
-        \end{bmatrix}&= \underbrace{
-        \begin{bmatrix}
+        \end{bmatrix}}^{\mathbf{y}}&= 
+        \overbrace{\begin{bmatrix}
             1 & 0 & \frac{-y_{c}}{g} & 0 & 0 & 0 \\
             0 & 0 & 0 & 1 & 0 & \frac{-y_{c}}{g} \\
-        \end{bmatrix}}_{= \:\mathbf{C}}
+        \end{bmatrix}}^{\mathbf{C}}
         \begin{bmatrix}
             x           \\
             \dot{x}     \\
@@ -142,8 +142,8 @@ The discrete time model should be of the form found in equation \ref{eq:LIPM_sta
 ... where;
 \begin{equation}
     \begin{split}
-        \mathbf{x}(k) = [x(kT) \dot{x}(kT) \ddot{x}(kT) z(kT) \dot{z}(kT) \ddot{z}(kT)]^\top \\
-        \mathbf{u}(k) = [u_x(kT) u_z(kT)]^\top  \\
+        \mathbf{x}(k) &= [x(kT) \:\: \dot{x}(kT) \:\: \ddot{x}(kT) \:\: z(kT) \:\: \dot{z}(kT) \:\: \ddot{z}(kT)]^\top \\
+        \mathbf{u}(k) &= [u_x(kT) \:\: u_z(kT)]^\top  \\
     \end{split}
 \end{equation}
 Matrices $\mathbf{A_d}$ and $\mathbf{B_d}$ are found in equation \ref{eq:LIPM_discrete}, 
