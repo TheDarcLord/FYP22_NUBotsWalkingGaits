@@ -56,22 +56,26 @@ The acceleration of the pendulum is thus given by equations \ref{eq:lipmx} and \
 
 Rearranging the ZMP equations \ref{eq:zmpx} and \ref{eq:zmpz} for torque and then substituting into the
 linear inverted pendulum equations \ref{eq:lipmx} and \ref{eq:lipmz}, yields a relationship between the ZMP and the CoM.
-This relationship, seen in equations \ref{eq:ZMP_LIPMx} and \ref{eq:ZMP_LIPMz}, is used to drive the CoM's position during locomotion.
+This relationship, seen in equations \ref{eq:ZMP_LIPMx} and \ref{eq:ZMP_LIPMz}, takes the current position of the 
+CoM as an input, along with its planar accelerations, and returns the ZMP. The ZMP being the point at which 
+the vertical reaction, $R_y$ must occur in order to balance $mg$ without generating net torques about the
+$X$ and $Z$ axes. If this ZMP is within the support polygon it is assumed that the pendulum is dynamically stable.
 
 \begin{align}
     p_x &= x - \frac{y_{c}}{g} \ddot{x} \label{eq:ZMP_LIPMx} \\
     p_z &= z - \frac{y_{c}}{g} \ddot{z} \label{eq:ZMP_LIPMz}
 \end{align}
 
-An input, $\mathbf{u}$, is defined as the time derivative of the acceleration of the CoM, seen as
-equation \ref{eq:jerk}.
+The previous equations return the ZMP as the output, when instead the aim is drive the CoM of 
+the robot as a function of the ZMP. To achieve this an input, $\mathbf{u}$, is defined as the 
+time derivative of the acceleration of the CoM, seen in equation \ref{eq:jerk}.
 
 \begin{equation}\label{eq:jerk}
     \frac{d}{dt} \: \mathbf{\ddot{x}} = \begin{bmatrix} u_x \\ u_z \end{bmatrix}
 \end{equation}
 
 Given this input, the dynamics of the pendulum can be converted to a strictly proper,  
-state space representation, given by the equation \ref{eq:LIPM_stateCT}.
+state space representation \citep{kajita_2003_biped}, given by the equation \ref{eq:LIPM_stateCT}.
 
 \begin{equation}\label{eq:LIPM_stateCT}
     \begin{split}
@@ -130,8 +134,9 @@ state space representation, given by the equation \ref{eq:LIPM_stateCT}.
 \end{equation}
 
 The continuous time system, equation \ref{eq:LIPM_stateCT}, must be discretized with sampling 
-time $T$ in order drive the position of the CoM as the robot model is simulated in discrete time.
-The discrete time model should be of the form found in equation \ref{eq:LIPM_stateDT}. 
+time $T$, as the robot model is simulated in discrete time. Additionally, implementation in MatLab
+on on the robot itself requires that the system be discretized.
+The discrete time model is of the form found in equation \ref{eq:LIPM_stateDT}. 
 
 \begin{equation}\label{eq:LIPM_stateDT}
     \begin{split}

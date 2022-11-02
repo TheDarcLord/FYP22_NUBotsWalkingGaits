@@ -1,19 +1,77 @@
+In order to track a ZMP reference the input $\mathbf{u}(k)$ requires knowledge of the future 
+output, $\mathbf{y(k+)}$. To achieve this preview Control is used. This particular method
+was developed by Katayama et al. in the late 1980s \citep{katayama_1985_design}.
+
+A performance index, $\mathbf{J}$, is established with weights $\mathbf{Q}_{e}$,
+$\mathbf{Q}_{x}$, and $\mathbf{R}$, which is found in equation \ref{eq:PC_performanceIndex}. 
+The output tracking error is penalised by $\mathbf{Q}_{e}$, while $\mathbf{Q}_{x}$ penalises 
+the change in state. $\mathbf{R}$ penalises control action. The minimization $\mathbf{J}$
+will result in asymptotic regulation of the output, $\mathbf{y_d}(k)$, to
+the desired output, $\mathbf{y_d^*}(k)$, without excessive change in either state or
+control action.
 
 %% PERFORMANCE INDEX
 \begin{equation}\label{eq:PC_performanceIndex}
-    J_{u} = \sum_{i=k}^{\text{$\infty$}}                                   \:
-    \mathbf{Q}_{e}      \lVert   \mathbf{y}(k) - \mathbf{y_{d}}(k)  \rVert \: + \:
-    \mathbf{Q}_{x}      \lVert   \mathbf{x}(k) - \mathbf{x}(k-1)    \rVert \: + \:
-    \mathbf{R}          \lVert   \mathbf{u}(k) - \mathbf{u}(k-1)    \rVert
+    \mathrm{arg\:min} \:\: \mathbf{J} = \sum_{i=k}^{\text{$\infty$}} \:
+    \mathbf{Q}_{e}      \lVert   \mathbf{y_d}(k) - \mathbf{y_d^*}(k)  \rVert \: + \:
+    \mathbf{Q}_{x}      \lVert   \mathbf{x_d}(k) - \mathbf{x_d}(k-1)  \rVert \: + \:
+    \mathbf{R}          \lVert   \mathbf{u_d}(k) - \mathbf{u_d}(k-1)  \rVert
 \end{equation}
 
+The optimal control action, $\mathbf{u_d^*}(k)$ is thus given by equation \ref{eq:PC_optimalControl},
+with gains $\mathbf{G_{e}}$, $\mathbf{G_{x}}$ and $\mathbf{G_d}(l)$. The gain $\mathbf{G_{e}}$ multiplies
+the accumulated output error, from zero to current time step $k$, which represents integral action 
+on the tracking error. The gain $\mathbf{G_{x}}$ multiplies the current state, and thus represents 
+the state feedback component of the control action. The final gain, $\mathbf{G_d}(l)$, is a feed forward
+term, that is based on the summation of future demand from just ahead of the current time increment, $k + 1$, 
+to time horizon $k+{N_{l}}$.
 %% OPTIMAL CONTROL
 \begin{equation}\label{eq:PC_optimalControl}
-    \mathbf{u^{*}}(k) =                                                 \:
-    - \mathbf{G_{e}} \sum_{i=0}^{k} [\mathbf{y}(k) - \mathbf{y_{d}}(k)] \:
-    - \mathbf{G_{x}} \mathbf{x}(k)                                      \:   
-    - \sum_{l=1}^{N_{l}} \mathbf{G_{d}}(l)\mathbf{y_{d}}(k + l) 
+    \mathbf{u_d^{*}}(k) =                                                   \:
+    - \mathbf{G_{e}} \sum_{i=0}^{k} [\mathbf{y_d}(k) - \mathbf{y_d^*}(k)] \:
+    - \mathbf{G_{x}} \mathbf{x_d}(k)                                        \:   
+    - \sum_{l=1}^{N_{l}} \mathbf{G_d}(l)\mathbf{y_d^*}(k + l)
 \end{equation}
+
+These gains are given by the equations \ref{eq:PC_gains1}, \ref{eq:PC_gains2}, and \ref{eq:PC_gains3}, where $\mathbf{\tilde{A}_{c}}$ is
+the closed loop matrix defined in equation \ref{eq:PC_closedMatrix}.
+
+%% GAINS
+\begin{align}
+        \mathbf{G_{e}} &= [\mathbf{R} + \mathbf{\tilde{B}}^{\top} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
+        \mathbf{\tilde{B}}^{\top} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{I}}                                                \label{eq:PC_gains1} \\
+        \mathbf{G_{x}} &= [\mathbf{R} + \mathbf{\tilde{B}}^{\top} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
+        \mathbf{\tilde{B}}^{\top} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{F}}                                                \label{eq:PC_gains2} \\
+        \mathbf{G_{d}}(l) &= -[\mathbf{R} + \mathbf{\tilde{B}}^{\top} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
+        \mathbf{\tilde{B}}^{\top} (\mathbf{\tilde{A}_{c}}^{\top})^{(l - 1)} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{I}} \label{eq:PC_gains3}
+\end{align}
+
+%% CLOSED LOOP MATRIX
+\begin{equation}\label{eq:PC_closedMatrix}
+    \mathbf{\tilde{A}_{c}} = 
+    \mathbf{\tilde{A}} -
+    \mathbf{\tilde{B}} [\mathbf{R} + \mathbf{\tilde{B}}^{\top} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
+    \mathbf{\tilde{B}}^{\top} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{A}}
+\end{equation}
+
+Where $\mathbf{\tilde{K}_{d}}$ is the definite, non-negative solution of the discrete time algebraic Riccati Equation, 
+seen in equation \ref{eq:AlgRic} \citep{katayama_1985_design}.
+
+%% ALGEBRAIC RICCATI EQUATION
+\begin{equation}\label{eq:AlgRic}
+    \mathbf{\tilde{K}_{d}} = 
+        \mathbf{\tilde{A}}^{\top}   \mathbf{\tilde{K}_{d}}   \mathbf{\tilde{A}}  -
+        \mathbf{\tilde{A}}^{\top}   \mathbf{\tilde{K}_{d}}   \mathbf{\tilde{B}}
+        [\mathbf{R} + \mathbf{\tilde{B}}^{\top} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
+        \mathbf{\tilde{B}}^{\top} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{A}} +
+        \mathbf{\tilde{Q}}
+\end{equation}
+
+The matrices $\mathbf{\tilde{B}}$, $\mathbf{\tilde{F}}$, $\mathbf{\tilde{Q}}$, $\mathbf{\tilde{I}}$ and $\mathbf{\tilde{A}}$ are found
+below in equation \ref{eq:PC_define}. The matrix $\mathbf{\tilde{B}}$ is the augmented input matrix, containing $\mathbf{C_d}$ and 
+$\mathbf{B_d}$ from the discretized model found in equation \ref{eq:LIPM_discrete}. $\mathbf{\tilde{A}}$ is the 
+augmented evolution matrix, containing $\mathbf{C_d}$ and $\mathbf{A_d}$ from the aforementioned discretized model while
+the penalty matrix $\mathbf{\tilde{Q}}$ is formed from weights $\mathbf{Q}_{e}$ and $\mathbf{Q}_{x}$.
 
 %% DEFINED MATRICES
 \begin{equation}\label{eq:PC_define}
@@ -53,26 +111,10 @@
     \end{aligned}
 \end{equation}
 
-... where the gains, $\mathbf{G_{e}}$, $\mathbf{G_{x}}$ and $\mathbf{G_{d}}(l)$ are given by;
 
-%% Gains
-\begin{equation}\label{eq:PC_gains}
-    \begin{split}
-        \mathbf{G_{e}} &= [\mathbf{R} + \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
-        \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{I}} \\
-        \mathbf{G_{x}} &= [\mathbf{R} + \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
-        \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{F}} \\
-        \mathbf{G_{d}}(l) &= -[\mathbf{R} + \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
-        \mathbf{\tilde{B}}^{\intercal} (\mathbf{\tilde{A}_{c}}^{\intercal})^{(l - 1)} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{I}}
-    \end{split}
-\end{equation}
-... where;
-\begin{equation}\label{eq:PC_closedMatrix}
-    \mathbf{\tilde{A}_{c}} = \mathbf{\tilde{A}} 
-   -\mathbf{\tilde{B}} [\mathbf{R} + \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{B}}]^{-1}
-    \mathbf{\tilde{B}}^{\intercal} \mathbf{\tilde{K}_{d}} \mathbf{\tilde{A}} 
-\end{equation}
-... and $\mathbf{\tilde{K}_{d}}$ is a solution to the Discrete Time Algebraic Riccati Equation.
+
+
+
 
 %% MATLAB DRAWN LIPM MODEL
 \begin{figure}[!h]
