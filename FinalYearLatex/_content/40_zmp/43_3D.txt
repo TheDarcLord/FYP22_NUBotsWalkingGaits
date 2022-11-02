@@ -1,8 +1,7 @@
-%% MATLAB DRAWN LIPM MODEL 2
-\begin{figure}[!h]
-    \begin{center}
-        \includegraphics[width=.95\linewidth]{_figures/3D_ZMP.png}
-        \caption{3D model using ZMP walking with Preview Control.}
-        \label{fig:3D_ZMP}
-    \end{center}
-\end{figure}
+LIPM
+
+DIFFERENT FREQUENCIES
+
+TRAJECTORY
+
+ZMP

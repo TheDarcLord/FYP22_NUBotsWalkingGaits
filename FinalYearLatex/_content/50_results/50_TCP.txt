@@ -1,0 +1,5 @@
+In order to evaluate the quasistatic and ZMP locomotion it was necessary to
+develop 
+
+MATLAB 2 CPP
+over TCP
