@@ -28,7 +28,7 @@ This is seen in figure \ref{fig:matLIPM} as the blue cross.
         \omega &= 2 \pi f                   \\
         \mathbf{Q}(t) &= \begin{bmatrix}
             \dot{x}t & 0 & A \cdot sin(\omega t) 
-        \end{bmatrix}
+        \end{bmatrix}^{\top}
     \end{aligned}
 \end{equation}
 
