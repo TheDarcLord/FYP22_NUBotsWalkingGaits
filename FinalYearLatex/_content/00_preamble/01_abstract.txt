@@ -1,13 +1,1 @@
-The intention of this particular, half finished, report is to convey the volume of work
-I have completed this semester, in order to prove my elligiblity to continue my Final Year Project
-in semester two. \\
-Despite blank sections, such as background, it can be seen from the figures presented
-that I have a firm understanding as to bipedal locomotion using Quasi Static and ZMP 
-walking strategies. \\
-Given the work I have completed thus far I am interested in exploring a Spring Loaded
-Inverted Pendulum (SLIP) Model of walking. This may or may not address the 'springy'
-of the NuGus with 3D printed legs, however, I feel developing a sim of such a model 
-is a natural progression from ZMP and for myself. \\
-I concede my ZMP implementation is a little rushed, somewhat 'cart before the horse', 
-and not lacking a few logic errors, but it is close. I intend to refactor all the
-matlab script I have written to date.
+--

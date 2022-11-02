@@ -1,2 +1,2 @@
-The following section covers mathematical methods and bidpedal concepts that form the groundwork for
+The following section covers mathematical methods and bipedal concepts that form the groundwork for
 the development of humanoid walking gaits.

@@ -1,27 +1,19 @@
 In the western world the pursuit of creating autonomous humanoids began with the Greeks.
 \citep{truitt_2015_medieval}
 
-Social Robotics ? 
-\citep{devlin_2018_turned}
+Medieval -> Da Vinci Robot, German Monk Clockwork
 
-Studying humanoids
-\citep{raibert_1986_legged}
+Ichiro Kato -> WaBot 1  Quasi
+            -> WL-10RD  ZMP
+Mark Raibert -> Legged Robots that Balance  Spring Loaded Pendulum  \citep{raibert_1986_legged}
 
-Robo Cup
+ 
+Robo Cup -> 2050 Goal 
+            -? World underwateer by then
 
+NuBots
 
-
-
-
-
-
-
-
-
-
-
-
-
+Problem:
 
 
 %%Position:

@@ -3,6 +3,8 @@ is covered in Section \ref{sec:NovelTraj}, thus it is simply a matter
 of simulating the discretised pendulum dynamics with the optimal input 
 $\mathbf{u_d^*}$ along some predefined trajectory.
 
+\subsubsection*{LIPM ZMP Model}
+
 The pendulum model is initialised at zero in both $X$ and $Z$, with the 
 mass constrained to move in the $XZ$ plane at $y_c$. This is depicted in
 figure \ref{fig:matLIPM}, with the pendulum mass and shaft in red, while
@@ -60,7 +62,6 @@ This is seen in figure \ref{fig:matLIPM} as the blue cross.
     \end{center}
 \end{figure}
 
+ZMP frequency trade off vs Actuator penalty vs Computation time
 
-TRAJECTORY
-
-ZMP
+\subsubsection*{Robot ZMP}

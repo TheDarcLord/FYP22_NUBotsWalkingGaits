@@ -1,7 +1,36 @@
-%This is one of the most important parts of the report. In the conclusion section, you  %should 
-%\begin{itemize}
-%\item briefly summarise the results,
-%\item reflect on the work presented, 
-%\item make recommendations,
-%\item suggest future work or improvements.
-%\end{itemize}
+This is one of the most important parts of the report. In the conclusion section, you  %should 
+\begin{itemize}
+\item briefly summarise the results,
+    \begin{itemize}
+        \item Simulation of Quasi Static in Webots -> Flawless
+        \item Simulation of ZMP in WeBots -> Somewhat Successful
+        \item Quasi Static on NuGus -> Evident robot cannot run `QuasiStatic`
+            \begin{itemize}
+                \item Metal Legs are a different geometry to plastic Legs -> Model Change
+                \item Servos at Hip Knee and Ankle joints significantly under powered -> Hit 80 degrees and collapse
+                \item Backlash in Servos not account for, but significant -> 1-2 degrees, joint values: 0.06 degree increments (rad to decimal places)
+                \item Mass over a single foot not possible for slow quasi static walk
+                \item Fast quasistatic possible, however, tiny steps, rapid shifting of mass
+                \item TCP IP Communication Lag fluctuation -> 500ms, method would need to be modified to send all values, and then run them
+            \end{itemize}
+    \end{itemize}
+\item reflect on the work presented, 
+    \begin{itemize}
+        \item Lack of torso model -> some impact, arms could have been used to shift CoM (quite heavy 300g+)
+        \item New Trajectory Method useful, particularly in the Hobbyist space
+        \item True mass positions for model would have been useful, however 3 different models makes that a little hard
+        \item True geometry (metal legs) may have improved result, however, metal legs have only been implemented in the final few weeks. Have not been documented in Onshape.
+        \item Jacobian + Differential Kinematics = MatLab Sim with Gravity
+        \item QuasiStatic approach somewhat novel, but Successful
+        \item ZMP frequency trade off vs Actuator penalty vs Computation time
+    \end{itemize}
+\item make recommendations,
+    \begin{itemize}
+        \item DOCUMENT THE ROBOT's GEOMETRY AND KEEP IT UP TO DATE
+        \item DOCUMENT THE ROBOT'S MASS AND KEEP IT UP TO DATE
+        \item REPLACE SERVO MOTORS with more powerful models
+        \item MODEL SERVO Backlash
+        \item Use trajectory method as interim solution, after replacing servos -> GoTo (position) on field -> With quasi static -> Large Footsteps!!
+        \item Reactions at feet measured -> foot Torque / Force sensors -> CoM less blind, more accurate, tuned -> reactive ZMP
+    \end{itemize}
+\end{itemize}
