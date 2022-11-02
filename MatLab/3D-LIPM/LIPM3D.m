@@ -2,15 +2,11 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
 % LIPM: Discretised Linear Inverted Pendulum
 %   Detailed explanation goes here
     % Params
-        T_hrzn  = params.timeHorizon;
         T       = params.timestep;
         NL      = params.Nl;
         g       = params.g;
         zc      = params.zc;
         k       = index;
-
-    % Forward Time Horizon
-        fwdT    = model.t(k)+T :T: model.t(k) + T_hrzn;
                  
     % Current State
         X0      = model.x(:,k);
@@ -19,9 +15,9 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
         Ad      = [1,  T,  (T^2)/2,  0,  0,        0;   % x
                    0,  1,        T,  0,  0,        0;   % x'
                    0,  0,        1,  0,  0,        0;   % x"
-                   0,  0,        0,  1,  T,  (T^2)/2;   % y
-                   0,  0,        0,  0,  1,        T;   % y'
-                   0,  0,        0,  0,  0,        1];  % y"
+                   0,  0,        0,  1,  T,  (T^2)/2;   % z
+                   0,  0,        0,  0,  1,        T;   % z'
+                   0,  0,        0,  0,  0,        1];  % z"
         Cd      = [1,  0,  -(zc/g),  0,  0,        0;
                    0,  0,        0,  1,  0,  -(zc/g)];
         Bd      = [(T^3)/6,       0;
@@ -62,7 +58,7 @@ function [ZMPk, CoMk, model] = LIPM3D(model,index,params)
         % State Feedback
             Gx           = gainCore * K_hat * F_hat;
         % Feedforward / Preview Action - page 685 !
-            Yd      = pREF(fwdT, params);
+            Yd      = model.pREF(:,k+1:k+NL);
             Gp_Yd   =  zeros(size(Yd));
             Ac_hat  =  A_hat - B_hat * gainCore * K_hat* A_hat;
             Gd      = @(l) -gainCore*((Ac_hat')^(l-1))*K_hat*I_hat;

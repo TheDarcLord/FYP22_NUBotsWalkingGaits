@@ -1,6 +1,51 @@
-LIPM
+The method for generating a ZMP reference trajectory, $\mathbf{y_d^*}$, 
+is covered in Section \ref{sec:NovelTraj}, thus it is simply a matter 
+of simulating the discretised pendulum dynamics with the optimal input 
+$\mathbf{u_d^*}$ along some predefined trajectory.
 
-DIFFERENT FREQUENCIES
+The pendulum model is initialised at zero in both $X$ and $Z$, with the 
+mass constrained to move in the $XZ$ plane at $y_c$. This is depicted in
+figure \ref{fig:matLIPM}, with the pendulum mass and shaft in red, while
+the constraint plane is a pale red.
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_INIT.eps}
+        \caption{Inverted Pendulum Initial Position}\label{fig:matLIPM}
+    \end{center}
+\end{figure}
+
+The arbitrary trajectory chosen is a sinusoidal function of time, set out in equation \ref{eq:LIPM_TRJ}, 
+and is represented in black. The initial $ZMP(x,z)$, which is the first value of $\mathbf{y_d}$, is at the origin.
+This is seen in figure \ref{fig:matLIPM} as the blue cross.
+
+\begin{equation}\label{eq:LIPM_TRJ}
+    \begin{aligned}
+        \lambda &= 2                        \\
+        \dot{x} &= 0.2                      \\
+        A &= 0.25                           \\
+        f &= \dot{x} \lambda^{-1}           \\
+        \omega &= 2 \pi f                   \\
+        \mathbf{Q}(t) &= \begin{bmatrix}
+            \dot{x}t & 0 & A \cdot sin(\omega t) 
+        \end{bmatrix}
+    \end{aligned}
+\end{equation}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_50hz1sec.eps}
+        \caption{Inverted Pendulum Model $\mathbf{y_d}$ vs $\mathbf{y_d^*}$, at 50Hz}\label{fig:matLIPM50a}
+    \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_50hz1sec_BIRD.eps}
+        \caption{Inverted Pendulum Model view from above, at 50Hz}\label{fig:matLIPM50b}
+    \end{center}
+\end{figure}
+
 
 TRAJECTORY
 
