@@ -4,7 +4,7 @@ clear all
 
 %% Parameters
 params.timeHorizon  =  1;                                       % Seconds 
-params.framerate    =  50;                                      % INTEGER
+params.framerate    =  100;                                      % INTEGER
 params.timestep     =  1 / params.framerate;                    % Seconds
 params.Nl           =  params.timeHorizon / params.timestep;    % INTEGER
 params.StepLength   =  0.15;
@@ -28,7 +28,7 @@ params.CP           =  1;
 %       Δu(i): u(i) - u(i-1)    aka Incremental Control Vector
 params.weights.Qe   = 1    * eye(2,2);     
 params.weights.Qx   = 0    * eye(6,6);
-params.weights.R    = 1e-3 * eye(2,2);
+params.weights.R    = 1e-4 * eye(2,2);
 
 %% Model
 model.t             = 0:params.timestep:10;
@@ -171,7 +171,7 @@ TRAJECTORIES = figure(2);
 
 %% FRAMES
 
-jINDEXES = [136 450];
+jINDEXES = [339 840];
 params.CP = 0;
 
 FRAMES = figure(4);

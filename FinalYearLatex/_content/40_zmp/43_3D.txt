@@ -46,6 +46,20 @@ This is seen in figure \ref{fig:matLIPM} as the blue cross.
     \end{center}
 \end{figure}
 
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_100hz1sec.eps}
+        \caption{Inverted Pendulum Model $\mathbf{y_d}$ vs $\mathbf{y_d^*}$, at 100Hz}\label{fig:matLIPM100a}
+    \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_100hz1sec_BIRD.eps}
+        \caption{Inverted Pendulum Model view from above, at 100Hz}\label{fig:matLIPM100b}
+    \end{center}
+\end{figure}
+
 
 TRAJECTORY
 
