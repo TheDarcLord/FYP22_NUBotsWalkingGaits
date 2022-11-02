@@ -6,7 +6,7 @@ $\mathbf{u_d^*}$ along some predefined trajectory.
 \subsubsection*{LIPM ZMP Model}
 
 The pendulum model is initialised at zero in both $X$ and $Z$, with the 
-mass constrained to move in the $XZ$ plane at $y_c$. This is depicted in
+mass constrained to move in the $XZ$ plane at $y_c = 0.5$ metres. This is depicted in
 figure \ref{fig:matLIPM}, with the pendulum mass and shaft in red, while
 the constraint plane is a pale red.
 
@@ -34,12 +34,23 @@ This is seen in figure \ref{fig:matLIPM} as the blue cross.
     \end{aligned}
 \end{equation}
 
+To travel along this trajectory, a step length of $0.15$ metres was used, with a footstep radius of
+$0.1$ metres. This parameterisation of this footstep is similar to the full humanoid robot.
+Weights $\mathbf{Q}_e$, $\mathbf{Q}_x$ and $\mathbf{R}$ were set as $\mathbf{I}_{2 \times 2}$, 
+$\mathbf{0}_{6 \times 6}$ and $\mathbf{1e^{-3}_{2 \times 2}}$ respectively. The model was then 
+run at $50$ Hz, with a $1$ second time horizon, for $10$ seconds.
+
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_50hz1sec.eps}
         \caption{Inverted Pendulum Model $\mathbf{y_d}$ vs $\mathbf{y_d^*}$, at 50Hz}\label{fig:matLIPM50a}
     \end{center}
 \end{figure}
+
+Figure \ref{fig:matLIPM50a} depicts the achieved ZMP, in red, in comparison with the ZMP reference trajectory, 
+in black. Significant overshoot is clearly evident along the $Z$ axis, and exists along the $X$ axis too. This
+overshoot is most evident when viewing the ZMP reference trajectory, $\mathbf{y_d^*}$, and the achieved 
+ZMP trajectory, $\mathbf{y_d}$, from above.
 
 \begin{figure}[!h]
     \begin{center}
@@ -48,12 +59,26 @@ This is seen in figure \ref{fig:matLIPM} as the blue cross.
     \end{center}
 \end{figure}
 
+Figure \ref{fig:matLIPM50b} demonstrates the impact of the aforementioned overshoot. In addition,
+there is evidence of integral windup in the achieved ZMP trajectory. This is most evident in the lower
+half of figure \ref{fig:matLIPM50b} as the ZMP trajectory, in blue, deteriorates from an initially
+linear path between ZMP reference footsteps.
+
+Doubling the system frequency significantly reduces ZMP error. This is evident in Figure \ref{fig:matLIPM100a},
+which depicts the exactly the same model, run with the with the same time horizon, at double the frequency.
+Overshoot is evident along the $Z$ and $X$ axes too, however it has been substantially reduced following the 
+change in system frequency.
+
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_100hz1sec.eps}
         \caption{Inverted Pendulum Model $\mathbf{y_d}$ vs $\mathbf{y_d^*}$, at 100Hz}\label{fig:matLIPM100a}
     \end{center}
 \end{figure}
+
+Again this is most evident from above, which is depicted in Figure \ref{fig:matLIPM100b}. However, this
+reduction in ZMP error comes a the cost of processing time. In order to counter act this, the time horizon could
+be halved.
 
 \begin{figure}[!h]
     \begin{center}
@@ -62,6 +87,7 @@ This is seen in figure \ref{fig:matLIPM} as the blue cross.
     \end{center}
 \end{figure}
 
-ZMP frequency trade off vs Actuator penalty vs Computation time
+In order to reduce the ZMP error further, the penalty on the control action, $\mathbf{R}$ could 
+be reduced, allowing the controller to take more violent actions.
 
 \subsubsection*{Robot ZMP}
