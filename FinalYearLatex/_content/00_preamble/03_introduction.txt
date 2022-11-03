@@ -11,7 +11,8 @@ girl and a band of four players.
 
 In the 14th century mechanical clocks melded with simple automata, which began a revolution in 
 the powering and design of humanoid automata. This culminated in examples such as Leonardo Da Vinci's 
-Clockwork Knight from the 1490s and Juanelo Turriano's series of praying monks in the 1560s.
+Clockwork Knight from the 1490s and Juanelo Turriano's series of praying monks in the 1560s...
+
 In 17th century Japan, "karakuri" puppets ... more
 
 By beginning of the 20th century, automata ... 
@@ -30,7 +31,7 @@ Mark Raibert -> Legged Robots that Balance  Spring Loaded Pendulum  \citep{raibe
 
  
 Robo Cup -> 2050 Goal 
-            -? World underwateer by then
+            -? World underwater by then
 
 NuBots
 
