@@ -28,7 +28,7 @@ params.CP           =  1;
 %       Δu(i): u(i) - u(i-1)    aka Incremental Control Vector
 params.weights.Qe   = 1    * eye(2,2);     
 params.weights.Qx   = 0    * eye(6,6);
-params.weights.R    = 1e-4 * eye(2,2);
+params.weights.R    = 1e-3 * eye(2,2);
 
 %% Model
 model.t             = 0:params.timestep:10;
@@ -146,10 +146,11 @@ TRAJECTORIES = figure(2);
         ylabel('X Displacement ({\it metres})','FontSize',12,'FontWeight','bold')
         plot(model.t,model.pREF(1,1:length(model.t)),'k','LineWidth',2)
         plot(model.t,model.y(1,:),'r','LineWidth',2)
+        plot(model.t,abs(model.y(1,:) - model.pREF(1,1:length(model.t))),'color','#00CA00','LineWidth',2)
 
         legend({'y^{D}_{d} {\itaka} ZMP^{REF}_{X}'...
                 'y_d(1) {\itaka} ZMP_{X}'...
-                },...
+                'ZMP_{X} error'},...
             'FontSize',12,'Location','eastoutside')
         
     subplot(2,1,2)
@@ -163,15 +164,18 @@ TRAJECTORIES = figure(2);
         ylabel('Z Displacement ({\it metres})','FontSize',12,'FontWeight','bold')
         plot(model.t,model.pREF(2,1:length(model.t)),'k','LineWidth',2)
         plot(model.t,model.y(2,:),'r','LineWidth',2)
+        plot(model.t,abs(model.y(2,:) - model.pREF(2,1:length(model.t))),'color','#00CA00','LineWidth',2)
         
         legend({'y^{D}_{d}(2) {\itaka} ZMP^{REF}_{Z}'...
                 'y_d(2) {\itaka} ZMP_{Z}'...
-                },...
+                'ZMP_{Z} error'},...
             'FontSize',12,'Location','eastoutside')
+%% Error Checking
+
 
 %% FRAMES
 
-jINDEXES = [339 840];
+jINDEXES = [339 1640];
 params.CP = 0;
 
 FRAMES = figure(4);

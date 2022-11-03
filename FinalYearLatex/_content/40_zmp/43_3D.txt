@@ -37,7 +37,7 @@ This is seen in figure \ref{fig:matLIPM} as the blue cross.
 To travel along this trajectory, a step length of $0.15$ metres was used, with a footstep radius of
 $0.1$ metres. This parameterisation of this footstep is similar to the full humanoid robot.
 Weights $\mathbf{Q}_e$, $\mathbf{Q}_x$ and $\mathbf{R}$ were set as $\mathbf{I}_{2 \times 2}$, 
-$\mathbf{0}_{6 \times 6}$ and $\mathbf{1e^{-3}_{2 \times 2}}$ respectively. The model was then 
+$\mathbf{0}_{6 \times 6}$ and $\mathbf{1e^{-3}}_{2 \times 2}$ respectively. The model was then 
 run at $50$ Hz, with a $1$ second time horizon, for $10$ seconds.
 
 \begin{figure}[!h]
@@ -60,7 +60,7 @@ ZMP trajectory, $\mathbf{y_d}$, from above.
 \end{figure}
 
 Figure \ref{fig:matLIPM50b} demonstrates the impact of the aforementioned overshoot. In addition,
-there is evidence of integral windup in the achieved ZMP trajectory. This is most evident in the lower
+there is evidence of integral windup in the achieved ZMP trajectory. This is most apparent in the lower
 half of figure \ref{fig:matLIPM50b} as the ZMP trajectory, in blue, deteriorates from an initially
 linear path between ZMP reference footsteps.
 
@@ -76,9 +76,10 @@ change in system frequency.
     \end{center}
 \end{figure}
 
-Again this is most evident from above, which is depicted in Figure \ref{fig:matLIPM100b}. However, this
-reduction in ZMP error comes a the cost of processing time. In order to counter act this, the time horizon could
-be halved.
+Again this is most evident when view from above, as depicted in Figure \ref{fig:matLIPM100b}. However, this
+reduction in ZMP error comes a the cost of processing time. In order to counter act the extended processing
+the time horizon was reduced. To further reduce the ZMP error, the penalty on the control action, $\mathbf{R}$, 
+can be reduced to allow the controller to take more violent control actions.
 
 \begin{figure}[!h]
     \begin{center}
@@ -87,7 +88,6 @@ be halved.
     \end{center}
 \end{figure}
 
-In order to reduce the ZMP error further, the penalty on the control action, $\mathbf{R}$ could 
-be reduced, allowing the controller to take more violent actions.
+
 
 \subsubsection*{Robot ZMP}
