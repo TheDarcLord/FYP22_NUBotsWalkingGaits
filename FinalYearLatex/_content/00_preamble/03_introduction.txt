@@ -1,10 +1,31 @@
-In the western world the pursuit of creating autonomous humanoids began with the Greeks.
-\citep{truitt_2015_medieval}
+The pursuit of creating autonomous humanoids began with the Ancient Greeks \citep{truitt_2015_medieval}. 
+Hephaestus, god of smithing, created tripedal automata with golden wheels to serve the other gods of Mount
+Olympus, as well as the Talos, a giant bronze humanoid. Automata and mechanisms were cherished in the world 
+of the Ancient Greeks, as teaching tools, and artworks. However, these were primarily constructed of pipes,
+rope, pulleys and levers. As such, the definition of automata is a machine that completes a singular task, 
+repeatedly.
 
-Medieval -> Da Vinci Robot, German Monk Clockwork
+Following the Greeks, the Islamic world became the home of mechanisms and automata. Ismail al-Jazari, a 12th 
+century polymath, is credited with creating the first humanoid automata. These included a wine serving
+girl and a band of four players.
 
-Ichiro Kato -> WaBot 1  Quasi
-            -> WL-10RD  ZMP
+In the 14th century mechanical clocks melded with simple automata, which began a revolution in 
+the powering and design of humanoid automata. This culminated in examples such as Leonardo Da Vinci's 
+Clockwork Knight from the 1490s and Juanelo Turriano's series of praying monks in the 1560s.
+In 17th century Japan, "karakuri" puppets ... more
+
+By beginning of the 20th century, automata ... 
+Everywhere ... 
+
+Following World War Two, and the development of the first computer, Colossus, ...
+Humanoid Automata drifted into Humanoid Robotics. The latter being distinguished by the
+capacity to program a Robot for a series of unrelated tasks, while the former is only ever designed 
+to do one.
+
+Ichiro Kato is credited with the first few walking humanoid robots... 1960s - 70s
+    WaBot 1
+Miomir Vukobratovic's work leading to...
+    WL-10RD
 Mark Raibert -> Legged Robots that Balance  Spring Loaded Pendulum  \citep{raibert_1986_legged}
 
  
