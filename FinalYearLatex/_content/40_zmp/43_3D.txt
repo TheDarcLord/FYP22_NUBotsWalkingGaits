@@ -79,7 +79,7 @@ change in system frequency.
 Again this is most evident when view from above, as depicted in Figure \ref{fig:matLIPM100b}. However, this
 reduction in ZMP error comes a the cost of processing time. In order to counter act the extended processing
 the time horizon was reduced. To further reduce the ZMP error, the penalty on the control action, $\mathbf{R}$, 
-can be reduced to allow the controller to take more violent control actions.
+can be reduced to allow the controller to make more violent control actions.
 
 \begin{figure}[!h]
     \begin{center}
