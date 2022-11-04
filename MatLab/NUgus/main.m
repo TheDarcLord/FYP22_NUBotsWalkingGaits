@@ -171,13 +171,13 @@ clc
     
     hold on
     grid on
+    axis equal
+    view(-165,45);
     set(gca,'Color','#CCCCCC');
     title("3D Model - ZMP Walking",'FontSize',12);
     xlabel('{\bfZ} (metres)');
     ylabel('{\bfX} (metres)');
     zlabel('{\bfY} (metres)');
-    axis equal
-    view(-165,45);
 
     for i=1:t_end
         cla(ROBOT_FRAME)
