@@ -7,7 +7,7 @@ clc
 
 %% Video & Time Parameters
     model.frequency   = 025;                     % FPS
-    params.timestp    = model.framerate^(-1);    % Seconds
+    params.timestp    = model.frequency^(-1);    % Seconds
     model.tspan       = 0 : params.timestp : 12; % [ time ]
  % Step Parameterisation - Trajectory dictates time                      |
     params.vMax       = 0.15;   % m/s  - Norm vCoM Max                   |
@@ -84,7 +84,7 @@ clc
         zlabel('{\bfY} (metres)');
         [~] = plotRobot(1,model,params);
     % +-+-+-+-+-+-+-+-+-+-+-+
-    
+
     if params.enableComms == 1
         commJointValues("10.1.1.3","10013",[CNV.*model.q0; iGusArms]);
     end
