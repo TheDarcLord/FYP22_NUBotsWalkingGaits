@@ -142,7 +142,7 @@ function [r0CoM] = rCoM(q, params)
             (AB2(1:3,4) + AB3(1:3,4)) *(mLu/2) + ...
             (AB9(1:3,4) + AB8(1:3,4)) *(mLu/2) ...
             )/sigmaMass;
-
-    r0CoM(1) = r0CoM(1) - 0.05;
+    
+    %r0CoM(1) = r0CoM(1) - 0.05; % Real Model ... NuGus is fine
 end
 

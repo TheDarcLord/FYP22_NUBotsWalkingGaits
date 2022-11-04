@@ -29,6 +29,7 @@ clc
     params.ankle2knee = [0.005669; 0.19942; -0.0002];
     params.knee2hip   = [       0; 0.19954; -0.0015];
     params.hip2waist  = [-0.06895; 0.04625; -0.0545];
+    params.sole2SP    = [ 0.022; 0; 0.011]; % m - Sole to Support Polygon
     params.ServoSize  = 0.05;     % m    - Approximation/Spacing
  % Masses
     params.mass.fibula = 0.1719;                    % Paired with `tibia`
@@ -76,7 +77,7 @@ clc
         hold on
         grid on
         axis equal
-        view(-145,50);
+        view(-210,30);
         set(gca,'Color','#CCCCCC');
         title("3D Model - ZMP Walking",'FontSize',12);
         xlabel('{\bfZ} (metres)');

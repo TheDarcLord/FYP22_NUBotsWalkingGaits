@@ -10,7 +10,7 @@ function DEBUG(j,t_begin,t_end,Qstep,model,params)
         xlabel('{\bfZ} (metres)');
         ylabel('{\bfX} (metres)');
         zlabel('{\bfY} (metres)');
-        view(-145,50);
+        view(-210,30);
         [~] = plotRobot(j,model,params);
         TIME = t_begin:t_end;
         plot3(Qstep(3,TIME),Qstep(1,TIME),Qstep(2,TIME),...

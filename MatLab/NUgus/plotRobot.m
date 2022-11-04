@@ -1,49 +1,35 @@
 function pass = plotRobot(index,model,params)
     % Origin
-    a = 0.25;
+    a   = 0.25;
+    def = [0,0,0,1];
+    HTs = kSlow( model.q(:,index), params);
     quiver3(0,0,0,a,0,0,"LineWidth",1,'Color','r');         % Z Vector
     quiver3(0,0,0,0,a,0,"LineWidth",1,'Color','#379203');   % X Vector
     quiver3(0,0,0,0,0,a,"LineWidth",1,'Color','b');         % Y Vector
 
-    TOE  = [eye(3), [ 0.12915; 0; 0];[0,0,0,1]];
-    HEEL = [eye(3), [-0.08385; 0; 0];[0,0,0,1]];
-    INSIDEL = [eye(3), [0; 0; -0.054];[0,0,0,1]];
-    INSIDER = [eye(3), [0; 0;  0.054];[0,0,0,1]];
+    rBER = HTs.ABER(1:3,4); % END EFFECTOR RIGHT
+    rT1 = HTs.ABER * [eye(3), [+0.12915; 0; +0.054]; def];
+    rT2 = HTs.ABER * [eye(3), [-0.08385; 0; +0.054]; def];
+    rT3 = HTs.ABER * [eye(3), [-0.08385; 0; -0.054]; def];
+    rT4 = HTs.ABER * [eye(3), [+0.12915; 0; -0.054]; def];
 
-    HTs   = kSlow( model.q(:,index), params);
+    plot3(rBER(3),rBER(1),rBER(2),'bo','LineWidth',1,'MarkerSize',5);
+    plot3([rT1(3,4), rT2(3,4)],[rT1(1,4), rT2(1,4)],[rT1(2,4), rT2(2,4)],'k','LineWidth',2);
+    plot3([rT2(3,4), rT3(3,4)],[rT2(1,4), rT3(1,4)],[rT2(2,4), rT3(2,4)],'k','LineWidth',2);
+    plot3([rT3(3,4), rT4(3,4)],[rT3(1,4), rT4(1,4)],[rT3(2,4), rT4(2,4)],'k','LineWidth',2);
+    plot3([rT4(3,4), rT1(3,4)],[rT4(1,4), rT1(1,4)],[rT4(2,4), rT1(2,4)],'k','LineWidth',2);
+
+    rBEL = HTs.ABEL(1:3,4); % END EFFECTOR LEFT
+    lT1 = HTs.ABEL * [eye(3), [+0.12915; 0; +0.054]; def];
+    lT2 = HTs.ABEL * [eye(3), [-0.08385; 0; +0.054]; def];
+    lT3 = HTs.ABEL * [eye(3), [-0.08385; 0; -0.054]; def];
+    lT4 = HTs.ABEL * [eye(3), [+0.12915; 0; -0.054]; def];
     
-    rBER = HTs.ABER(1:3,4);                     % END EFFECTOR
-    plot3(rBER(3),rBER(1),rBER(2), ...          %   RIGHT!
-      'bo','LineWidth',1,'MarkerSize',5);
-    ATFR = HTs.ABER*TOE;                        %
-    rTFR = ATFR(1:3,4);                         % + TOE
-    plot3([rBER(3),rTFR(3)],[rBER(1),rTFR(1)],[rBER(2),rTFR(2)],...
-          'k','LineWidth',2);
-    AHFR = HTs.ABER*HEEL;                       %
-    rHFR = AHFR(1:3,4);                         % + HEEL
-    plot3([rBER(3),rHFR(3)],[rBER(1),rHFR(1)],[rBER(2),rHFR(2)],...
-          'k','LineWidth',2);
-    AIFR = HTs.ABER*INSIDER;                    %
-    rIFR = AIFR(1:3,4);                         % + INSIDE 
-    plot3([rBER(3),rIFR(3)],[rBER(1),rIFR(1)],[rBER(2),rIFR(2)],...
-          'k','LineWidth',2);
-
-
-    rBEL = HTs.ABEL(1:3,4);                     % END EFFECTOR
-    plot3(rBEL(3),rBEL(1),rBEL(2), ...          %   LEFT!
-          'ro','LineWidth',1,'MarkerSize',5);
-    ATFL = HTs.ABEL*TOE;                        %
-    rTFL = ATFL(1:3,4);                         % + TOE
-    plot3([rBEL(3),rTFL(3)],[rBEL(1),rTFL(1)],[rBEL(2),rTFL(2)],...
-          'k','LineWidth',2);
-    AHFL = HTs.ABEL*HEEL;                       %
-    rHFL = AHFL(1:3,4);                         % + HEEL
-    plot3([rBEL(3),rHFL(3)],[rBEL(1),rHFL(1)],[rBEL(2),rHFL(2)],...
-          'k','LineWidth',2);
-    AIFL = HTs.ABEL*INSIDEL;                    %
-    rIFL = AIFL(1:3,4);                         % + INSIDE 
-    plot3([rBEL(3),rIFL(3)],[rBEL(1),rIFL(1)],[rBEL(2),rIFL(2)],...
-          'k','LineWidth',2);
+    plot3(rBEL(3),rBEL(1),rBEL(2),'ro','LineWidth',1,'MarkerSize',5);
+    plot3([lT1(3,4), lT2(3,4)],[lT1(1,4), lT2(1,4)],[lT1(2,4), lT2(2,4)],'k','LineWidth',2);
+    plot3([lT2(3,4), lT3(3,4)],[lT2(1,4), lT3(1,4)],[lT2(2,4), lT3(2,4)],'k','LineWidth',2);
+    plot3([lT3(3,4), lT4(3,4)],[lT3(1,4), lT4(1,4)],[lT3(2,4), lT4(2,4)],'k','LineWidth',2);
+    plot3([lT4(3,4), lT1(3,4)],[lT4(1,4), lT1(1,4)],[lT4(2,4), lT1(2,4)],'k','LineWidth',2);
 
 
 %% OTHER JOINTS & LINKS
@@ -116,7 +102,7 @@ function pass = plotRobot(index,model,params)
     
     a = 0.5;
     CM = rCoM(model.q(:,index),params);
-    axis([ CM(3)-a, CM(3)+a, CM(1)-a, CM(1)+a, -0.05, a]);
+    axis([ CM(3)-a, CM(3)+a, CM(1)-a, CM(1)+a, -0.02, a]);
     plot3(CM(3),CM(1),CM(2),'mo','MarkerSize',10,'LineWidth',2);
     drawnow
     pass = 1;
