@@ -84,6 +84,7 @@ clc
         zlabel('{\bfY} (metres)');
         [~] = plotRobot(1,model,params);
     % +-+-+-+-+-+-+-+-+-+-+-+
+    
     if params.enableComms == 1
         commJointValues("10.1.1.3","10013",[CNV.*model.q0; iGusArms]);
     end

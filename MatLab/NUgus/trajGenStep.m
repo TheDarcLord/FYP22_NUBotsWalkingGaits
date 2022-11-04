@@ -21,12 +21,12 @@ function [Q] = trajGenStep(xei,ZMP,indexspan,model,params)
                          /(A(3) - B(3));
         M = gradFUNC(A,B);
         THETA = atan2(-1/M,1);
+        
     %% TRAJECTORY - CONTINUOUS TIME
         td  = model.tspan(tf_i) - model.tspan(tm_i);
         xef  = [ZMP(1); 0; ZMP(2); 0; THETA; 0];
-        stpHght = params.StepHeight;
-        
-        Ay  = 2*stpHght / (td/2)^2;
+
+        Ay  = 2 * params.StepHeight / (td/2)^2;
         Vy  = Ay*(td/2);
     
         xeT = @(t)  [xei(1) + ((xef(1)-xei(1)) / td).*t;
