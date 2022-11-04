@@ -10,8 +10,8 @@ function pass = plotRobot(index,model,params)
     rBER = HTs.ABER(1:3,4); % END EFFECTOR RIGHT
     rT1 = HTs.ABER * [eye(3), [+0.12915; 0; +0.054]; def];
     rT2 = HTs.ABER * [eye(3), [-0.08385; 0; +0.054]; def];
-    rT3 = HTs.ABER * [eye(3), [-0.08385; 0; -0.054]; def];
-    rT4 = HTs.ABER * [eye(3), [+0.12915; 0; -0.054]; def];
+    rT3 = HTs.ABER * [eye(3), [-0.08385; 0; -0.076]; def];
+    rT4 = HTs.ABER * [eye(3), [+0.12915; 0; -0.076]; def];
 
     plot3(rBER(3),rBER(1),rBER(2),'bo','LineWidth',1,'MarkerSize',5);
     plot3([rT1(3,4), rT2(3,4)],[rT1(1,4), rT2(1,4)],[rT1(2,4), rT2(2,4)],'k','LineWidth',2);
@@ -20,8 +20,8 @@ function pass = plotRobot(index,model,params)
     plot3([rT4(3,4), rT1(3,4)],[rT4(1,4), rT1(1,4)],[rT4(2,4), rT1(2,4)],'k','LineWidth',2);
 
     rBEL = HTs.ABEL(1:3,4); % END EFFECTOR LEFT
-    lT1 = HTs.ABEL * [eye(3), [+0.12915; 0; +0.054]; def];
-    lT2 = HTs.ABEL * [eye(3), [-0.08385; 0; +0.054]; def];
+    lT1 = HTs.ABEL * [eye(3), [+0.12915; 0; +0.076]; def];
+    lT2 = HTs.ABEL * [eye(3), [-0.08385; 0; +0.076]; def];
     lT3 = HTs.ABEL * [eye(3), [-0.08385; 0; -0.054]; def];
     lT4 = HTs.ABEL * [eye(3), [+0.12915; 0; -0.054]; def];
     
