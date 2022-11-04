@@ -188,7 +188,7 @@ clc
         IMAGE(i) = getframe(gcf);
     end
 
-%% RESEND q(t)
+%% Send Joint [ Values; Arms ]
 if params.enableComms == 1
     commJointValues("10.1.1.2","10013",[CNV.*model.q0; arms]);
     pause(2)
