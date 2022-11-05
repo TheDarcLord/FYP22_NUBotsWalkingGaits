@@ -65,11 +65,10 @@ clc
                          -05.5]); % θ₁₂
     CNV = [-1;+1;+1;+1;-1;+1;-1;+1;-1;-1;-1;+1]; % Joint Angle Conversion
     model.q(:,1)      = model.q0;
-    model.q(:,2)      = model.q0;
     model.xe(:,1)     = k(model.q0, params);
     model.r0CoMg(:,1) = rCoM(model.q0,params);
     model.mode(1)     = params.mode;
-    iGusArms          = deg2rad([105; -10; -30; -30; 10; 105]);
+    iGusArms          = deg2rad([105; -15; -100; -100; 15; 105]);
 
     % +-+-+-+-+-+-+-+-+-+-+-+
     ROBOT_FRAME = figure(1);
