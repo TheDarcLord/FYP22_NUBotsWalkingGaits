@@ -104,27 +104,54 @@ clc
     % Initialise variables
     Q        = model.glbTrj;                   % Q:         [x y z]ᵀ
     Qstep    = zeros(6,length(model.glbTrj));  % Qstep:     [xe]
-    r        = (params.HipWidth/2) + 0.05;     % Radius of Circle + shim
+    r        = (params.HipWidth/2) + 0.03;     % Radius of Circle + shim
     STEP     = params.mode;              % DEFINE MODE:  1 RIGHT Step 
                                          %              -1 LEFT  Step
     accuDist        = 0;                 % Accumulated Distance
     model.pREF(:,1) = Q([1 3],1);        % Last Foot Step -> TrajStartPoint
     A               = model.glbTrj(:,1); % A = [x₁ y₁ z₁]ᵀ
-    t_begin         = 2;                 % Index of Step Beginning
+    t_init          = 1;                 % Initialise Index
     model.TBE       = eye(4);            % HomoTrans: Base -> End Effector
     for i=2:length(model.tspan)
         tic
         accuDist = accuDist + norm(Q(:,i-1) - Q(:,i));
-        if accuDist > params.StepLength || i == length(Q)
-            % TAKING STEP
-            t_end           = i;       % Index of Step Ending
-            params.mode     = STEP;    % Mode
-            j               = t_begin; % `j` runs the step
-            model.xe(:,j)   = k(model.q(:,j), params); % Update Xe
-            
-            A = updateCoord(model.TBE, A);
 
-            for u=t_begin:length(model.tspan)
+        if accuDist > params.StepLength || i == length(Q)
+            % STEP TIME INDEXES
+            t_run              = t_init + 1;   % `j` runs the step
+            t_end              = i;            % Index of Step Ending
+            params.mode        = STEP;         % Mode
+            model.xe(:,t_init) = k(model.q(:,t_init), params); % Update Xe
+            
+            % DESIGN STEP
+            B = model.glbTrj(:,i);
+            M = gradFUNC(A([1 3]),B([1 3]));
+            % Right (+) & Left (-)
+            model.pREF(:,i) = B([1 3]) + STEP*[M*r*sqrt(1/(1+M^2)); ...
+                                                -r*sqrt(1/(1+M^2))];
+
+            % GENERATE STEP TRAJECTORY
+            Qstep(:,t_run:t_end) = trajGenStep(model.xe(:,t_init), ...
+                                               model.pREF(:,t_end), ...
+                                               t_run:t_end, ...
+                                               model,params);
+
+            DEBUG(t_init,t_init,t_end,Qstep,model,params);
+
+            for j=t_run:t_end
+                jNEG            = j - 1;
+                xeSTAR          = Qstep(:,j);
+                model.mode(:,j) = params.mode;
+                model.q(:,j)    = k_Inv(model.q(:,jNEG), ... q0
+                                                 xeSTAR, ... xe*
+                                                 j, model, params);
+               [model.xe(:,j), model.TBE] = k(model.q(:,j), params);
+                model.r0CoMg              = rCoM(model.q(:,j),params);
+                
+                DEBUG(j,t_run,t_end,Qstep,model,params);
+            end
+
+            for u=t_init:length(model.tspan)
                 % UPDATE: Global Trajectory to End Effector Coords
                 model.glbTrj(:,u) = ...
                     updateCoord(model.TBE, model.glbTrj(:,u));
@@ -134,36 +161,12 @@ clc
                 model.pREF(:,u) = tmpREF([1 3]);
             end
 
-            B = model.glbTrj(:,i);
-            M = gradFUNC(A([1 3]),B([1 3]));
-            % Right (+) & Left (-)
-            model.pREF(:,i) = B([1 3]) + STEP*[M*r*sqrt(1/(1+M^2)); ...
-                                                -r*sqrt(1/(1+M^2))];
-
-            % GENERATE STEP TRAJECTORY
-            Qstep(:,t_begin:t_end) = trajGenStep(model.xe(:,j), ...
-                                       model.pREF(:,t_end), ...
-                                       t_begin:t_end, ...
-                                       model,params);
-
-            for j=t_begin:t_end
-                jn = j - 1;
-                model.mode(:,j)     = params.mode;
-                xeSTAR = Qstep(:,j);
-                model.q(:,j)  = k_Inv(model.q(:,jn), ...
-                                        xeSTAR, j, model, params);
-                [model.xe(:,j), model.TBE] = k(model.q(:,j), params);
-                DEBUG(j,t_begin,t_end,Qstep,model,params);
-            end
-
             % CLEAN UP
             STEP      = STEP * -1;
             accuDist  = 0;
-            A         = B;
-            t_begin   = t_end - 1;
+            A         = model.glbTrj(:,i);
+            t_init    = t_end;
             toc
-        else
-            model.pREF(:,i) = model.pREF(:,i-1);
         end
     end
 
@@ -181,7 +184,7 @@ clc
     ylabel('{\bfX} (metres)');
     zlabel('{\bfY} (metres)');
 
-    for i=1:t_end
+    for i=1:length(model.tspan)
         cla(ROBOT_FRAME)
         params.mode = model.mode(i);
         [~] = plotRobot(i,model,params);
