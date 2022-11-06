@@ -147,20 +147,41 @@ path and orientation of the end effector from the inital step time, to the final
     \end{bmatrix}
 \end{equation}
 
-\subsubsection*{Implementation}
+\subsubsection*{Implementation of 3D Quasistatic Locomotion}
+
+In three dimensions a global trajectory was introduced in order to evaluate Algorithm \ref{alg:Glb2Fts}, as 
+well as the quasistatic locomotion. The chosen trajectory is a sinusoid with parameters found in \eqref{eq:3DQS_TRJ}.
 
 \begin{equation}\label{eq:3DQS_TRJ}
     \begin{aligned}
         \lambda &= 2                        \\
-        \dot{x} &= 0.2                      \\
+        \dot{x} &= 0.025                    \\
         A &= 0.25                           \\
         f &= \dot{x} \lambda^{-1}           \\
         \omega &= 2 \pi f                   \\
-        \mathbf{Q}(t) &= \begin{bmatrix}
+        \mathbf{Q}(t) &= \mathbf{r}_{CoM} + 
+        \begin{bmatrix}
             \dot{x}t & 0 & A \cdot sin(\omega t) 
         \end{bmatrix}^{\top}
     \end{aligned}
 \end{equation}
+
+The wavelength, $\lambda$, is two metres, while the target axial velocity is $0.025 ms^{-1}$, and the 
+amplitude of the sine wave is $0.25$ metres. This yielded frequency $f$, and angular velocity, $\omega$, 
+as seen above. The floor projected CoM position, $\mathbf{r}_{CoM}$, was added so the final 
+time iterated trajectory would begin from the centre of the robot.
+
+The model for the robot itself, [UPDATE MODELS], was initialised with the joint value vector:
+
+\begin{equation}
+    \mathbf{q_0} = [-0.305, \: -\frac{\pi}{12}, \: \frac{\pi}{6}, \: -\frac{\pi}{12}, \: 0.305, \: 0,
+    0, \: 0.305, \: \frac{\pi}{12}, \: -\frac{\pi}{6}, \: \frac{\pi}{12}, \: -0.305]^\top .
+\end{equation}
+
+The right foot was chosen as the global origin, and thus the left foot was designated the as 
+the inital $End$ $Effector$. Finally, the system frequency was chosen as $40 Hz$, and the simulation
+time, $25$ seconds. The resulting initialised robot is presented in figure \ref{fig:3DQS_init}.
+Immediately evident is the partial sine wave trajectory, in black, beginning from the floor projected CoM.
 
 \begin{figure}[!h]
     \begin{center}
@@ -169,6 +190,11 @@ path and orientation of the end effector from the inital step time, to the final
         \label{fig:3DQS_init}
     \end{center}
 \end{figure}
+
+To run the model, a modified version of Algorithm \ref{alg:Glb2Fts} was used. 
+Algorithm \ref{alg:3DalgSimp} ...
+
+\input{_content/30_quasiStatic/Alg3D_model.txt}
 
 \begin{figure}[!h]
     \begin{center}

@@ -1,7 +1,7 @@
 %% UPDATED
 \begin{algorithm}[h!]
     \caption{Global Trajectory to Footsteps}\label{alg:Glb2Fts}
-        \begin{algorithmic}
+        \begin{algorithmic}[1]
             \State $    r                       \gets \frac{1}{2} \cdot \text{HipWidth} + \text{Shim}   $
             \State $    \mathbf{Q}_{2 \times N} \gets \text{Trajectory}                                 $   \Comment{Columns of $\vec{r}_{(x,y)}$}
             \State $    \mathbf{REF}            \gets \mathbf{0}_{2 \times N}       $

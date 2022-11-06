@@ -1,7 +1,7 @@
 %% UPDATED
 \begin{algorithm}[h!]
     \caption{Localised Trajectory to Footsteps}\label{alg:Loc2Fts}
-        \begin{algorithmic}
+        \begin{algorithmic}[1]
             \State $    r                       \gets \frac{1}{2} \cdot \text{HipWidth} + \text{Shim}       $
             \State $    \mathbf{Q}_{2 \times N} \gets \text{Trajectory}                                     $   \Comment{Columns of $\vec{r}_{(x,y)}$}
             \State $    \mathbf{T^{B}_{E}}      \gets \mathbf{I}_{4 \times 4}                               $   \Comment{Transform from $Base$ to $End \: Effector$}
