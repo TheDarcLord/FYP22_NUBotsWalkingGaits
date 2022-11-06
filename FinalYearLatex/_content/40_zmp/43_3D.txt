@@ -60,18 +60,19 @@ ZMP trajectory, $\mathbf{y_d}$, from above.
 \end{figure}
 
 Figure \ref{fig:matLIPM50b} demonstrates the impact of the aforementioned overshoot. In addition,
-there is evidence of integral windup in the achieved ZMP trajectory. This is most apparent in the lower
+there is evidence of some nonlinear behaviour in the achieved ZMP trajectory. On closer inspection
+of the figure, it is evident that this behaviour worsens with time. This is most apparent in the lower
 half of figure \ref{fig:matLIPM50b} as the ZMP trajectory, in blue, deteriorates from an initially
 linear path between ZMP reference footsteps.
 
-Doubling the system frequency significantly reduces ZMP error. This is evident in Figure \ref{fig:matLIPM100a},
+Doubling the system frequency significantly reduces the ZMP error. This is evident in Figure \ref{fig:matLIPM100a},
 which depicts the exactly the same model, run with the with the same time horizon, at double the frequency.
 Overshoot is evident along the $Z$ and $X$ axes too, however it has been substantially reduced following the 
 change in system frequency.
 
 \begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_100hz1sec.eps}
+        \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_200hz1sec.eps}
         \caption{Inverted Pendulum Model $\mathbf{y_d}$ vs $\mathbf{y_d^*}$, at 100Hz}\label{fig:matLIPM100a}
     \end{center}
 \end{figure}
@@ -83,11 +84,9 @@ can be reduced to allow the controller to make more violent control actions.
 
 \begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_100hz1sec_BIRD.eps}
+        \includegraphics[width=.95\linewidth]{_content/40_zmp/LIPM/LIPM_200hz1sec_BIRD.eps}
         \caption{Inverted Pendulum Model view from above, at 100Hz}\label{fig:matLIPM100b}
     \end{center}
 \end{figure}
-
-
 
 \subsubsection*{Robot ZMP}
