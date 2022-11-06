@@ -84,7 +84,7 @@ product of $\vec{TJ}^{B}_{t}$ and $\vec{AB}_b(\mathbf{q})$ was added to the two 
 If this was implemented as a nonlinear constraint the optimal array of joints values, $\mathbf{q^*}$,
 immediately following $\mathbf{q_0}$ would result in an instantaneous torque about the $Y$ axis.
 Thus to orientate the waist of the robot such that it is perpendicular to $\mathbf{Q}(t)$ the IKM
-becomes equation \ref{eq:3D_ikm}. The higher weights of $\mathbf{K_{tj}}$ result in an initial
+becomes equation \eqref{eq:3D_ikm}. The higher weights of $\mathbf{K_{tj}}$ result in an initial
 angular velocity of the torso about the $Y$ axis, however, this angular velocity immediately 
 decelerates to the angular velocity of the trajectory about the $Y$ axis.
 
@@ -100,7 +100,7 @@ decelerates to the angular velocity of the trajectory about the $Y$ axis.
 
 \subsubsection*{Footstep Trajectory Generation}
 In three dimensions the method for generating a trajectory for the end effector, the stepping foot,
-is largely the same as the two dimensional method, found in equation \ref{eq:2D_pos}. 
+is largely the same as the two dimensional method, found in equation \eqref{eq:2D_pos}. 
 In order to traverse an arbitrary trajectory, $\mathbf{Q}(t)$, the rotation of the end effector
 about the base $Y$ axis must be updated to be parallel with $\mathbf{Q}(t_{f})$, where
 $t_f$ is the time instant at which the end effector returns to the ground. Figure \ref{fig:3D_angTraj}
@@ -119,14 +119,14 @@ $\mathbf{r}_{(t_f-1)}\, \to \,\mathbf{r}_{(t_f)}$ the $atan2(\nabla,1)$ function
 However, as the `toe' of the robot's foot is defined along $X$ axis of the end effector, $X_{e}$,
 the priority was ensuring that $X_{e}$ was parallel to the line segment 
 $\mathbf{r}_{(t_f-1)}\, \to \,\mathbf{r}_{(t_f)}$. Thus, the desired yaw angle of the end effector 
-about $Y_b$ is $atan2(-(\nabla)^{-1},1)$. This lead to equation \ref{eq:aTan}, 
+about $Y_b$ is $atan2(-(\nabla)^{-1},1)$. This lead to equation \eqref{eq:aTan}, 
 which defines the yaw angle of the end effector at $t_{f}$.
 
 \begin{equation}\label{eq:aTan}
     \theta_{t_f} = atan2(-\frac{(z_{t_f} - z_{t_{t_{f} - 1} })}{(x_{t_f} - x_{t_{t_{f} - 1} })},1)
 \end{equation}
 
-Thus equation \ref{eq:2D_qt} was extended to form equation \ref{eq:3D_qt} which defines the 
+Thus equation \eqref{eq:2D_qt} was extended to form equation \eqref{eq:3D_qt} which defines the 
 path and orientation of the end effector from the inital step time, to the final step time.
 
 \begin{equation}\label{eq:3D_qt}
@@ -148,3 +148,40 @@ path and orientation of the end effector from the inital step time, to the final
 \end{equation}
 
 \subsubsection*{Implementation}
+
+\begin{equation}\label{eq:3DQS_TRJ}
+    \begin{aligned}
+        \lambda &= 2                        \\
+        \dot{x} &= 0.2                      \\
+        A &= 0.25                           \\
+        f &= \dot{x} \lambda^{-1}           \\
+        \omega &= 2 \pi f                   \\
+        \mathbf{Q}(t) &= \begin{bmatrix}
+            \dot{x}t & 0 & A \cdot sin(\omega t) 
+        \end{bmatrix}^{\top}
+    \end{aligned}
+\end{equation}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.8\linewidth]{_content/30_quasiStatic/3D/figQS_init.png}
+        \caption{ CAPTION }
+        \label{fig:3DQS_init}
+    \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.8\linewidth]{_content/30_quasiStatic/3D/figQS_traj.png}
+        \caption{ CAPTION }
+        \label{fig:3DQS_traj}
+    \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.8\linewidth]{_content/30_quasiStatic/3D/figQS_action.png}
+        \caption{ CAPTION }
+        \label{fig:3DQS_action}
+    \end{center}
+\end{figure}

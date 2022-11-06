@@ -1,7 +1,7 @@
 \subsubsection*{Homogeneous transforms}
 
 Homogenous transforms consist of a rotation, ${R}^{a}_{b}$, and a translation, 
-$\mathbf{r}^{a}_{b}$, between two coordinate systems. Equation \ref{eq:HT} is interpreted
+$\mathbf{r}^{a}_{b}$, between two coordinate systems. equation \eqref{eq:HT} is interpreted
 as \emph{from $a$, where is $b$}.
 \begin{equation}\label{eq:HT}
     \mathbf{A}^{a}_{b} = \begin{bmatrix}

@@ -7,7 +7,7 @@ result in the function's maximum or minimum value. [cite numerical optimisation]
 \end{equation}
 
 An objective function is proposed as `$\mathbf{x}^{*}$ \emph{is equal to the 
-argument of the minimum value of} $f(\mathbf{x})$'. Equation \ref{eq:optimisation} is 
+argument of the minimum value of} $f(\mathbf{x})$'. equation \eqref{eq:optimisation} is 
 the mathematical notation for this statement, where $\mathbf{x}^{*}$ is the optimal column 
 matrix that minimises $f(\mathbf{x})$. The objective function can also be subject to equality and 
 inequality constraints of the form;

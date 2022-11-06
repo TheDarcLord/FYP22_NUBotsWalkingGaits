@@ -19,7 +19,7 @@ that friction holds the foot in place is retained. These simplifications yield e
 $\mathbf{A}$ intersecT with the ground, becoming the fulcrum of the pendulum. 
 $R_{y}$ balances $F_{\mathbf{A}y}$ and thus $R_{y} = mg$, where $m$ is the mass of the robot. 
 As the horizontal componenT of $\mathbf{F_{A}}$ are balanced by the horizontal friction componenT 
-of $\mathbf{R_{xyz}}$, equation \ref{eq:simpZMP} can be solved for the $\mathbf{ZMP}(p_x,p_z)$ as follows:
+of $\mathbf{R_{xyz}}$, equation \eqref{eq:simpZMP} can be solved for the $\mathbf{ZMP}(p_x,p_z)$ as follows:
 
 \begin{align}
     p_x &= \frac{\tau_z}{mg}   \label{eq:zmpx} \\
@@ -68,14 +68,14 @@ $X$ and $Z$ axes. If this ZMP is within the support polygon it is assumed that t
 
 The previous equations return the ZMP as the output, when instead the aim is drive the CoM of 
 the robot as a function of the ZMP. To achieve this an input, $\mathbf{u}$, is defined as the 
-time derivative of the acceleration of the CoM, seen in equation \ref{eq:jerk}.
+time derivative of the acceleration of the CoM, seen in equation \eqref{eq:jerk}.
 
 \begin{equation}\label{eq:jerk}
     \frac{d}{dt} \: \mathbf{\ddot{x}} = \begin{bmatrix} u_x \\ u_z \end{bmatrix}
 \end{equation}
 
 Given this input, the dynamics of the pendulum can be converted to a strictly proper,  
-state space representation \citep{kajita_2003_biped}, given by the equation \ref{eq:LIPM_stateCT}.
+state space representation \citep{kajita_2003_biped}, given by the equation \eqref{eq:LIPM_stateCT}.
 
 \begin{equation}\label{eq:LIPM_stateCT}
     \begin{split}
@@ -133,10 +133,10 @@ state space representation \citep{kajita_2003_biped}, given by the equation \ref
     \end{split}
 \end{equation}
 
-The continuous time system, equation \ref{eq:LIPM_stateCT}, must be discretized with sampling 
+The continuous time system, equation \eqref{eq:LIPM_stateCT}, must be discretized with sampling 
 time $T$, as the robot model is simulated in discrete time. Additionally, implementation in MatLab
 on on the robot itself requires that the system be discretized.
-The discrete time model is of the form found in equation \ref{eq:LIPM_stateDT}. 
+The discrete time model is of the form found in equation \eqref{eq:LIPM_stateDT}. 
 
 \begin{equation}\label{eq:LIPM_stateDT}
     \begin{split}
@@ -151,7 +151,7 @@ The discrete time model is of the form found in equation \ref{eq:LIPM_stateDT}.
         \mathbf{u}(k) &= [u_x(kT) \:\: u_z(kT)]^\top  \\
     \end{split}
 \end{equation}
-Matrices $\mathbf{A_d}$ and $\mathbf{B_d}$ are found in equation \ref{eq:LIPM_discrete}, 
+Matrices $\mathbf{A_d}$ and $\mathbf{B_d}$ are found in equation \eqref{eq:LIPM_discrete}, 
 while matrix $\mathbf{C_d}$ is equal to $\mathbf{C}$ which 
 is found in \ref{eq:LIPM_stateCT}.
 

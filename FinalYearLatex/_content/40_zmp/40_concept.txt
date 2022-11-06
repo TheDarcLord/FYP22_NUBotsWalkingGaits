@@ -30,15 +30,15 @@ balanced by the moment of friction forces, in the $XZ$ plane, about the $Y$ axis
 Additionally horizontal reaction forces at point $\mathbf{P}$, $R_x$ and $R_z$, must balance
 the horizontal components of $\mathbf{F_{A}}$. These horizontal reactions
 are also a result of friction between the support polygon and the ground. Thus for the 
-system to be in equilibrium the sum of forces at the base coordinate system, equation \ref{eq:ZMPF}, 
-and the sum of moments about the base coordinate system, equation \ref{eq:ZMPM},  must be zero.
+system to be in equilibrium the sum of forces at the base coordinate system, equation \eqref{eq:ZMPF}, 
+and the sum of moments about the base coordinate system, equation \eqref{eq:ZMPM},  must be zero.
 
 \begin{align}
     \mathbf{0}  &= \mathbf{F_{A}}                   + \mathbf{R_{xyz}}                  + {\begin{bmatrix} 0 \\ -m_{f}g \\ 0 \end{bmatrix}}                                     \label{eq:ZMPF}        \\
     \mathbf{0}  &= \vec{BA} \times \mathbf{F_{A}}   + \vec{BP} \times \mathbf{R_{xyz}}  + \vec{BG} \times {\begin{bmatrix} 0 \\ -m_{f}g \\ 0 \end{bmatrix}} - \mathbf{M_{A}}    \label{eq:ZMPM}        \\
 \end{align}
 
-If the base coordinate system is located at the CoM of the foot equation \ref{eq:ZMPM} is 
+If the base coordinate system is located at the CoM of the foot equation \eqref{eq:ZMPM} is 
 reduced to equation \label{eq:ZMP_M2}.
 
 \begin{equation}
@@ -55,7 +55,7 @@ all that remains is the vertical component, and thus it can be clearly seen that
     \end{center}
 \end{figure}
 
-As $R_y$ is constant the only way to balance either equation \ref{eq:ZMPM} or equation \ref{eq:ZMP_M2} is by
+As $R_y$ is constant the only way to balance either equation \eqref{eq:ZMPM} or equation \eqref{eq:ZMP_M2} is by
 shifting the position of $\mathbf{P}$. This is clearly seen in Figure \ref{fig:ZMP2}, which is the orthogonal view 
 of the Figure \ref{fig:ZMP1}. On the left, (A), it is evident that shifting $R_y$ in $X$ is the only approach available
 to balance the sum of moments about $Z$. On the right, (B), it is evident that shifting $R_y$ in $Z$ is the only 

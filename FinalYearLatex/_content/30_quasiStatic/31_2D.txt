@@ -7,7 +7,7 @@ found to be invaluable when moving to three dimensions.
 \subsubsection*{Two Dimensional Inverse Kinematic Model}
 
 The two dimensional inverse kinematic Model (IKM) is a quadratic optimisation function solving for the 
-array of joint variables, $\mathbf{q}$, that minimise the equation \ref{eq:2D_ikm}. Weights, 
+array of joint variables, $\mathbf{q}$, that minimise the equation \eqref{eq:2D_ikm}. Weights, 
 $\mathbf{K_q}$, $\mathbf{K_e}$, and $\mathbf{K_{CoM}}$, penalise the change in joint variables, the
 end effector error and the displacement of the ground projected CoM from the centre of the support polygon.
 
@@ -57,7 +57,7 @@ was necessary to return the foot to the ground within the desired time period.
     \end{bmatrix}
 \end{equation}
 
-The indefinite integral of equation \ref{eq:2D_accel} is $\mathbf{\dot r}(t) + \mathbf{b}$, 
+The indefinite integral of equation \eqref{eq:2D_accel} is $\mathbf{\dot r}(t) + \mathbf{b}$, 
 where $\mathbf{b}$ is some unknown constant. At time $\frac{1}{2}(t_i + t_f)$, halfway along
 the trajectory, the $y$ component of $\mathbf{\dot r}(t)$ must be zero, ceasing the foot's vertical 
 velocity. Concurrently, the $x$ component of $\mathbf{\dot r}(t)$ is $0 + b_{x}$ and thus $b_{x}$
@@ -73,7 +73,7 @@ was set to the average velocity.
     \end{bmatrix}
 \end{equation}
 
-Equation \ref{eq:2D_vel} was indefinitely integrated to yield $\mathbf{r}(t) + \mathbf{c}$, where 
+equation \eqref{eq:2D_vel} was indefinitely integrated to yield $\mathbf{r}(t) + \mathbf{c}$, where 
 $\mathbf{c}$ is some unknown constant.
 The $y$ component of the trajectory contains three unknown variables, $a_{y}$, $b_{y}$ and $c_{y}$.
 As the robot is stepping along the plane $y = 0$, it is evident that $c_{y} = 0$. To solve the remaining 
@@ -84,10 +84,10 @@ the trajectory.
     y_{d} = -\frac{1}{2} a_{y} (\frac{1}{2}(t_i + t_f))^{2} + b_{y} \, (\frac{1}{2}(t_i + t_f))
 \end{equation}
 
-Substituting $b_{y} = a_{y}(\frac{1}{2}(t_i + t_f))$ into equation \ref{eq:2D_solve}
+Substituting $b_{y} = a_{y}(\frac{1}{2}(t_i + t_f))$ into equation \eqref{eq:2D_solve}
 yields the coefficients $a_{y}$ and $b_{y}$. As the $x$ component of the trajectory must equal 
 the $x$ component of the inital position at time $t_i$, it follows that $c_{x} = x_i$.
-This lead to equation \ref{eq:2D_pos} which paramterises the path of a stepping foot as
+This lead to equation \eqref{eq:2D_pos} which paramterises the path of a stepping foot as
 a function of time.
 
 \begin{equation}\label{eq:2D_pos}
@@ -131,7 +131,7 @@ with the steps at 0, 8 and 16 seconds. The width of the support polygon was chos
 
 To shift between kinematic chains, a parameter called $STEP$ was established. $STEP$ took values of $-1$ or $1$ depending on 
 which foot to be in motion. This 
-approach was based on the relationship between the dual kinematic chains, as seen in equation \ref{eq:STEP}.
+approach was based on the relationship between the dual kinematic chains, as seen in equation \eqref{eq:STEP}.
 
 \begin{equation}\label{eq:STEP}
     (\mathbf{T}^{Left}_{Right})^{1} = (\mathbf{T}^{Right}_{Left})^{-1}
@@ -144,7 +144,7 @@ the kinematic chains within the FKM function. The position of the left sole, and
 global two dimensional arrays, as seen in algorithm \ref{alg:2D_run}. \\
 
 The trajectory followed by each step was designed using 
-equation \ref{eq:2D_pos}. Rather than a dedicated, parallel kinematic chain and IKM to shift the CoM between steps, 
+equation \eqref{eq:2D_pos}. Rather than a dedicated, parallel kinematic chain and IKM to shift the CoM between steps, 
 the step duration was halved during step trajectory generation algorithm. 
 The inital half of the step time period was used to shift the CoM to the fixed foot, while the remainder
 stepped the foot. This was achieved by populating the first half of the trajectory matrix, $\mathbf{Q}$, with the 
@@ -154,11 +154,11 @@ its initial position for half the time period of the step, while the CoM shifted
 
 \input{_content/30_quasiStatic/AlgTrajgen.txt}
 
-It should be noted that algorithm \ref{alg:2D_trajGen} drops the $t_i$ term from equation \ref{eq:2D_pos}, and 
+It should be noted that algorithm \ref{alg:2D_trajGen} drops the $t_i$ term from equation \eqref{eq:2D_pos}, and 
 generates a parabolic trajectory from an initial time of zero, to the final time $+t_d$. This trajectory
 is then shifted to the the second half of the step time period using $\mathbf{TT}$.
 
-The IKM was a direct implementation of equation \ref{eq:2D_ikm} and nonlinear constraint \ref{eq:2D_ineq}, 
+The IKM was a direct implementation of equation \eqref{eq:2D_ikm} and nonlinear constraint \ref{eq:2D_ineq}, 
 with weights found in equations \ref{eq:2D_w2} to \ref{eq:2D_w3}. The large penalty associated with the end effector error, $\mathbf{K_e}$,
 forces the solver to primarily satisfy the pose of the end effector.
 The initial value passed to the numerical solver at each time index,

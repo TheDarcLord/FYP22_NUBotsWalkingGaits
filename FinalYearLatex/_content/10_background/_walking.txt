@@ -11,7 +11,7 @@ by the total mass of the system.
     \vec{r_{CoM}} = \frac{ \sum\limits_{i=1}^{i=N} m_{i} \, \vec{r_i} } { \sum\limits_{i=1}^{i=N} m_{i} }
 \end{equation}
 
-Figure \ref{fig:CoM} presents a physical representation of equation \ref{eq:CoM}, with the symbol pointed to
+Figure \ref{fig:CoM} presents a physical representation of equation \eqref{eq:CoM}, with the symbol pointed to
 by $\vec{r_{CoM}}$ representing the resulting CoM.
 
 \begin{figure}[h!]

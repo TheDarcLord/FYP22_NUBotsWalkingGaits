@@ -17,7 +17,7 @@ the constraint plane is a pale red.
     \end{center}
 \end{figure}
 
-The arbitrary trajectory chosen is a sinusoidal function of time, set out in equation \ref{eq:LIPM_TRJ}, 
+The arbitrary trajectory chosen is a sinusoidal function of time, set out in equation \eqref{eq:LIPM_TRJ}, 
 and is represented in black. The initial $ZMP(x,z)$, which is the first value of $\mathbf{y_d}$, is at the origin.
 This is seen in figure \ref{fig:matLIPM} as the blue cross.
 
