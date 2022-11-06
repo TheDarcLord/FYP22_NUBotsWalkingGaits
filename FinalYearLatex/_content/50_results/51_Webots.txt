@@ -1,4 +1,19 @@
-Webots Frames with MatLab reference
+Webots Frames
 
 Model used, derived from OnShape Igus Model 
 Differing Mass ... No Impact. 
+
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/50_results/40Hz_QS.png}
+        \caption{40Hz WeBots Quasistatic}\label{fig:Res_QS}
+    \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/50_results/200Hz_ZMP.png}
+        \caption{200Hz WeBots Zero Moment Point}\label{fig:Res_QS}
+    \end{center}
+\end{figure}

@@ -2,3 +2,18 @@ Started:        Igus model     -> Webots
 1st Model:      Different materials to Igus -> Heavier 7kg, Plastic Legs
 Upgrade:        Metal Legs -> Less Weight -> Change to geometry by mistake -> MatLab Model tuned to fit
 2nd Upgrade:    New Metal Legs in the works to return to original geometry
+
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/50_results/WebotsVReal_stable.png}
+        \caption{Geometry}\label{fig:Res_QS}
+    \end{center}
+\end{figure}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.95\linewidth]{_content/50_results/WebotsVReal_stableToo.png}
+        \caption{CoM}\label{fig:Res_QS}
+    \end{center}
+\end{figure}
