@@ -11,7 +11,6 @@
             \State $    \mathbf{REF}_{[:,1]}    \gets \vec{A}                       $
 
             \For {$ i \gets 2$  $\mathbf{to}$ $N$}
-                \State
                 \State $ \text{Sum} \gets \text{Sum} + \| \, \mathbf{Q}_{[:,i-1]} - \mathbf{Q}_{[:,i]} \, \|  $
                 \If {$\text{Sum} \geq \text{StepSize} $ $\mathbf{OR}$ $i = N$}
                     \State $    \vec{B}              \gets \mathbf{Q}_{[:,i]}           $
@@ -23,7 +22,6 @@
                 \Else
                     \State $    \mathbf{REF}_{[:,i]} \gets \mathbf{REF}_{[:,i - 1]}     $
                 \EndIf
-                \State
             \EndFor
         \end{algorithmic}
 \end{algorithm}
