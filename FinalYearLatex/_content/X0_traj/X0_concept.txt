@@ -43,16 +43,16 @@ substituted back into the equation to yield:
 
 The coordinates $(X_{DE \cap C},Y_{DE \cap C})$ form two possible footstep positions differing only 
 in the sign of the component added to $B_{(x,y)}$.
-\newline
+
+\input{_content/X0_traj/X0_AlgA.txt}
+
 The distance accumulated up until the the generation of $(X_{DE \cap C},Y_{DE \cap C})$, is then reset.
 Point $A$ then takes the value of $B$, before then returning to the process of iterating along the 
 trajectory until, again, the magnitude of footstep is reached. Equations \ref{eq:TRJ_X} and \ref{eq:TRJ_Y} are
 then applied to a new value of $B_{(x,y)}$ to yield a second pair of footstep positions. This process of 
 iterating along the trajectory, and generating footsteps, continues until the trajectory's end, where 
 the process iss repeated once more with $B_{(x,y)} = \mathbf{Q}(t)_{(:,n)}$. This procedure is described below in
-algorithm \ref{alg:Glb2Fts}.
-
-\input{_content/X0_traj/X0_AlgA.txt}
+Algorithm \ref{alg:Glb2Fts}.
 
 Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory and following
 algorithm \ref{alg:Glb2Fts} produces the series of footsteps seen in figure \ref{fig:TRJ_Sign}. Notice 
@@ -83,12 +83,14 @@ in sign of the roots of equation \eqref{eq:TRJ_Quad}.
     \end{center}
 \end{figure}
 
-\input{_content/X0_traj/X0_AlgB.txt}
+
 
 To resolve this, rather than tracking and updating the location of the $Base$ of the FKM and the location of 
 the $End$ $Effector$ with a pair of global variables, it is assumed that the base of fixed foot is at the origin. 
 Thus, the robot is now defined in terms of a local coordinate system. Algorithm \ref{alg:Glb2Fts} is then modified
 to update every point along the global trajectory, $\mathbf{Q}(t)$.
+
+\input{_content/X0_traj/X0_AlgB.txt}
 
 The variable $\mathbf{T^{B}_{E}}$ is initialised as $\mathbf{I}_{4 \times 4}$, and is used to hold 
 the homogenous transform that describes the relationship between the $Base$ and the $End$ $Effector$.
@@ -98,12 +100,12 @@ along the trajectory, and position of the $End$ $Effector$. This transforms the 
 the coordinates of the $End$ $Effector$, following the completion of a step, as this becomes the origin, the $Base$,
 of the kinematic chain in preparation for the next step. This idea is borrowed directly from Kajita 
 \citep{kajita_2003_biped}, and is presented as algorithm \ref{alg:Loc2Fts}.
-\newline
+
 Algorithm \ref{alg:Glb2Fts} works sufficiently for simple trajectories that do not result in the 
 robot turning beyond $\pm \frac{\pi}{2}$ about a global $Z$ axis, while algorithm \ref{alg:Loc2Fts} works for any 
 trajectory. Both methods are ideal for statically stable locomotion, however, must be modified further
 in order to work with dynamically stable approaches to locomotion.
-\newline
+
 Given the global trajectory, $\mathbf{Q}(t)$, is a function of time the variable $\mathbf{REF}$ is also a 
 function of time. During execution in discrete time, these two geometric objects are iterated through 
 along with time. Thus this proposed method generates a footstep trajectory. To the best of the author's 
