@@ -243,12 +243,12 @@ the sinusoidal trajectory by the robot.
     \end{center}
 \end{figure}
 
-Figure \ref{fig:3DQS_waist} depicts the orientatation of the robot's waist with respect to
+Figure \ref{fig:3DQS_waist} depicts the orientation of the robot's waist with respect to
 the sinusoidal trajectory. Initially, it is clearly seen that the waist is aligned with the $Z$ axis.
 However, as progress is made along the trajectory, it is evident that the waist component
 of the IKM, seen in equation \eqref{eq:3D_ikm}, is satisfied.
  
-Finally, figure \ref{fig:3DQS_action} proves the success of this quasistatic locomotion implementation.
+Figure \ref{fig:3DQS_action} proves the success of this quasistatic locomotion implementation.
 In pink, the path of the CoM quite clearly starts from the bounds of a former left foot support polygon during
 a step by th right foot. It then converges to the centre of the right foot support polygon prior to 
 the left foot leaving the ground. Finally, it clearly begins to creep forward as the left foot continues
