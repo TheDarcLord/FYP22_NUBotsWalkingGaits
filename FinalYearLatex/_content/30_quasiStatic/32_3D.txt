@@ -185,3 +185,11 @@ path and orientation of the end effector from the inital step time, to the final
         \label{fig:3DQS_action}
     \end{center}
 \end{figure}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=.8\linewidth]{_content/30_quasiStatic/3D/figQS_waist.png}
+        \caption{ CAPTION }
+        \label{fig:3DQS_waist}
+    \end{center}
+\end{figure}
