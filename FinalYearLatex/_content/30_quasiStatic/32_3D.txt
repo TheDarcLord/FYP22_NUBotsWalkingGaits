@@ -173,9 +173,9 @@ time iterated trajectory would begin from the centre of the robot.
 
 The model for the robot itself, [UPDATE MODELS], was initialised with the joint value vector:
 
-\begin{equation}
-    \mathbf{q_0} = [-0.305, \: -\frac{\pi}{12}, \: \frac{\pi}{6}, \: -\frac{\pi}{12}, \: 0.305, \: 0,
-    0, \: 0.305, \: \frac{\pi}{12}, \: -\frac{\pi}{6}, \: \frac{\pi}{12}, \: -0.305]^\top .
+\begin{equation}\label{eq:3D_JA_INIT}
+    \mathbf{q_0} = [-\frac{5.5\pi}{180}, \: -\frac{\pi}{12}, \: \frac{\pi}{6}, \: -\frac{\pi}{12}, \: \frac{5.5\pi}{180}, \: 0,
+    0, \: \frac{5.5\pi}{180}, \: \frac{\pi}{12}, \: -\frac{\pi}{6}, \: \frac{\pi}{12}, \: -\frac{5.5\pi}{180}]^\top .
 \end{equation}
 
 The right foot was chosen as the global origin, and thus the left foot was designated the as 
