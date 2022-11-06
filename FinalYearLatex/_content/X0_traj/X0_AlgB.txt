@@ -1,35 +1,37 @@
+%% UPDATED
 \begin{algorithm}[h!]
     \caption{Localised Trajectory to Footsteps}\label{alg:Loc2Fts}
         \begin{algorithmic}
-            \State $    r                       \gets \frac{1}{2} \cdot HipWidth    $
-            \State $    \mathbf{Q}_{2 \times N} \gets Trajectory                    $   \Comment{Columns of $\vec{r}_{(x,y)}$}
-            \State $    \mathbf{T^{B}_{E}}      \gets \mathbf{I}_{4 \times 4}       $   \Comment{Transform from $Base$ to $End \: Effector$}
-            \State $    \mathbf{REF}            \gets \mathbf{0}_{2 \times N}       $
-            \State $    Sum                     \gets 0                             $
-            \State $    \vec{A}                 \gets \mathbf{Q}_{[:,1]}            $
-            \State $    STEP                    \gets -1                            $
-            \State $    \mathbf{REF}_{[:,1]}    \gets \vec{A}                       $
-
+            \State $    r                       \gets \frac{1}{2} \cdot \text{HipWidth} + \text{Shim}       $
+            \State $    \mathbf{Q}_{2 \times N} \gets \text{Trajectory}                                     $   \Comment{Columns of $\vec{r}_{(x,y)}$}
+            \State $    \mathbf{T^{B}_{E}}      \gets \mathbf{I}_{4 \times 4}                               $   \Comment{Transform from $Base$ to $End \: Effector$}
+            \State $    \mathbf{REF}            \gets \mathbf{0}_{2 \times N}                               $
+            \State $    \text{Sum}              \gets 0                                                     $
+            \State $    \vec{A}                 \gets \mathbf{Q}_{[:,1]}                                    $
+            \State $    \text{STEP}             \gets -1                                                    $
+            \State $    \mathbf{REF}_{[:,1]}    \gets \vec{A}                                               $
+            \State
             \For {$ i \gets 2$  $\mathbf{to}$ $N$}
-
-                \State $    Sum \gets Sum + \| \, \mathbf{Q}_{[:,i-1]} - \mathbf{Q}_{[:,i]} \, \|       $
-                \If {$Sum \geq StepSize$ $\mathbf{OR}$ $i = N$}
-                    \State $ \mathbf{R^{E}_{B}} \gets (\mathbf{T^{B}_{E}}_{[1\to3, \, 1\to3]})^{\top}   $
-                    \State $ \vec{r_{BE}}       \gets \mathbf{T^{B}_{E}}_{[1\to3,4]}                    $
-
-                    \For {$u \gets i$ $\mathbf{to}$ $N$}
-                        \State $ \mathbf{Q}_{[:,u]} \gets \mathbf{R^{E}_{B}} \cdot ( \mathbf{Q}_{[:,u]} - \vec{r_{BE}} )    $  
-                    \EndFor
-                    \State $    \vec{B}                 \gets \mathbf{Q}_{[:,i]}                                            $
-                    \State $    \mathbf{REF}_{[:,i]}    \gets \vec{B} + STEP \cdot \begin{pmatrix} \nabla_{AB} \cdot r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \\ -r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \end{pmatrix} $
-                    \State $    Sum 	                \gets 0		                    $
-                    \State $    STEP 	                \gets -STEP	                    $
-                    \State $    \vec{A}                 \gets \vec{B}	                $
-                    \State $    \mathbf{T^{B}_{E}}      \gets DKM(\mathbf{q})           $   \Comment{The transform once a step is complete}
+                \State $    \text{Sum} \gets \text{Sum} + \| \, \mathbf{Q}_{[:,i-1]} - \mathbf{Q}_{[:,i]} \, \|  $
+                \If {$\text{Sum} \geq \text{StepSize}$ $\mathbf{OR}$ $i = N$}
+                    \State 
+                    \State $    \vec{B}                 \gets \mathbf{Q}_{[:,i]}                                 $
+                    \State $    \mathbf{REF}_{[:,i]}    \gets \vec{B} + \text{STEP} \cdot \begin{pmatrix} \nabla_{AB} \cdot r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \\ -r \sqrt{{(1+(\nabla_{AB})^2)}^{-1}} \end{pmatrix} $
+                    \State
+                    \State $    \mathbf{T^{B}_{E}}      \gets \text{DKM}(\mathbf{q})                             $
+                    \State $    \mathbf{R^{E}_{B}}      \gets (\mathbf{T^{B}_{E}}_{[1\to3, \, 1\to3]})^{\top}    $
+                    \State $    \vec{r_{BE}}            \gets \mathbf{T^{B}_{E}}_{[1\to3,4]}                     $
+                    \State 
+                        \For {$u \gets i$ $\mathbf{to}$ $N$}
+                            \State $ \mathbf{Q}_{[:,u]} \gets \mathbf{R^{E}_{B}} \cdot ( \mathbf{Q}_{[:,u]} - \vec{r_{BE}} )    $
+                        \EndFor
+                    \State
+                    \State $    \text{STEP} 	        \gets -\text{STEP}	                                $
+                    \State $    \vec{A}                 \gets \mathbf{Q}_{[:,i]}	                        $ \Comment{$\vec{B}$, in essence, after being transformed}
+                    \State $    \text{Sum} 	            \gets 0		                                        $ 
                 \Else
                     \State $    \mathbf{REF}_{[:,i]}    \gets \mathbf{REF}_{[:,i - 1]}  $
                 \EndIf
-
             \EndFor
         \end{algorithmic}
 \end{algorithm}
