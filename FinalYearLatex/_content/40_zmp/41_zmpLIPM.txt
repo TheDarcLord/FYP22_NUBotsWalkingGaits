@@ -135,8 +135,9 @@ state space representation \citep{kajita_2003_biped}, given by the equation \eqr
 
 The continuous time system, equation \eqref{eq:LIPM_stateCT}, must be discretized with sampling 
 time $T$, as the robot model is simulated in discrete time. Additionally, implementation in MatLab
-on on the robot itself requires that the system be discretized.
-The discrete time model is of the form found in equation \eqref{eq:LIPM_stateDT}. 
+or on the robot itself requires that the system be discretized. The system was discretized
+using the forward Euler Method. The complete discrete time model is of the form found in 
+equation \eqref{eq:LIPM_stateDT}.
 
 \begin{equation}\label{eq:LIPM_stateDT}
     \begin{split}
