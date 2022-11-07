@@ -123,8 +123,8 @@ for the CoM of the robot. Thus, the IKM for this approach is as follows;
         &\mathbf{K_{e}}      \lVert  {   k(\mathbf{q}) - \mathbf{x_{e}^*}                           }   \rVert \: + \\
         &\mathbf{K_{CoM}}    \lVert  {   \mathbf{LIPM}(x,y_c,z) - \mathbf{r^{B}_{CoM}}(\mathbf{q})  }   \rVert \: + \\
         &\mathbf{K_{q}}      \lVert  {   \mathbf{q_{0}} - \mathbf{q}                                }   \rVert \: + \\
-        &\mathbf{K_{tj}}     \lVert\:{   (\vec{TJ}^{B}_{(t)})^{\top} \cdot \vec{AB}_b(\mathbf{q})   } \:\rVert
-    \end{split}.
+        &\mathbf{K_{tj}}     \lVert\:{   (\vec{TJ}^{B}_{(t)})^{\top} \cdot \vec{AB}_b(\mathbf{q})   } \:\rVert .
+    \end{split}
 \end{equation}
 
 All these constraints have been discussed in Section \ref{sec:3D_QS}. Note however, that rather than 
@@ -177,7 +177,7 @@ time taken spent processing in preparation for the next step is greater than the
 system, then the algorithm has failed. Thus, the time horizon $Nl$ now has a moderate impact on the 
 the success of implementing this approach to locomotion on a realtime system. For the purpose
 of this report, it is assumed that this processing period, shifting the ZMP preview reference
-forward in time at each increment along the global trajectory, was negligible. 
+forward in time at each increment along the global trajectory, is negligible. 
 
 \subsubsection*{Matlab Simulation Results}
 
@@ -191,7 +191,7 @@ and lowering of the left foot.
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=.8\linewidth]{_content/40_zmp/ZMP/figZMPtrj.png}
-        \caption{ CAPTION }
+        \caption{ Dynamically stable End Effector trajectory }
         \label{fig:ZMP_traj}
     \end{center}
 \end{figure}
@@ -208,19 +208,29 @@ in blue, moves in much the same manner.
     \end{center}
 \end{figure}
  
-Finally, figure \ref{fig:ZMP_action} proves the success of this implementation of 
-dynamically stable locomotion. In green, the path of the achieved ZMP quite clearly starts 
-
-
-It then converges to the centre of the right foot support polygon prior to 
-the left foot leaving the ground. Finally, it clearly begins to creep forward as the left foot continues
-its step. The green trajectory is that of the $End$ $Effector$, which should be reminiscent of figure 
-\ref{fig:3DQS_traj}.
+Figure \ref{fig:ZMP_action} proves the success of this implementation of 
+dynamically stable locomotion. In this instant, both feet are planted on the ground.
+In green, the path of the achieved ZMP is quite clearly traveling towards the right 
+support polygon as the the left foot prepares to take a subsequent step. The path 
+of the LIPM, in pink, oscillates at less than one quarter of the amplitude of the
+ZMP. The trajectory of the $End$ $Effector$ has been omitted for clarity.
 
 \begin{figure}[!h] 
     \begin{center}
         \includegraphics[width=.8\linewidth]{_content/40_zmp/ZMP/figZMPAction.png}
-        \caption{ Zero Moment Point Locomotion. Time period: X - Y seconds}
+        \caption{ Zero Moment Point Locomotion. Time period: 4.235 - 4.855 seconds}
         \label{fig:ZMP_action}
+    \end{center}
+\end{figure}
+
+Lastly, figure \ref{fig:ZMPlipm} depicts the ZMP reference tracking error. The initial overshoot is 
+a consequence of starting with a stationary CoM, as the model must immediately act to accelerate the
+CoM and reach the inital desired ZMP within the right foot support polygon.
+
+\begin{figure}[!h] 
+    \begin{center}
+        \includegraphics[width=.8\linewidth]{_content/40_zmp/ZMP/figZMPlipm.png}
+        \caption{ Zero Moment Point Achieved vs Zero Moment Point Reference}
+        \label{fig:ZMPlipm}
     \end{center}
 \end{figure}
