@@ -11,14 +11,29 @@ girl and a band of four players.
 
 In the 14th century mechanical clocks melded with simple automata, which began a revolution in 
 the powering and design of humanoid automata. This culminated in examples such as Leonardo Da Vinci's 
-Clockwork Knight from the 1490s and Juanelo Turriano's series of praying monks in the 1560s...
+Clockwork Knight \citep{moran_2006_the} from the 1490s and Gianello della Torre's series of praying monks 
+\citep{king_2002_clockwork} in the 1560s.
+
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=.7\linewidth]{_content/00_preamble/intro/_LeoAndMonk.png}
+        \caption{Left: Leonardo da Vinci's humanoid knight automata, Right: One of Gianello della Torre's clockwork praying monks}
+    \end{center}
+\end{figure}
 
 In 17th century Japan, "karakuri" puppets ... more
+
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=.5\linewidth]{_content/00_preamble/intro/_karakuri.jpeg}
+        \caption{19th Century Karakuri, located at the National Museum of Nature and Science, Tokyo.}
+    \end{center}
+\end{figure}
 
 By beginning of the 20th century, automata ... 
 Everywhere ... 
 
-Following World War Two, and the development of the first computer, Colossus, ...
+Following World War Two, and the development of the first computer, Colossus, at Bletchley Park, 
 Humanoid Automata drifted into Humanoid Robotics. The latter being distinguished by the
 capacity to program a Robot for a series of unrelated tasks, while the former is only ever designed 
 to do one.
@@ -27,13 +42,37 @@ Ichiro Kato is credited with the first few walking humanoid robots... 1960s - 70
     WaBot 1
 Miomir Vukobratovic's work leading to...
     WL-10RD
+
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=.7\linewidth]{_content/00_preamble/intro/kato.png}
+        \caption{Left: WABOT-1 the first statically stable walking humanoid \citep{humanoidroboticsinstitutewasedauniversity_2007_humanoid}, Right: WL-10RD the first dynamically stable walking humanoid \citep{takanishilaboratory_2004_biped}}
+    \end{center}
+\end{figure}
+
 Mark Raibert -> Legged Robots that Balance  Spring Loaded Pendulum  \citep{raibert_1986_legged}
+
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=.7\linewidth]{_content/00_preamble/intro/atlas-mid-step.jpeg}
+        \caption{Atlas \citep{bostondynamics_2022_flipping}, from Boston Dynamics.}
+    \end{center}
+\end{figure}
 
  
 Robo Cup -> 2050 Goal 
             -? World underwater by then
+\citep{robocupfederation_2020_robocup}
 
+\citep{nubots_2022_nubots}
 NuBots
+
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=.7\linewidth]{_content/00_preamble/intro/nugus.jpg}
+        \caption{NUbots' Nugus Platform}
+    \end{center}
+\end{figure}
 
 Problem:
 

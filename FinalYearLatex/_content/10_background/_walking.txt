@@ -24,7 +24,6 @@ by $\vec{r_{CoM}}$ representing the resulting CoM.
     \end{center}
 \end{figure}
 
-
 \subsubsection*{Support Polygon}
 The support polygon is the area beneath an object defined by the set of points that are fixed to the ground. 
 In the case of humanoids, it is the area beneath a single foot when it is parallel to, and placed on, 
