@@ -17,7 +17,7 @@ Clockwork Knight \citep{moran_2006_the} from the 1490s and Gianello della Torre'
 \begin{figure}[h!]
     \begin{center}
         \includegraphics[width=.7\linewidth]{_content/00_preamble/intro/_LeoAndMonk.png}
-        \caption{Left: Leonardo da Vinci's humanoid knight automata, Right: One of Gianello della Torre's clockwork praying monks}
+        \caption{Left: Leonardo da Vinci's humanoid knight automata \\ Right: One of Gianello della Torre's clockwork praying monks}
     \end{center}
 \end{figure}
 
@@ -34,7 +34,7 @@ was the first dynamically stable walking humanoid robot.
 \begin{figure}[h!]
     \begin{center}
         \includegraphics[width=.7\linewidth]{_content/00_preamble/intro/kato.png}
-        \caption{Left: WABOT-1 the first statically stable walking humanoid \citep{humanoidroboticsinstitutewasedauniversity_2007_humanoid}, Right: WL-10RD the first dynamically stable walking humanoid \citep{takanishilaboratory_2004_biped}}
+        \caption{Left: WABOT-1 the first statically stable walking humanoid \citep{humanoidroboticsinstitutewasedauniversity_2007_humanoid} \\ Right: WL-10RD the first dynamically stable walking humanoid \citep{takanishilaboratory_2004_biped}}
     \end{center}
 \end{figure}
 
