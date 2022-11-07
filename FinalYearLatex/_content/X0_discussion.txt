@@ -1,0 +1,24 @@
+Modelling error has had the largest impact on the validation of quasistatic and dynamically stable
+walking methods. The masses of each joint and link are known, however, the position of each mass
+is only estimated. This has been due to the hardware changes the Nugus platform has been undergoing
+since the inception of the work presented in this report. Additionally, the model within the Webots
+simulation environment has little to no relation to the real platform in its current state.
+The model derived for this report was based on the `Onshape' [REFERENCE] document managed by the Nubots team.
+This document has not been updated to reflect the current state of the platform. Including the torso, arms and 
+head of the Nugus platform in the model presented in this report
+may have given rise to the exploiting the use of the arms to shift the centre of mass, given
+their shear mass. However, this would come at the cost of processing time.
+
+The novel algorithms developed for stepping along an arbitrary trajectory are not as robust as they 
+could be. Specifically, approaching the end of the trajectory leads to a final step that must both satisfy
+the position and time requirements dictated by the trajectory. Given a quasistatic walk, this culminates 
+in a rapid, short step with little to no time given to shifting the centre of mass prior to attempting the step.
+Conversely this final step is possible when using a dynamically stable walking method, as the zero moment
+point is the variable of concern. Thus, the final zero moment point is located beneath one of the feet, whichever
+having stepped most recently. Yet, the ideal final position of the centre of mass is halfway between 
+the feet, which would leave the robot statically stable, and ready for a new trajectory. 
+
+Computing both the Geometric and Analytical Jacobians of the model presented in this report
+could have allowed for the validation of the walking methods while remaining within the Matlab
+environment. However, doing so would have been both time and computationally expensive. 
+Determining these Jacobians is critical to any attempt transitioning from servo to torque control.

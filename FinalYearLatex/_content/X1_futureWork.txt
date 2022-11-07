@@ -1,9 +1,12 @@
-suggest future work or improvements.
+Future work will include;
 \begin{itemize}
-    \item Respect Full ZMP -> Torque about Yaw Axis may have caused ZMP bounce WeBots
-    \item Model interaction with the ground
-    \item Explore Online Trajectory generation and tracking -> Model Based, not Circle Geometry Based
-    \item Make use of mass with passive gait -> reduce energy expenditure
-    \item KEEP MATHEMATICAL MODEL AND PHYSICAL MODEL DOCUMENTED AND UP TO DATE
-    \item Reliance on URDF passing, great idea, doesn't work when you don't keep the model up to date.
+    \item Exploring alternative methods of utilising Vukobratović's Zero Moment Point equations, avoiding
+        methods that simplify them, to develop a robust dynamically stable walk.
+    \item Modelling interactions with the ground, particularly when using 'studs` on the sole
+        of the Nugus platform.
+    \item Explore model driven, online trajectory generation and tracking to enable robust locomotion.
+    \item Explore the use of the mass of the robot within a less energy intensive passive gait.
+    \item Ensuring the geometry and mass of the Nugus platform is up to date to reenable the use of URDF files.
+    \item Exploring the possibility of driving the robot's centre of mass with a spring loaded inverted pendulum, 
+        in order to achieve a method for running.
 \end{itemize}

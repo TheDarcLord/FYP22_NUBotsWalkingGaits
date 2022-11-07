@@ -1,36 +1,42 @@
-This is one of the most important parts of the report. In the conclusion section, you  %should 
-\begin{itemize}
-\item briefly summarise the results,
-    \begin{itemize}
-        \item Simulation of Quasi Static in Webots -> Flawless
-        \item Simulation of ZMP in WeBots -> Somewhat Successful
-        \item Quasi Static on NuGus -> Evident robot cannot run `QuasiStatic`
-            \begin{itemize}
-                \item Metal Legs are a different geometry to plastic Legs -> Model Change
-                \item Servos at Hip Knee and Ankle joints significantly under powered -> Hit 80 degrees and collapse
-                \item Backlash in Servos not account for, but significant -> 1-2 degrees, joint values: 0.06 degree increments (rad to decimal places)
-                \item Mass over a single foot not possible for slow quasi static walk
-                \item Fast quasistatic possible, however, tiny steps, rapid shifting of mass
-                \item TCP IP Communication Lag fluctuation -> 500ms, method would need to be modified to send all values, and then run them
-            \end{itemize}
-    \end{itemize}
-\item reflect on the work presented, 
-    \begin{itemize}
-        \item Lack of torso model -> some impact, arms could have been used to shift CoM (quite heavy 300g+)
-        \item New Trajectory Method useful, particularly in the Hobbyist space
-        \item True mass positions for model would have been useful, however 3 different models makes that a little hard
-        \item True geometry (metal legs) may have improved result, however, metal legs have only been implemented in the final few weeks. Have not been documented in Onshape.
-        \item Jacobian + Differential Kinematics = MatLab Sim with Gravity
-        \item QuasiStatic approach somewhat novel, but Successful
-        \item ZMP frequency trade off vs Actuator penalty vs Computation time
-    \end{itemize}
-\item make recommendations,
-    \begin{itemize}
-        \item DOCUMENT THE ROBOT's GEOMETRY AND KEEP IT UP TO DATE
-        \item DOCUMENT THE ROBOT'S MASS AND KEEP IT UP TO DATE
-        \item REPLACE SERVO MOTORS with more powerful models
-        \item MODEL SERVO Backlash
-        \item Use trajectory method as interim solution, after replacing servos -> GoTo (position) on field -> With quasi static -> Large Footsteps!!
-        \item Reactions at feet measured -> foot Torque / Force sensors -> CoM less blind, more accurate, tuned -> reactive ZMP
-    \end{itemize}
-\end{itemize}
+This project successfully demonstrates the implementation of a quasistatic walking method
+and a dynamically stable walking method in a Webots simulation environment. Due to modelling 
+error, hardware changes that have been made to the Nugus platform since this project's 
+inception, and the use of actuators that cannot support the mass of the robot during 
+the single support phase, it was not possible to further validate these walking methods on the real system.
+Specifically given the under performance of the servo motors, it is not currently possibly to implement
+a quasistatic walk on the Nugus platform. Additionally, due to communication lag, the only possible
+way to validate a dynamically stable gait is by generating and executing large files containing 
+time iterated joint variables. Alternatively, implementing the dynamically stable approach within 
+the Nubots codebase, would achieve the same result.
+
+A novel algorithm to convert an arbitrary trajectory into a time delineated sequence of footsteps was developed.
+This algorithm was modified to robustly generate footsteps along complex trajectories, using the homogenous
+transform between the fixed and stepping foot following the completion of a step. A subsequent modification,
+generating the footstep positions from a current time instance to a time horizon, was made to enable 
+the use of preview control.
+
+Quasistatic locomotion along a trajectory was achieved using an inverse kinematic model based on numerical
+optimisation. The quadratic cost function, subject to numerical optimisation, had weights associated with the 
+position of the end effector, the waist orientation of the robot, and the position of the 
+centre of mass. Additionally, the numerical optimisation routine was subject
+to nonlinear equality constraints to enforced the robot's posture, as well as 
+nonlinear inequality constraints that restricted the average velocity of the centre of mass.
+
+Dynamically stable locomotion along a trajectory was achieved in similar manner to quasistatic locomotion,
+however, rather than forcing the centre of mass to a position within a support polygon, the centre of
+mass was guided by the position state of a linear inverted pendulum. This pendulum was constrained
+to move in the $XZ$ plane, at a specified height. The linear inverted pendulum model was
+subject to preview control, with the output demand specified by the sequence of footsteps
+generated by aforementioned algorithms.
+
+Matlab implementations of both methods confirmed the viability of both approaches to locomotion and 
+generated time delineated sequences of joint variables. These joint variables were then executed in 
+the Webots simulation environment, having been sent in sequence over TCP.
+
+Hardware changes, hardware limitations and network delay prevented the Nugus platform 
+from further validating the aforementioned methods of locomotion. However, a simulated statically stable 
+pose was generated with a modified model, and sending the corresponding joint variables over TCP to 
+replicate this statically stable pose on the Nugus platform, was successfully. Thus this method
+of simulating a walk in Matlab and subsequently testing the viability of the walk on 
+both the Nugus platform and in Webots without writing further code, 
+has great potential and plenty of room for improvement.

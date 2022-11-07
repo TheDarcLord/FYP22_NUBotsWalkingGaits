@@ -39,3 +39,13 @@ executing the joint values infrequently. Thus, any attempt at a dynamically stab
 gravity or the inertia of the robot would cause a fall while waiting for a subsequent array of joint variables.
 However, as it is possible to statically balance the robot by sending the joint variable array over TCP, this 
 bridge between matlab and the Nugus platform has some promise.
+
+
+\begin{itemize}
+    \item Metal Legs are a different geometry to plastic Legs -> Model Change
+    \item Servos at Hip Knee and Ankle joints significantly under powered -> Hit 80 degrees and collapse
+    \item Backlash in Servos not account for, but significant -> 1-2 degrees, joint values: 0.06 degree increments (rad to decimal places)
+    \item Mass over a single foot not possible for slow quasi static walk
+    \item Fast quasistatic possible, however, tiny steps, rapid shifting of mass
+    \item TCP IP Communication Lag fluctuation -> 500ms, method would need to be modified to send all values, and then run them
+\end{itemize}
