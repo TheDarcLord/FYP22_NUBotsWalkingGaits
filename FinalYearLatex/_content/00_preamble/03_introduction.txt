@@ -1,4 +1,4 @@
-The pursuit of creating autonomous humanoids began with the Ancient Greeks \citep{truitt_2015_medieval}. 
+The pursuit of creating autonomous humanoids began with the Ancient Greeks \citep{rtruitte_2015_medieval}. 
 Hephaestus, god of smithing, created tripedal automata with golden wheels to serve the other gods of Mount
 Olympus, as well as the Talos, a giant bronze humanoid. Automata and mechanisms were cherished in the world 
 of the Ancient Greeks, as teaching tools, and artworks. However, these were primarily constructed of pipes,
@@ -7,10 +7,10 @@ repeatedly.
 
 Following the Greeks, the Islamic world became the home of mechanisms and automata. Ismail al-Jazari, a 12th 
 century polymath, is credited with creating the first humanoid automata. These included a wine serving
-girl and a band of four players.
+girl and a band of four players \citep{rtruitte_2015_medieval}.
 
 In the 14th century mechanical clocks melded with simple automata, which began a revolution in 
-the powering and design of humanoid automata. This culminated in examples such as Leonardo Da Vinci's 
+the design amd powering of humanoid automata. This culminated in examples such as Leonardo Da Vinci's 
 Clockwork Knight \citep{moran_2006_the} from the 1490s and Gianello della Torre's series of praying monks 
 \citep{king_2002_clockwork} in the 1560s.
 
@@ -21,28 +21,16 @@ Clockwork Knight \citep{moran_2006_the} from the 1490s and Gianello della Torre'
     \end{center}
 \end{figure}
 
-In 17th century Japan, "karakuri" puppets ... more
-
-\begin{figure}[h!]
-    \begin{center}
-        \includegraphics[width=.5\linewidth]{_content/00_preamble/intro/_karakuri.jpeg}
-        \caption{19th Century Karakuri, located at the National Museum of Nature and Science, Tokyo.}
-    \end{center}
-\end{figure}
-
-By beginning of the 20th century, automata ... 
-Everywhere ... 
-
 Following World War Two, and the development of the first computer, Colossus, at Bletchley Park, 
 Humanoid Automata drifted into Humanoid Robotics. The latter being distinguished by the
 capacity to program a Robot for a series of unrelated tasks, while the former is only ever designed 
 to do one.
 
-Ichiro Kato is credited with the first few walking humanoid robots... 1960s - 70s
-    WaBot 1
-Miomir Vukobratovic's work leading to...
-    WL-10RD
-
+\citet{kat_1973_development} developed the first walking humanoid robots. The WaBot series,
+which began in the early 1970s, explored statically stable locomotion, object maniuplation,
+human to robot communication. During this period Kato became aware of Miomir Vukobratović's work 
+on dynamically stable systems. This lead to the development of WL-10RD by Kato and his team, which
+was the first dynamically stable walking humanoid robot.
 \begin{figure}[h!]
     \begin{center}
         \includegraphics[width=.7\linewidth]{_content/00_preamble/intro/kato.png}
@@ -50,8 +38,11 @@ Miomir Vukobratovic's work leading to...
     \end{center}
 \end{figure}
 
-Mark Raibert -> Legged Robots that Balance  Spring Loaded Pendulum  \citep{raibert_1986_legged}
-
+In the late 1980's Mark Raibert, base at MIT's `Leg Lab', devised a new method of locomotion
+with his development of a spring loaded inverted pendulum. This robot, the Raibert Hopper \citep{raibert_1986_legged}, 
+was the first of series from Raibert and the `Leg Lab' team. Today, what was the MIT `Leg Lab'
+in the 1980s has formed the Boston Dynamics group, with Raibert as its head. Boston Dyanmic 
+is currently at the forefront of humanoid research and development, with their robot Atlas.
 \begin{figure}[h!]
     \begin{center}
         \includegraphics[width=.7\linewidth]{_content/00_preamble/intro/atlas-mid-step.jpeg}
@@ -59,13 +50,15 @@ Mark Raibert -> Legged Robots that Balance  Spring Loaded Pendulum  \citep{raibe
     \end{center}
 \end{figure}
 
- 
-Robo Cup -> 2050 Goal 
-            -? World underwater by then
-\citep{robocupfederation_2020_robocup}
+RoboCup \citep{robocupfederation_2020_robocup} was established in 1997 as a compltition 
+between university research groups, with the objective of developing a humanoid football
+to compete with the Football World Cup victors of that year. To drive development, the RoboCup
+has a yearly football competition. This competition is split into different classes; Humanoid, 
+Standard Platform, Middle Size, Small Size and now, Simulation.
 
-\citep{nubots_2022_nubots}
-NuBots
+NuBots \citep{nubots_2022_nubots} is the University of Newcastle's RoboCup team, and Robotics 
+research group. Their current platform, Nugus, is based on the iGus Open Platform 
+\citep{bonnuniversityinstituteforcomputerscience_university} developed by Bonn University.
 
 \begin{figure}[h!]
     \begin{center}
@@ -74,21 +67,17 @@ NuBots
     \end{center}
 \end{figure}
 
-Problem:
+NuBots currently runs a machine learned walk referred to as `The Quintic Walk' by the members of the team.
+However, this walk causes serious oscillation within the rest of the platform's body. Additionally,
+this walk engine was all but become a black box to the members of the team. To manage this, the
+team has sunk hundreds of hours into simulating and executing various sets of tuning parameters 
+that lead to a somewhat stable walk. In addition, they have built a Webots simulation of 
+the Nugus platform. 
 
-
-%%Position:
-NuBots require more Mechatronics Students for the long march to a team of functioning robots. NuBots
-have not excelled internationally for many years, and continue to struggle with the locomotion problem.
-\\
-%%Problem:
-I have no experience solving the locomotion problem, despite my interest in it. In order to accelerate 
-developement of walking solutions, an interface between matlab and a NuGus, allowing the running of open 
-loop trajectories and joint variables in realtime, would be greatly appreciated. Additionally, if a solution
-to the lack of rigidity of the 3D printed legs could make use of their elasticity, the NuBots team could field
-its full team of robots.
-\\
-%%Proposal:
-Developing my understanding of the locomotion problem, by simulating well known solutions, will make 
-me an asset to the team.
-%%Appendix~\ref{app:Table}
+The subject of this report is the exploration of both statically stable and dynamically stable walking
+methods for the Nugus platform. In order to increase the utility of either approach, a novel method 
+of traveling along a specified trajectory will also be developed, alongside an interface to 
+enable the rapid validation of a walking routine within the Webots environment or on the
+Nugus Platform itself, without first implementing the routine in C++. This work should 
+lead to a walking engine for NUbots, that is transparent, enables the rapid validation of 
+future walking routines, and most importantly results in the Nugus platform walking.
