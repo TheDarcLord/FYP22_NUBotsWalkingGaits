@@ -1,5 +1,5 @@
 The three dimensional model offers new challenges and new options in terms of quasistatic
-locomotion. Modifications were made to the IKM and step trajectory generation in order to 
+locomotion. Modifications are made to the IKM and step trajectory generation in order to 
 exploit as much of the work completed in section \ref{sec:2D_QS} as possible.\\
 
 Rather than walking in a straight line, the robot shall now `follow' a trajectory. The method 
@@ -13,7 +13,7 @@ of the robot.\\
 
 A closer inspection of Figure~\ref{fig:3D_1} is depicted in Figure~\ref{fig:3D_pair}. On the
 left, in green, $\vec{r}^{B}_{5}(\mathbf{q})$ is the position vector associated with the transform 
-$\mathbf{T^B_5}(\mathbf{q})$. Additionally two unit vectors, $\mathbf{e_x}$ and $\mathbf{e_z}$, were projected 
+$\mathbf{T^B_5}(\mathbf{q})$. Additionally two unit vectors, $\mathbf{e_x}$ and $\mathbf{e_z}$, are projected 
 from the base coordinate system.
 
 \begin{figure}[!h]
@@ -25,7 +25,7 @@ from the base coordinate system.
 \end{figure}
 
 On the right, in purple, we have two additional vectors, $\vec{r}^{B}_{5a}$ and $\vec{r}^{B}_{5b}$ that 
-were constructed from $\mathbf{T^B_5}$ by multiplying $\mathbf{T^B_5}$ by the homogenous transforms
+are constructed from $\mathbf{T^B_5}$ by multiplying $\mathbf{T^B_5}$ by the homogenous transforms
 found in equations~\eqref{eq:rbl5a} and \eqref{eq:rbl5b}. Thus both $\vec{r}^{B}_{5a}$ and $\vec{r}^{B}_{5b}$
 share the orientation of $\mathbf{T^B_5}$.
 
@@ -80,8 +80,8 @@ between the current column vector of $\mathbf{Q}(t)$ and the previous one $\math
 \end{figure}
 
 As the robot's waist will not necessarily start perpendicular to the trajectory, the weighted dot 
-product of $\vec{TJ}^{B}_{t}$ and $\vec{AB}_b(\mathbf{q})$ was added to the two dimensional IKM.
-If this was implemented as a nonlinear constraint the optimal array of joints values, $\mathbf{q^*}$,
+product of $\vec{TJ}^{B}_{t}$ and $\vec{AB}_b(\mathbf{q})$ is added to the two dimensional IKM.
+If this is implemented as a nonlinear constraint the optimal array of joints values, $\mathbf{q^*}$,
 immediately following $\mathbf{q_0}$ would result in an instantaneous torque about the $Y$ axis.
 Thus to orientate the waist of the robot such that it is perpendicular to $\mathbf{Q}(t)$ the IKM
 becomes equation~\eqref{eq:3D_ikm}. The higher weights of $\mathbf{K_{tj}}$ result in an initial
@@ -117,7 +117,7 @@ presents the arbitrary trajectory in green, with two $\mathbf{r}(x,z)$ positions
 To determine the the angle between the $Z$ axis of the base, $Z_{b}$, and the line segment
 $\mathbf{r}_{(t_f-1)}\, \to \,\mathbf{r}_{(t_f)}$ the $atan2(\nabla,1)$ function is used.
 However, as the `toe' of the robot's foot is defined along $X$ axis of the end effector, $X_{e}$,
-the priority was ensuring that $X_{e}$ was parallel to the line segment 
+the priority is ensuring that $X_{e}$ is parallel to the line segment 
 $\mathbf{r}_{(t_f-1)}\, \to \,\mathbf{r}_{(t_f)}$. Thus, the desired yaw angle of the end effector 
 about $Y_b$ is $atan2(-(\nabla)^{-1},1)$. This lead to equation~\eqref{eq:aTan}, 
 which defines the yaw angle of the end effector at $t_{f}$.
@@ -126,7 +126,7 @@ which defines the yaw angle of the end effector at $t_{f}$.
     \theta_{t_f} = atan2(-\frac{(z_{t_f} - z_{t_{t_{f} - 1} })}{(x_{t_f} - x_{t_{t_{f} - 1} })},1)
 \end{equation}
 
-Thus equation~\eqref{eq:2D_qt} was extended to form equation~\eqref{eq:3D_qt} which defines the 
+Thus equation~\eqref{eq:2D_qt} is extended to form equation~\eqref{eq:3D_qt} which defines the 
 path and orientation of the end effector from the inital step time, to the final step time.
 
 \begin{equation}\label{eq:3D_qt}
@@ -149,7 +149,7 @@ path and orientation of the end effector from the inital step time, to the final
 
 \subsubsection*{Implementation of 3D Quasistatic Locomotion}
 
-In three dimensions a global trajectory was introduced in order to evaluate Algorithm \ref{alg:Glb2Fts}, as 
+In three dimensions a global trajectory is introduced in order to evaluate Algorithm~\ref{alg:Glb2Fts}, as 
 well as the quasistatic locomotion. The chosen trajectory is a sinusoid with parameters found in~\eqref{eq:3DQS_TRJ}.
 
 \begin{equation}\label{eq:3DQS_TRJ}
@@ -168,21 +168,21 @@ well as the quasistatic locomotion. The chosen trajectory is a sinusoid with par
 
 The wavelength, $\lambda$, is two metres, while the target axial velocity is $0.025 ms^{-1}$, and the 
 amplitude of the sine wave is $0.25$ metres. This yielded frequency $f$, and angular velocity, $\omega$, 
-as seen above. The floor projected CoM position, $\mathbf{r}_{CoM}$, was added so the final 
+as seen above. The floor projected CoM position, $\mathbf{r}_{CoM}$, is added so the final 
 time iterated trajectory would begin from the centre of the robot.
 
-The model for the robot itself, [UPDATE MODELS], was initialised with the joint value vector:
+The model for the robot itself, [UPDATE MODELS], is initialised with the joint value vector:
 
 \begin{equation}\label{eq:3D_JA_INIT}
     \mathbf{q_0} = [-\frac{5.5\pi}{180}, \: -\frac{\pi}{12}, \: \frac{\pi}{6}, \: -\frac{\pi}{12}, \: \frac{5.5\pi}{180}, \: 0,
     0, \: \frac{5.5\pi}{180}, \: \frac{\pi}{12}, \: -\frac{\pi}{6}, \: \frac{\pi}{12}, \: -\frac{5.5\pi}{180}]^\top .
 \end{equation}
 
-The right foot was chosen as the global origin, and thus the left foot was designated the as 
-the inital $End$ $Effector$. Finally, the system frequency was chosen as $40 Hz$, and the simulation
+The right foot is chosen as the global origin, and thus the left foot is designated the as 
+the inital $End$ $Effector$. Finally, the system frequency is chosen as $40 Hz$, and the simulation
 time, $25$ seconds. The resulting initialised robot is presented in Figure~\ref{fig:3DQS_init}.
 Immediately evident is the partial sine wave trajectory, in black, beginning from the floor projected CoM.
-To step along the trajectory a step size of $0.1$ metres and step height of $0.07$ metres were chosen.
+To step along the trajectory a step size of $0.1$ metres and step height of $0.07$ metres are chosen.
 
 \begin{figure}[!h]
     \begin{center}
@@ -192,11 +192,11 @@ To step along the trajectory a step size of $0.1$ metres and step height of $0.0
     \end{center}
 \end{figure}
 
-To run the model, a modified version of Algorithm \ref{alg:Glb2Fts} is used. 
-Algorithm \ref{alg:3DalgSimp} includes three new variables for running the model, $init$, $run$ and
+To run the model, a modified version of Algorithm~\ref{alg:Glb2Fts} is used. 
+Algorithm~\ref{alg:3DalgSimp} includes three new variables for running the model, $init$, $run$ and
 $stop$. All three temporarily store indexes of the time span. Given the state of the robot
 is initialised at time zero, $init$, stores this index. The algorithm then proceeds to iterate through
-the global trajectory, much like algorithm \ref{alg:Glb2Fts}. However upon reaching the step magnitude, 
+the global trajectory, much like algorithm~\ref{alg:Glb2Fts}. However upon reaching the step magnitude, 
 $StepSize$, a step trajectory, $\mathbf{Q_step}$, is generated and traversed immediately after 
 determining the position of the footstep, $\mathbf{REF}_k$.
 
@@ -212,11 +212,11 @@ This switch allows the passing of the $End$ $Effector$ state vector to the step 
 
 \input{_content/30_quasiStatic/Alg3D_model.txt}
 
-\subsubsection*{Matlab Simulation Results}
+\subsubsection*{MATLAB Simulation Results}
 
 Figure~\ref{fig:3DQS_traj} depicts the initial position of the feet, in red and blue, with respect to 
 the sinusoidal trajectory, in black. The $End$ $Effector$ trajectory, shown in green, demonstrates the 
-aforementioned switching nature of algorithm \ref{alg:3DalgSimp}. This trajectory begins at the 
+aforementioned switching nature of algorithm~\ref{alg:3DalgSimp}. This trajectory begins at the 
 left foot, completes a step, and then switches to the right foot. 
 
 \begin{figure}[!h]

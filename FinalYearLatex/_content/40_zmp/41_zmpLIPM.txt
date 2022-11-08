@@ -1,5 +1,5 @@
 Rather than constraining the CoM of the robot during locomotion, the better approach is 
-to control it, using the position of an inverted pendulum. This approached was developed and 
+to control it, using the position of an inverted pendulum. This approached is developed and 
 implemented by Shuuji Kajita \citep{kajita_2003_biped} in the early 2000s. 
 
 \subsubsection*{ZMP simplification}
@@ -134,8 +134,8 @@ state space representation \citep{kajita_2003_biped}, given by the equation~\eqr
 \end{equation}
 
 The continuous time system, equation~\eqref{eq:LIPM_stateCT}, must be discretized with sampling 
-time $T$, as the robot model is simulated in discrete time. Additionally, implementation in MatLab
-or on the robot itself requires that the system be discretized. The system was discretized
+time $T$, as the robot model is simulated in discrete time. Additionally, implementation in MATLAB
+or on the robot itself requires that the system be discretized. The system is discretized
 using the forward Euler Method. The complete discrete time model is of the form found in 
 equation~\eqref{eq:LIPM_stateDT}.
 

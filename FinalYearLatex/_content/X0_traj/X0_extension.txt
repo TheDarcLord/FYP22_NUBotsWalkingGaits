@@ -1,4 +1,4 @@
-$\mathbf{REF}$, mentioned in both algorithm \ref{alg:Glb2Fts} and \ref{alg:Loc2Fts}, stores a discrete 
+$\mathbf{REF}$, mentioned in both algorithm~\ref{alg:Glb2Fts} and \ref{alg:Loc2Fts}, stores a discrete 
 time ZMP Reference which drives Kajita's proposed ZMP pattern generator, seen in Figure~\ref{fig:TRJ_ZMP}.
 
 \begin{figure}[!h]
@@ -9,9 +9,9 @@ time ZMP Reference which drives Kajita's proposed ZMP pattern generator, seen in
     \end{center}
 \end{figure}
 
-In order to the use preview control to drive the position of the centre of mass, algorithm \ref{alg:Loc2Fts}
-had to be decomposed and implemented in two distinct phases. First the ZMP preview reference was generated, in
-much the same way as algorithm \ref{alg:Glb2Fts}. This was then followed by transforming not only the global 
+In order to the use preview control to drive the position of the centre of mass, algorithm~\ref{alg:Loc2Fts}
+had to be decomposed and implemented in two distinct phases. First the ZMP preview reference is generated, in
+much the same way as algorithm~\ref{alg:Glb2Fts}. This is then followed by transforming not only the global 
 trajectory, but the ZMP preview reference as well into coordinate system of the $Base$. This process has been 
 separated into two algorithms for clarity.
 \newline

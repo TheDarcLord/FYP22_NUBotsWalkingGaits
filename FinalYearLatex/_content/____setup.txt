@@ -27,7 +27,7 @@
 \definecolor{MATLABKeyword}{rgb}{0,0,1}
 \definecolor{MATLABComment}{rgb}{0.1328125,0.54296875,0.1328125}
 \definecolor{MATLABString}{rgb}{0.625,0.125,0.9375}
-\lstset{language=Matlab,
+\lstset{language=MATLAB,
     basicstyle=\small\ttfamily,
     keywordstyle=\color{MATLABKeyword},
     %identifierstyle=,

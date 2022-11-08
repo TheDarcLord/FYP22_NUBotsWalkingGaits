@@ -1,5 +1,5 @@
 Unlike WeBots, the server established on the robot cannot ignore the passing of time. As such
-the select socket function is used to poll for incoming connections from the Matlab client.
+the select socket function is used to poll for incoming connections from the MATLAB client.
 
 Seen below in Figure~\ref{fig:Real1} is the current Nugus robot in comparison with the WeBots model. 
 Of particular note is the differing geometry of the legs. As such, the models that successful ran in WeBots
@@ -20,7 +20,7 @@ the other hand has been initialised with;
 \end{figure}
 
 Figure~\ref{fig:Real2} depicts the CoM, in red, for both the Webots model and the Nugus robot. To achieve this
-similarity, the $X$ position of the CoM in the matlab model was shifted backwards by $0.02$ metres.
+similarity, the $X$ position of the CoM in the MATLAB model is shifted backwards by $0.02$ metres.
 
 \begin{figure}[!h]
     \begin{center}
@@ -34,11 +34,11 @@ far too weak to be able to single handedly support the mass of the robot for mor
 As such, the only way to execute a quasistatic walk would be implementing a walking solution on the robot itself.
 Quasistatic locomotion is inherently slow, and thus any attempt at a rapid quasistatic walk would take
 too long to develop by trial and error. Secondly, although the frequency at which the Nugus server applied 
-the joint variables to the servos was defined, the communication lag consistently led to the robot
+the joint variables to the servos is defined, the communication lag consistently led to the robot
 executing the joint values infrequently. Thus, any attempt at a dynamically stable walk would fail by default as 
 gravity or the inertia of the robot would cause a fall while waiting for a subsequent array of joint variables.
 However, as it is possible to statically balance the robot by sending the joint variable array over TCP, this 
-bridge between matlab and the Nugus platform has some promise.
+bridge between MATLAB and the Nugus platform has some promise.
 
 
 \begin{itemize}

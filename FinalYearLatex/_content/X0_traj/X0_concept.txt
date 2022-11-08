@@ -33,7 +33,7 @@ The equations for line $DE$ and circle $C$ are then solved for $y$, and equated 
 
 $\alpha$ is temporary variable in order to make the the former quadratic equation,~\eqref{eq:TRJ_Quad},
 more manageable. The quadratic formula is then used to find the roots of equation~\eqref{eq:TRJ_Quad}, which
-are the $X$ components of the intersections between $DE$ and $C$; points $D$ and $E$. At this point, $\alpha$ was 
+are the $X$ components of the intersections between $DE$ and $C$; points $D$ and $E$. At this point, $\alpha$ is 
 substituted back into the equation to yield:
 
 \begin{align}
@@ -52,11 +52,11 @@ trajectory until, again, the magnitude of footstep is reached. Equations~\eqref{
 then applied to a new value of $B_{(x,y)}$ to yield a second pair of footstep positions. This process of 
 iterating along the trajectory, and generating footsteps, continues until the trajectory's end, where 
 the process iss repeated once more with $B_{(x,y)} = \mathbf{Q}(t)_{(:,n)}$. This procedure is described below in
-Algorithm \ref{alg:Glb2Fts}.
+Algorithm~\ref{alg:Glb2Fts}.
 
 Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory and following
-algorithm \ref{alg:Glb2Fts} produces the series of footsteps seen in Figure~\ref{fig:TRJ_Sign}. Notice 
-the impact of the $STEP$ variable. On the left $STEP$ was initialised with $1$, while on the right $STEP$ was
+algorithm~\ref{alg:Glb2Fts} produces the series of footsteps seen in Figure~\ref{fig:TRJ_Sign}. Notice 
+the impact of the $STEP$ variable. On the left $STEP$ is initialised with $1$, while on the right $STEP$ is
 initialised with $-1$. Thus, on the left, the first step the robot took is with the left foot, while on the 
 right the opposite is true. Additionally each subsequent step, on either side, is with the formerly planted foot.
 Thus both the FKM and the decision as to which foot is in motion, are driven by the sign of a the $STEP$ variable.
@@ -87,7 +87,7 @@ in sign of the roots of equation~\eqref{eq:TRJ_Quad}.
 
 To resolve this, rather than tracking and updating the location of the $Base$ of the FKM and the location of 
 the $End$ $Effector$ with a pair of global variables, it is assumed that the base of fixed foot is at the origin. 
-Thus, the robot is now defined in terms of a local coordinate system. Algorithm \ref{alg:Glb2Fts} is then modified
+Thus, the robot is now defined in terms of a local coordinate system. Algorithm~\ref{alg:Glb2Fts} is then modified
 to update every point along the global trajectory, $\mathbf{Q}(t)$.
 
 \input{_content/X0_traj/X0_AlgB.txt}
@@ -95,14 +95,14 @@ to update every point along the global trajectory, $\mathbf{Q}(t)$.
 The variable $\mathbf{T^{B}_{E}}$ is initialised as $\mathbf{I}_{4 \times 4}$, and is used to hold 
 the homogenous transform that describes the relationship between the $Base$ and the $End$ $Effector$.
 This transform is then decomposed into its rotation matrix, $\mathbf{R^{B}_{E}}$, and its position vector,
-$\vec{r^{B}_{E}}$. $\mathbf{R^{B}_{E}}^{\top}$ was applied to the difference between every subsequent position vector 
+$\vec{r^{B}_{E}}$. $\mathbf{R^{B}_{E}}^{\top}$ is applied to the difference between every subsequent position vector 
 along the trajectory, and position of the $End$ $Effector$. This transforms the original trajectory into 
 the coordinates of the $End$ $Effector$, following the completion of a step, as this becomes the origin, the $Base$,
 of the kinematic chain in preparation for the next step. This idea is borrowed directly from Kajita 
-\citep{kajita_2003_biped}, and is presented as algorithm \ref{alg:Loc2Fts}.
+\citep{kajita_2003_biped}, and is presented as algorithm~\ref{alg:Loc2Fts}.
 
-Algorithm \ref{alg:Glb2Fts} works sufficiently for simple trajectories that do not result in the 
-robot turning beyond $\pm \frac{\pi}{2}$ about a global $Z$ axis, while algorithm \ref{alg:Loc2Fts} works for any 
+Algorithm~\ref{alg:Glb2Fts} works sufficiently for simple trajectories that do not result in the 
+robot turning beyond $\pm \frac{\pi}{2}$ about a global $Z$ axis, while algorithm~\ref{alg:Loc2Fts} works for any 
 trajectory. Both methods are ideal for statically stable locomotion, however, must be modified further
 in order to work with dynamically stable approaches to locomotion.
 

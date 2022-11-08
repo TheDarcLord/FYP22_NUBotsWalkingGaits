@@ -3,7 +3,7 @@ walking methods. The masses of each joint and link are known, however, the posit
 is only estimated. This has been due to the hardware changes the Nugus platform has been undergoing
 since the inception of the work presented in this report. Additionally, the model within the Webots
 simulation environment has little to no relation to the real platform in its current state.
-The model derived for this report was based on the `Onshape' [REFERENCE] document managed by the Nubots team.
+The model derived for this report is based on the `Onshape' [REFERENCE] document managed by the Nubots team.
 This document has not been updated to reflect the current state of the platform. Including the torso, arms and 
 head of the Nugus platform in the model presented in this report
 may have given rise to the exploiting the use of the arms to shift the centre of mass, given
@@ -19,6 +19,6 @@ having stepped most recently. Yet, the ideal final position of the centre of mas
 the feet, which would leave the robot statically stable, and ready for a new trajectory. 
 
 Computing both the Geometric and Analytical Jacobians of the model presented in this report
-could have allowed for the validation of the walking methods while remaining within the Matlab
+could have allowed for the validation of the walking methods while remaining within the MATLAB
 environment. However, doing so would have been both time and computationally expensive. 
 Determining these Jacobians is critical to any attempt transitioning from servo to torque control.

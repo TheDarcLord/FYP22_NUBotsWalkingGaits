@@ -87,7 +87,7 @@ with respect to that same base coordinate system.
 \end{equation}
 
 $\mathbf{\Theta}$ is the parameterisation of the rotation matrix contained within the 
-DKM, that being $\mathbf{R}_{E}^{B}$. For the purpose of this report, Euler Angles, were 
+DKM, that being $\mathbf{R}_{E}^{B}$. For the purpose of this report, Euler Angles, are 
 chosen to parameterise $\mathbf{\Theta_{E}^{B}}$. The determination of Euler Angles is by the multiplication of a 
 series of rotations, $\mathbf{R_{z}}(\psi) \mathbf{R_{y}}(\theta) \mathbf{R_{x}}(\phi)$, which results 
 in the rotation matrix;

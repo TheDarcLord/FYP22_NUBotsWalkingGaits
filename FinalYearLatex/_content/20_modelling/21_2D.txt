@@ -1,5 +1,5 @@
 %% HAND DRAWN 2D MODEL
-Figure~\ref{fig:2D_too} depicts the two dimensional bipedal model during the single support phase, where the centre of
+Figure~\ref{fig:2D_too} depicts the two-dimensional bipedal model during the single support phase, where the centre of
 mass, located at the hips, is over the support polygon. The support polygon is depicted in green, and represents
 the base of the kinematic chain. In this instance, the base is the left foot, with the left leg, in red, constructed from it.
 The right foot, in black, is the end effector. It is connected to the hip position by the right leg, which 
@@ -8,14 +8,13 @@ feet.
 
 \begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=.4\linewidth]{_figures/2D_1.png}
+        \includegraphics[width=.4\linewidth]{_figures/2D_1.png}\label{fig:2D_1}
         \caption{Sketch depicting the 2D model. The $Z$ axis is out of the page. Coordinate system $\mathbf{1}$ is the $\mathbf{Base}$ and left foot, while coordinate system $\mathbf{6}$ is the $\mathbf{End\:\:Effector}$ and right foot.}
-        \label{fig:2D_1}
     \end{center}
 \end{figure}
 
-A series of Homogenous Transforms, equation(\eqref{eq:KCtoRightAnkle}) form the kinematic chain that 
-describes the position of the right ankle, the end effector, with respect to the left ankle, the base.
+Equation~\eqref{eq:KCtoRightAnkle} is series of homogenous transforms that form the kinematic chain describing
+ the position of the right ankle, the end effector, with respect to the left ankle, the base.
 Each transform of the kinematic chain consists of a rotation about each local $Z_{1 \to 6}$ axis by joint angle $\psi_{1 \to 6}$. 
 Translations in the $Y$ axis occur between the feet and knees, $L_1$, and between the knees and the hips, $L_2$. 
 
@@ -44,46 +43,46 @@ Where the transforms $\mathbf{A}^{a}_{b}$ are defined as;
     \end{split}
 \end{equation}
 
-Consequently , the kinematic chain from the right ankle to the position of the left ankle, the end effector 
-when the right ankle is fixed, is equation(\eqref{eq:KCtoLeftAnkle}):
+Consequently, the kinematic chain from the right ankle to the position of the left ankle, the end effector 
+when the right ankle is fixed, is equation~\eqref{eq:KCtoLeftAnkle}:
 
 \begin{equation}\label{eq:KCtoLeftAnkle}
-    \mathbf{T}^{6}_1 = (\mathbf{T}^{1}_6)^{-1}
+    \mathbf{T}^{6}_1 = {(\mathbf{T}^{1}_6)}^{-1}
 \end{equation}
 
-An additional homogenous transform was applied to each of above transform to express the end effectors in
+An additional homogenous transform is applied to each of above transform to express the end effectors in
 global coordinates.
 
 \begin{equation}\label{eq:worldHT2D}
     \begin{split}
         \mathbf{T}^{Global}_6 &= \mathbf{A}^{0}_{1} \mathbf{T}^{1}_6 \\
         \mathbf{T}^{Global}_1 &= \mathbf{A}^{0}_{6} \mathbf{T}^{6}_1
-    \end{split}
+    \end{split},
 \end{equation}
-...where;
+where;
 \begin{equation}\label{eq:worldHT2D_L}
     \mathbf{A}^{0}_{1} =
     \begin{bmatrix}
-        \mathbf{I} & \dots  & \dots  & \text{LeftAnkle}_{x} \\
-        \vdots     & \ddots & \dots  & \text{LeftAnkle}_{y} \\
+        \mathbf{I} & \cdots  & \cdots  & \text{LeftAnkle}_{x} \\
+        \vdots     & \ddots & \cdots  & \text{LeftAnkle}_{y} \\
         \vdots     & \vdots & \ddots & \text{LeftAnkle}_{z} \\
         0          & 0      & 0      & 1
-    \end{bmatrix}
+    \end{bmatrix},
 \end{equation}
-... and;
+and;
 \begin{equation}\label{eq:worldHT2D_R}
     \mathbf{A}^{0}_{6} =
     \begin{bmatrix}
-        \mathbf{I} & \dots  & \dots  & \text{RightAnkle}_{x} \\
-        \vdots     & \ddots & \dots  & \text{RightAnkle}_{y} \\
+        \mathbf{I} & \cdots  & \cdots  & \text{RightAnkle}_{x} \\
+        \vdots     & \ddots & \cdots  & \text{RightAnkle}_{y} \\
         \vdots     & \vdots & \ddots & \text{RightAnkle}_{z} \\
         0          & 0      & 0      & 1
     \end{bmatrix}
 \end{equation}
 \\
-Equations(\eqref{eq:worldHT2D}) form the Direct Kinematic Model (DKM). The was then
-written in Matlab, with the joint angles found in table \ref{tab:JointAngles} and 
-the parameters found in table \ref{tab:LinkLengths}.
+Equations~\eqref{eq:worldHT2D} form the Direct Kinematic Model (DKM). The is then
+written in MATLAB, with the joint angles found in table~\ref{tab:JointAngles} and 
+the parameters found in table~\ref{tab:LinkLengths}.
 
 %% TABLES OF JOINT ANGLES AND LINK LENGTHS
 \begin{table}[h!]\centering
@@ -103,6 +102,7 @@ the parameters found in table \ref{tab:LinkLengths}.
         }
     \end{center}
 \end{table}
+
 \begin{table}[h!]\centering
     \begin{center}
         \caption{Link Lengths for 2D model}\label{tab:LinkLengths}
@@ -119,17 +119,16 @@ the parameters found in table \ref{tab:LinkLengths}.
     \end{center}
 \end{table}
 
-The model was then plotted in both 2D and 3D (Figure~\ref{fig:2D_2}). Although 2D, plotting the model in 3D with an 
+The model is plotted in both 2D and 3D (Figure~\ref{fig:2D_2}). Although 2D, plotting the model in 3D with an 
 arbitrary distance between the hip joints, $3$ and $4$, provides more context regarding the 
 location and orientation of the right side (blue crosses). Additionally, plotting the 2D model in 3D reduced the 
-workload for developing the 3D model as a vast proportion of the matlab script could be reused.
+workload for developing the 3D model as a vast proportion of the MATLAB script could be reused.
 
 %% MATLAB DRAWN 2D MODEL
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=.85\linewidth]{_figures/2D_2.png}
-        \caption{2D model plotted in 3D (left) and 2D (right).}
-        \label{fig:2D_2}
+        \caption{2D model plotted in 3D (left) and 2D (right).}\label{fig:2D_2}
     \end{center}
 \end{figure}
 \newpage

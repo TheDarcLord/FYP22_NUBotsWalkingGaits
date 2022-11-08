@@ -57,7 +57,7 @@ moment that will cause the robot to fall.
 
 \subsubsection*{Quasistatic locomotion}
 Quasistatic locomotion is `\emph{walking while maintaining static stability}' 
-\citep{kato_1973_development}. Static stability dictates that if the robot were to stop 
+\citep{kato_1973_development}. Static stability dictates that if the robot are to stop 
 or pause at any moment, it would remain stable.  This relies on the floor projected horizontal components of 
 $\vec{r_{CoM}}$ remaining within `\emph{the support sole plane}' or support polygon at all times. 
 Quasistatic locomotion also relies on the \emph{quasistatic assumption} that `\emph{parts move 

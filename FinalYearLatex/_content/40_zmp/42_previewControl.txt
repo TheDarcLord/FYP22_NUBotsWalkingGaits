@@ -1,6 +1,6 @@
 In order to track a ZMP reference the input $\mathbf{u}(k)$ requires knowledge of the future 
 output, $\mathbf{y(k+)}$. To achieve this preview Control is used. This particular method
-was developed by Katayama et al. in the late 1980s \citep{katayama_1985_design}.
+is developed by Katayama et al. in the late 1980s \citep{katayama_1985_design}.
 
 A performance index, $\mathbf{J}$, is established with weights $\mathbf{Q}_{e}$,
 $\mathbf{Q}_{x}$, and $\mathbf{R}$, which is found in equation~\eqref{eq:PC_performanceIndex}. 

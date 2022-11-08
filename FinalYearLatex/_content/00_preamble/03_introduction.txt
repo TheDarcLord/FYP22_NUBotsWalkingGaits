@@ -23,7 +23,7 @@ Clockwork Knight \citep{moran_2006_the} from the 1490s and Gianello della Torre'
 
 Following World War Two, and the development of the first computer, Colossus, at Bletchley Park, 
 Humanoid Automata drifted into Humanoid Robotics. The latter being distinguished by the
-capacity to program a Robot for a series of unrelated tasks, while automata were designed to excel
+capacity to program a Robot for a series of unrelated tasks, while automata are designed to excel
 at a single task.
 
 \citet{kat_1973_development} developed the first walking humanoid robots. The WaBot series,

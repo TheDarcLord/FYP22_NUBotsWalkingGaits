@@ -1,12 +1,12 @@
-In order to evaluate the quasistatic and ZMP locomotion it was necessary to
-develop a Matlab function to send the array of joint variables to a target platform.
-In the context of this report, the desired platforms were a WeBots simulation of the 
+In order to evaluate the quasistatic and ZMP locomotion it is necessary to
+develop a MATLAB function to send the array of joint variables to a target platform.
+In the context of this report, the desired platforms are a WeBots simulation of the 
 robot, and the robot itself.
 
-The protocol chosen to transmit the joint variable array was TCP. A TCP server was
+The protocol chosen to transmit the joint variable array is TCP. A TCP server is
 established as a Webots Controller, and as a module on the Robot. Upon generating a 
-new array of joint variables, $\mathbf{q}$, Matlab created a TCP client instance. 
+new array of joint variables, $\mathbf{q}$, MATLAB created a TCP client instance. 
 This TCP client instance then sent the joint variables to the server, before disconnecting,
 and closing the client. In addition to the joint variable array for the locomotion of the legs, an
-additional six values were sent to position the arms. This was to hold the arms of the robot 
+additional six values are sent to position the arms. This is to hold the arms of the robot 
 in a constant pose so as not to interfere with the movement of the legs.

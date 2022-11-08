@@ -5,7 +5,7 @@ The following figures are a result of the joint variables generated during the
 execution of the three dimensional quasistatic model in Section \ref{sec:3D_QS},
 and the execution of the dynamically stable model in Section \ref{sec:ZMP_imp}.
 
-As a reminder, the three dimensional model was run along a sinusoidal trajectory
+As a reminder, the three dimensional model is run along a sinusoidal trajectory
 with a system frequency of 40Hz. Figure~\ref{fig:Res_QS} depicts the 
 WeBots model successfully walking using the quasistatic method, with the frames read
 from left to right. Close inspection reveals the CoM represented as a pale green cross
@@ -19,7 +19,7 @@ double support phase.
     \end{center}
 \end{figure}
 
-Similarly, the dynamically stable three dimensional mode was run along 
+Similarly, the dynamically stable three dimensional mode is run along 
 a sinusoidal trajectory with the same geometry as the former. Figure~\ref{fig:Res_ZMP} depicts the 
 WeBots model successfully walking using the Zero Moment Point, with the frames read
 from left to right. While the CoM remains within the support polygon at all times during

@@ -1,5 +1,5 @@
-This section outlines the development of a simplified 2D model, which was used to gain experience in
-implementing locomotion strategies, and a simplified 3D model. As the focus was simulating different 
-walking strategies, each model is comprised of the lower half of a humanoid, that being the feet, legs and 
-waist. Both models were constructed with a series of homogenous transforms that described the position 
+This section outlines the development of a simplified 2D model, which is used to gain experience in
+implementing locomotion strategies, and a simplified 3D model. As the focus is simulating different 
+walking strategies, each model is comprised of the lower half of a humanoid, that being the feet, legs, and 
+waist. Both models are constructed with a series of homogenous transforms that described the position 
 of the free foot, the end effector, with respect to the fixed foot, the base.
