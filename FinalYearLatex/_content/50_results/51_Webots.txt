@@ -1,36 +1,38 @@
-The WeBots server is conveniently constructed such that time within the WeBots 
+The Webots server is conveniently constructed such that time within the Webots 
 simulation pauses, as the server awaits a new set of joint variables.
 
 The following figures are a result of the joint variables generated during the 
-execution of the three dimensional quasistatic model in Section \ref{sec:3D_QS},
-and the execution of the dynamically stable model in Section \ref{sec:ZMP_imp}.
+execution of the three-dimensional quasistatic model in Section~\ref{sec:3D_QS},
+and the execution of the dynamically stable model in Section~\ref{sec:ZMP_imp}.
 
-As a reminder, the three dimensional model is run along a sinusoidal trajectory
+As a reminder, the three-dimensional model ran along a sinusoidal trajectory
 with a system frequency of 40Hz. Figure~\ref{fig:Res_QS} depicts the 
-WeBots model successfully walking using the quasistatic method, with the frames read
+Webots model successfully walking using the quasistatic method, with the frames read
 from left to right. Close inspection reveals the CoM represented as a pale green cross
 within a green support polygon. The frames demonstrate stepping of with both the left and 
 right feet during the single support phase, as well shifting the CoM during the 
-double support phase.
+double support phase. The animation of this sequence can be found here: 
+\url{https://www.youtube.com/watch?v=OEqY_AvQbxI}.
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=.95\linewidth]{_content/50_results/40Hz_QS.png}
-        \caption{40Hz WeBots Quasistatic}\label{fig:Res_QS}
+        \caption{40Hz Webots Quasistatic locomotion.}\label{fig:Res_QS}
     \end{center}
 \end{figure}
 
-Similarly, the dynamically stable three dimensional mode is run along 
+Similarly, the dynamically stable three-dimensional model ran along 
 a sinusoidal trajectory with the same geometry as the former. Figure~\ref{fig:Res_ZMP} depicts the 
-WeBots model successfully walking using the Zero Moment Point, with the frames read
+Webots model successfully walking using the Zero Moment Point, with the frames read
 from left to right. While the CoM remains within the support polygon at all times during
 quasistatic locomotion, it rarely enters the support polygon during dynamically stable 
 locomotion. Close inspection of these frames will see a red support polygon beneath the 
-feet, indicating that the CoM is within it. Unfortunately, WeBots does not track the ZMP.
+feet, indicating that the CoM is within it. Unfortunately, Webots does not track the ZMP.\@
 However, as the robot manages to travel closer and closer to the centre of the field without falling, it 
-can be assumed that the ZMP is within the support polygon.
+can be assumed that the ZMP is within the support polygon. The animation of this sequence can be found here: 
+\url{https://www.youtube.com/watch?v=QHIm520DaAE}.
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=.95\linewidth]{_content/50_results/200Hz_ZMP.png}
-        \caption{200Hz WeBots Zero Moment Point}\label{fig:Res_ZMP}
+        \caption{200Hz Webots Zero Moment Point locomotion.}\label{fig:Res_ZMP}
     \end{center}
 \end{figure}

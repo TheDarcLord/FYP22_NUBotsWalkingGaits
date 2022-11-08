@@ -4,7 +4,7 @@ that;
     \item Nubots develops and maintains accurate records of the Nugus platform's geometry and mass. 
     \item Nubots develops and maintains accurate records of the centre of mass of each component and link. 
     \item Switch to servo motors capable of generating a higher holding torque for all joints below the waist.
-    \item Install torsion springs at the knees, thus turning the servo motors into a parallel elastic actuators, to reduce holding torque require by these servos. This may also reduce servo motor backlash.
+    \item Install torsion springs at the knees, thus turning the servo motors into parallel elastic actuators, to reduce holding torque require by these servos. This may also reduce servo motor backlash.
     \item Develop a model of the servo motors, that accounts for backlash, which can then be used to determine the Zero Moment Point without the integration of additional sensors.
     \item Use and enhance the algorithms presented herein to implement a computationally cheap quasistatic walking engine, with large stable steps.
 \end{itemize}

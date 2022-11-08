@@ -41,7 +41,7 @@ clc
 %% Model setup
  % Step Mode -
     model.mode   = zeros(1,length(model.tspan));
-    params.mode  = -1;       % LEFT  FIXED - FKM T16
+    params.mode  =  1;       % LEFT  FIXED - FKM T16
     %               0;       % BOTH  FIXED - FKM T1H T6H
     %               1;       % RIGHT FIXED - FKM T61
  % Robot -
@@ -52,16 +52,16 @@ clc
 
 %% Initial Position & Orientation
     model.q0 = deg2rad([ -05.5;   % θ₁
-                         -39.5;   % θ₂  ~ 2D θ₁ Ankle
-                          56.5;   % θ₃  ~ 2D θ₂ Knee 
-                         -17.0;   % θ₄  ~ 2D θ₃ Hip
+                           -15;   % θ₂  ~ 2D θ₁ Ankle
+                            30;   % θ₃  ~ 2D θ₂ Knee 
+                           -15;   % θ₄  ~ 2D θ₃ Hip
                           05.5;   % θ₅
                           00.0;   % θ₆
                           00.0;   % θ₇
                           05.5;   % θ₈
-                          17.0;   % θ₉  ~ 2D θ₄ Hip
-                         -56.5;   % θ₁₀ ~ 2D θ₅ Knee
-                          39.5;   % θ₁₁ ~ 2D θ₆ Ankle
+                          15.0;   % θ₉  ~ 2D θ₄ Hip
+                         -30.5;   % θ₁₀ ~ 2D θ₅ Knee
+                          15.5;   % θ₁₁ ~ 2D θ₆ Ankle
                          -05.5]); % θ₁₂
     CNV = [-1;+1;+1;+1;-1;+1;-1;+1;-1;-1;-1;+1]; % Joint Angle Conversion
     model.q(:,1)      = model.q0;
@@ -78,11 +78,15 @@ clc
         axis equal
         view(-210,30);
         set(gca,'Color','#CCCCCC');
-        title("3D Model - ZMP Walking",'FontSize',12);
-        xlabel('{\bfZ} (metres)');
-        ylabel('{\bfX} (metres)');
-        zlabel('{\bfY} (metres)');
+        title("Initialised 3D Model",'FontSize',16);
+        xlabel('{\bfZ} (metres)','FontSize',12);
+        ylabel('{\bfX} (metres)','FontSize',12);
+        zlabel('{\bfY} (metres)','FontSize',12);
         [~] = plotRobot(1,model,params);
+        legend({'z_0','x_0','y_0','End Effector: Right Sole','End Effector: Left Sole',...
+            '','','','','','','','','Left Joints: (1 to 6)', ...
+            '','','','','','','','','','','','','','','','',...
+            '','','','Right Joints: (6 to 12)','','','','','','Estimated {\bfCoM}'},'FontSize',12)
     % +-+-+-+-+-+-+-+-+-+-+-+
 
     if params.enableComms == 1

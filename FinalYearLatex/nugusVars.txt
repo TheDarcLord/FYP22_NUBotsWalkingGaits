@@ -1,0 +1,22 @@
+%% TABLES OF JOINT ANGLES AND LINK LENGTHS
+\begin{table}[h!]\centering
+    \begin{center}
+        \caption{Nugus Platform Geometries.}\label{tab:LinkLengths3D}
+        {\footnotesize
+            \begin{tabular}{c l l}
+            \hline\hline\textbf{Displacement Variable Lengths} & & \\
+            {Variable} & {Length (\emph{m})} & {Description} \\\hline
+            $a$ & $0.038$ & Distance between support polygon and the ankle \\
+            $b$ & $0.005669$ & $x$ component of ankle to knee displacement \\
+            $c$ & $0.19942$ & $y$ component of ankle to knee displacement \\
+            $d$ & $-0.0002$ & $z$ component of ankle to knee displacement \\
+            $e$ & $0.19954$ & $y$ component of knee to hip displacement   \\
+            $f$ & $-0.0015$ & $z$ component of knee to hip displacement   \\
+            $g$ & $-0.06895$  & $x$ component of hip to waist displacement  \\
+            $h$ & $0.04625$ & $y$ component of hip to waist displacement  \\
+            $i$ & $-0.0545$ & $z$ component of hip to waist displacement  \\
+            $j$ & $0.11$ & Hip width of the robot
+            \end{tabular}
+        }
+    \end{center}
+\end{table}

@@ -2,11 +2,11 @@ Future work will include;
 \begin{itemize}
     \item Exploring alternative methods of utilising Vukobratović's Zero Moment Point equations, avoiding
         methods that simplify them, to develop a robust dynamically stable walk.
-    \item Modelling interactions with the ground, particularly when using 'studs` on the sole
+    \item Modelling interactions with the ground, particularly when using `studs' on the sole
         of the Nugus platform.
     \item Explore model driven, online trajectory generation and tracking to enable robust locomotion.
     \item Explore the use of the mass of the robot within a less energy intensive passive gait.
-    \item Ensuring the geometry and mass of the Nugus platform is up to date to reenable the use of URDF files.
-    \item Exploring the possibility of driving the robot's centre of mass with a spring loaded inverted pendulum, 
+    \item Ensuring the geometry and mass of the Nugus platform is up-to-date to re-enable the use of URDF files.
+    \item Exploring the possibility of driving the robot's centre of mass with a spring-loaded inverted pendulum, 
         in order to achieve a method for running.
 \end{itemize}

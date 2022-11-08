@@ -1,6 +1,6 @@
 %% HAND DRAWN 2D MODEL
-Figure~\ref{fig:2D_too} depicts the two-dimensional bipedal model during the single support phase, where the centre of
-mass, located at the hips, is over the support polygon. The support polygon is depicted in green, and represents
+Figure~\ref{fig:2D_1} depicts the two-dimensional bipedal model during the single support phase, where the centre of
+mass, located at the hips, is over the support polygon. The support polygon, depicted in green, represents
 the base of the kinematic chain. In this instance, the base is the left foot, with the left leg, in red, constructed from it.
 The right foot, in black, is the end effector. It is connected to the hip position by the right leg, which 
 is depicted in blue. As the robot walks, the role of the base and the end effector will switch between the left and right 
@@ -8,8 +8,10 @@ feet.
 
 \begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=.4\linewidth]{_figures/2D_1.png}\label{fig:2D_1}
-        \caption{Sketch depicting the 2D model. The $Z$ axis is out of the page. Coordinate system $\mathbf{1}$ is the $\mathbf{Base}$ and left foot, while coordinate system $\mathbf{6}$ is the $\mathbf{End\:\:Effector}$ and right foot.}
+        \includegraphics[width=.7\linewidth]{_content/20_modelling/2D_too.png}
+        \caption{Sketch depicting the 2D model. The $Z$ axis is out of the page. 
+        Coordinate system $\mathbf{1}$ is the $\mathbf{Base}$ and left foot, while coordinate 
+        system $\mathbf{6}$ is the $\mathbf{End\:\:Effector}$ and right foot.}\label{fig:2D_1}
     \end{center}
 \end{figure}
 
@@ -63,9 +65,9 @@ where;
 \begin{equation}\label{eq:worldHT2D_L}
     \mathbf{A}^{0}_{1} =
     \begin{bmatrix}
-        \mathbf{I} & \cdots  & \cdots  & \text{LeftAnkle}_{x} \\
-        \vdots     & \ddots & \cdots  & \text{LeftAnkle}_{y} \\
-        \vdots     & \vdots & \ddots & \text{LeftAnkle}_{z} \\
+        \mathbf{I} & \cdots  & \cdots  & \text{Left-Ankle}_{x} \\
+        \vdots     & \ddots & \cdots  & \text{Left-Ankle}_{y} \\
+        \vdots     & \vdots & \ddots & \text{Left-Ankle}_{z} \\
         0          & 0      & 0      & 1
     \end{bmatrix},
 \end{equation}
@@ -73,9 +75,9 @@ and;
 \begin{equation}\label{eq:worldHT2D_R}
     \mathbf{A}^{0}_{6} =
     \begin{bmatrix}
-        \mathbf{I} & \cdots  & \cdots  & \text{RightAnkle}_{x} \\
-        \vdots     & \ddots & \cdots  & \text{RightAnkle}_{y} \\
-        \vdots     & \vdots & \ddots & \text{RightAnkle}_{z} \\
+        \mathbf{I} & \cdots  & \cdots  & \text{Right-Ankle}_{x} \\
+        \vdots     & \ddots & \cdots  & \text{Right-Ankle}_{y} \\
+        \vdots     & \vdots & \ddots & \text{Right-Ankle}_{z} \\
         0          & 0      & 0      & 1
     \end{bmatrix}
 \end{equation}

@@ -16,7 +16,7 @@ $\mathbf{M_{A}}$, acting at the ankle. This is presented in Figure~\ref{fig:ZMP1
 with the support polygon shown in green. The support polygon contains the CoM of the 
 foot itself at $\mathbf{G}$, with some mass $m_f$. The Zero Moment Point, $\mathbf{P}$, at which reaction 
 $\mathbf{R_{xyz}}$ occurs is also contained within the support polygon. 
-All moment, force and position vectors are referenced from base coordinate system $\mathbf{B}$.
+All moment, force, and position vectors are referenced from base coordinate system $\mathbf{B}$.
 
 \begin{figure}[!h]
     \begin{center}
@@ -27,9 +27,9 @@ All moment, force and position vectors are referenced from base coordinate syste
 
 In order to maintain static equilibrium, the $Y$ component of $\mathbf{M_{A}}$ must be
 balanced by the moment of friction forces, in the $XZ$ plane, about the $Y$ axis.
-Additionally horizontal reaction forces at point $\mathbf{P}$, $R_x$ and $R_z$, must balance
+Additionally, horizontal reaction forces at point $\mathbf{P}$, $R_x$ and $R_z$, must balance
 the horizontal components of $\mathbf{F_{A}}$. These horizontal reactions
-are also a result of friction between the support polygon and the ground. Thus for the 
+are also a result of friction between the support polygon and the ground. Thus, for the 
 system to be in equilibrium the sum of forces at the base coordinate system, equation~\eqref{eq:ZMPF}, 
 and the sum of moments about the base coordinate system, equation~\eqref{eq:ZMPM},  must be zero.
 
@@ -39,14 +39,14 @@ and the sum of moments about the base coordinate system, equation~\eqref{eq:ZMPM
 \end{align}
 
 If the base coordinate system is located at the CoM of the foot equation~\eqref{eq:ZMPM} is 
-reduced to equation \label{eq:ZMP_M2}.
+reduced to equation following;
 
 \begin{equation}
-    \mathbf{0} = \vec{BA} \times \mathbf{F_{A}} + \vec{BP} \times \mathbf{R_{xyz}} - \mathbf{M_{A}}
-\end{equation} \label{eq:ZMP_M2}
+    \mathbf{0} = \vec{BA} \times \mathbf{F_{A}} + \vec{BP} \times \mathbf{R_{xyz}} - \mathbf{M_{A}}.
+\end{equation}~\label{eq:ZMP_M2}
 
 As the horizontal components of $\mathbf{R_{xyz}}$ balance the horizontal components of $\mathbf{F_{A}}$,
-all that remains is the vertical component, and thus it can be clearly seen that $R_y = m_fg + F_{\mathbf{A}y}$.
+all that remains is the vertical component, and thus it can be clearly seen that $R_y = m_{f}g + F_{\mathbf{A}y}$.
 
 \begin{figure}[!h]
     \begin{center}
@@ -59,7 +59,7 @@ As $R_y$ is constant the only way to balance either equation~\eqref{eq:ZMPM} or 
 shifting the position of $\mathbf{P}$. This is clearly seen in Figure~\ref{fig:ZMP2}, which is the orthogonal view 
 of the Figure~\ref{fig:ZMP1}. On the left, (A), it is evident that shifting $R_y$ in $X$ is the only approach available
 to balance the sum of moments about $Z$. On the right, (B), it is evident that shifting $R_y$ in $Z$ is the only 
-approach to balance the sum of moments about $X$. Thus $R_y$ occurs at the Zero Moment Point $(x,z)$ such that the 
+approach to balance the sum of moments about $X$. Thus, $R_y$ occurs at the Zero Moment Point $(x,z)$ such that the 
 sum of moments about $X$ and $Z$ is zero. The system is only dynamically stable if the ZMP$(x,z)$ exists within the 
 support polygon. If the ZMP is outside the support polygon then the net torque will cause the foot to lift from the 
 ground and rotate about an edge of the support polygon, thus causing the robot to fall.

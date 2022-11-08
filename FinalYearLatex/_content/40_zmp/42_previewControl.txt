@@ -1,6 +1,6 @@
 In order to track a ZMP reference the input $\mathbf{u}(k)$ requires knowledge of the future 
 output, $\mathbf{y(k+)}$. To achieve this preview Control is used. This particular method
-is developed by Katayama et al. in the late 1980s \citep{katayama_1985_design}.
+is developed by Katayama et al.\ in the late 1980s \citep{katayama_1985_design}.
 
 A performance index, $\mathbf{J}$, is established with weights $\mathbf{Q}_{e}$,
 $\mathbf{Q}_{x}$, and $\mathbf{R}$, which is found in equation~\eqref{eq:PC_performanceIndex}. 
@@ -12,7 +12,7 @@ control action.
 
 %% PERFORMANCE INDEX
 \begin{equation}\label{eq:PC_performanceIndex}
-    \mathrm{arg\:min} \:\: \mathbf{J} = \sum_{i=k}^{\text{$\infty$}} \:
+    \mathrm{\arg\:\min} \:\: \mathbf{J} = \sum_{i=k}^{\text{$\infty$}} \:
     \mathbf{Q}_{e}      \lVert   \mathbf{y_d}(k) - \mathbf{y_d^*}(k)  \rVert \: + \:
     \mathbf{Q}_{x}      \lVert   \mathbf{x_d}(k) - \mathbf{x_d}(k-1)  \rVert \: + \:
     \mathbf{R}          \lVert   \mathbf{u_d}(k) - \mathbf{u_d}(k-1)  \rVert
@@ -33,7 +33,7 @@ to time horizon $k+{N_{l}}$.
     - \sum_{l=1}^{N_{l}} \mathbf{G_d}(l)\mathbf{y_d^*}(k + l)
 \end{equation}
 
-These gains are given by the equations~\eqref{eq:PC_gains1}, \eqref{eq:PC_gains2}, and \eqref{eq:PC_gains3}, where $\mathbf{\tilde{A}_{c}}$ is
+These gains, given by the equations~\eqref{eq:PC_gains1},~\eqref{eq:PC_gains2}, and~\eqref{eq:PC_gains3}, where $\mathbf{\tilde{A}_{c}}$ form
 the closed loop matrix defined in equation~\eqref{eq:PC_closedMatrix}.
 
 %% GAINS

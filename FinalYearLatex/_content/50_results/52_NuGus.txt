@@ -1,15 +1,26 @@
-Unlike WeBots, the server established on the robot cannot ignore the passing of time. As such
+Unlike Webots, the server established on the robot cannot ignore the passing of time. As such
 the select socket function is used to poll for incoming connections from the MATLAB client.
 
-Seen below in Figure~\ref{fig:Real1} is the current Nugus robot in comparison with the WeBots model. 
-Of particular note is the differing geometry of the legs. As such, the models that successful ran in WeBots
-had to be slightly modified in order to achieve locomotion. The WeBots model depicted here has
-been initialised with the joint variable array found in~\eqref{eq:3D_JA_INIT}. The Nugus Robot on the
-the other hand has been initialised with;
+Seen below in Figure~\ref{fig:Real1} is the current Nugus robot in comparison with the Webots model. 
+Of particular note is the differing geometry of the legs. As such, the models that successful ran in Webots
+had to be slightly modified in order to achieve locomotion. The Webots model depicted here has
+been initialised with the joint variable array found in~\eqref{eq:3D_JA_INIT}. 
+The Nugus Robot on the other hand has been initialised with;
 
 \begin{equation}\label{eq:3D_JA_INIT}
-    \mathbf{q_0} = [-\frac{5.5\pi}{180}, \: -\frac{\pi}{12}, \: \frac{\pi}{6}, \: -\frac{\pi}{12}, \: \frac{5.5\pi}{180}, \: 0,
-    0, \: \frac{5.5\pi}{180}, \: \frac{\pi}{12}, \: -\frac{\pi}{6}, \: \frac{\pi}{12}, \: -\frac{5.5\pi}{180}]^\top .
+    \mathbf{q_0} = {[
+        -\frac{5.5}{180}\pi, \: 
+        -\frac{39.5}{180}\pi, \: 
+        \frac{56.5}{180}\pi, \: 
+        -\frac{17}{180}\pi, \: 
+        \frac{5.5}{180}\pi, \: 
+        0, \: 
+        0, \: 
+        \frac{5.5}{180}\pi, \: 
+        \frac{17}{180}\pi, \: 
+        -\frac{56.5}{180}\pi, \: 
+        \frac{39.5}{180}\pi, \: 
+        -\frac{5.5\pi}{180}]}^\top.
 \end{equation}
 
 \begin{figure}[!h]
@@ -30,7 +41,7 @@ similarity, the $X$ position of the CoM in the MATLAB model is shifted backwards
 \end{figure}
 
 Unfortunately, two issues prevented the Nugus robot from walking. Firstly, the knee servos are 
-far too weak to be able to single handedly support the mass of the robot for more than a few seconds.
+far too weak to be able to single-handedly support the mass of the robot for more than a few seconds.
 As such, the only way to execute a quasistatic walk would be implementing a walking solution on the robot itself.
 Quasistatic locomotion is inherently slow, and thus any attempt at a rapid quasistatic walk would take
 too long to develop by trial and error. Secondly, although the frequency at which the Nugus server applied 
@@ -39,13 +50,3 @@ executing the joint values infrequently. Thus, any attempt at a dynamically stab
 gravity or the inertia of the robot would cause a fall while waiting for a subsequent array of joint variables.
 However, as it is possible to statically balance the robot by sending the joint variable array over TCP, this 
 bridge between MATLAB and the Nugus platform has some promise.
-
-
-\begin{itemize}
-    \item Metal Legs are a different geometry to plastic Legs -> Model Change
-    \item Servos at Hip Knee and Ankle joints significantly under powered -> Hit 80 degrees and collapse
-    \item Backlash in Servos not account for, but significant -> 1-2 degrees, joint values: 0.06 degree increments (rad to decimal places)
-    \item Mass over a single foot not possible for slow quasi static walk
-    \item Fast quasistatic possible, however, tiny steps, rapid shifting of mass
-    \item TCP IP Communication Lag fluctuation -> 500ms, method would need to be modified to send all values, and then run them
-\end{itemize}
