@@ -11,16 +11,13 @@ by the total mass of the system.
     \vec{r_{CoM}} = \frac{ \sum\limits_{i=1}^{i=N} m_{i} \, \vec{r_i} } { \sum\limits_{i=1}^{i=N} m_{i} }
 \end{equation}
 
-Figure \ref{fig:CoM} presents a physical representation of equation \eqref{eq:CoM}, with the symbol pointed to
+Figure~\ref{fig:CoM} presents a physical representation of equation~\eqref{eq:CoM}, with the symbol pointed to
 by $\vec{r_{CoM}}$ representing the resulting CoM.
 
 \begin{figure}[h!]
     \begin{center}
         \includegraphics[width=.5\linewidth]{_content/10_background/fig_CoM.png}
-        \caption{
-            Centre of Mass
-        }
-        \label{fig:CoM}
+        \caption{The Centre of Mass, or CoM, within a field of masses.}\label{fig:CoM}
     \end{center}
 \end{figure}
 
@@ -33,15 +30,12 @@ the support polygon.
 \begin{figure}[h!]
     \begin{center}
         \includegraphics[width=.6\linewidth]{_content/10_background/fig_support_polygon.png}
-        \caption{
-            The support polygons of a humanoid
-        }
-        \label{fig:SupportPolygon}
+        \caption{The support polygons of a humanoid}\label{fig:SupportPolygon}
     \end{center}
 \end{figure}
 
-On the left of figure \ref{fig:SupportPolygon} the right foot, blue, is surrounded by the support 
-polygon, green, while the left foot, red, is in motion. Once the left foot step has been completed, 
+On the left of Figure~\ref{fig:SupportPolygon} the right foot, blue, is surrounded by the support 
+polygon, green, while the left foot, red, is in motion. Once the left footstep has been completed, 
 seen on the right, the support polygon is now constructed by the outer vertices of the feet.
 
 
@@ -49,17 +43,14 @@ seen on the right, the support polygon is now constructed by the outer vertices 
 Walking consists of a chain of double support (DS) and single support (SS) stages. During the
 double support phase, both feet are in contact with and parallel the ground. During the single
 support phase one foot remains fixed to the ground, while the other tracks a trajectory to a 
-new position. Figure \ref{fig:WalkingCycle} depicts the walking cycle with the positioning of the 
+new position. Figure~\ref{fig:WalkingCycle} depicts the walking cycle with the positioning of the 
 CoM after each stage. Without this CoM shift, the product of gravity and mass of the robot result in a 
 moment that will cause the robot to fall.
 
 \begin{figure}[h!]
     \begin{center}
         \includegraphics[width=.8\linewidth]{_content/10_background/fig_cycle_lower.png}
-        \caption{
-            Walking cycle with CoM shift
-        }
-        \label{fig:WalkingCycle}
+        \caption{Walking cycle with CoM shift.}\label{fig:WalkingCycle}
     \end{center}
 \end{figure}
 

@@ -1,20 +1,20 @@
 By the completion of this project I have;
 \begin{itemize}
-    \item Significantly improved my understanding of Numerical Optimisation
-	\item Gained a greater understanding of Kinematics
-	\item Learnt TCP networking, including the establishment of servers, clients and polling for incoming connections
-	\item Developed my mathematical modelling skills
-	\item Deepened my understanding of Control Systems
+    \item Significantly improved my understanding of Numerical Optimisation.
+	\item Gained a greater understanding of Kinematics.
+	\item Learned TCP networking, including the establishment of servers, clients and polling for incoming connections.
+	\item Developed my mathematical modelling skills.
+	\item Deepened my understanding of Control Systems.
 \end{itemize}
 The following dot points outline the objectives this project has achieved;
 \begin{itemize}
-    \item Developed 2D and 3D kinematic models for walking robots, and produced animations of their locomotion using Matlab
-	\item Validated my implementation of the Quasistatic approach to locomotion in a virtual simulation environment
-	\item Validated my implementation of the Dynamically Stable approach to locomotion in a virtual simulation environment
-	\item Developed a novel algorithm to enable a bipedal robot to follow an arbitrary trajectory
-	\item Enhanced the aforementioned algorithm to enable the following of complex trajectories
-	\item Enhanced the aforementioned algorithm to enable the use of Preview Control
-	\item Developed a Matlab function to communicate joint variables to either the virtual simulation environment or the robot platform
-	\item Developed a controller within the virtual simulation environment to execute joint variables on the virtual robot platform
+    \item Developed 2D and 3D kinematic models for walking robots, and produced animations of their locomotion using Matlab.
+	\item Validated my implementation of the Quasistatic approach to locomotion in a virtual simulation environment.
+	\item Validated my implementation of the Dynamically Stable approach to locomotion in a virtual simulation environment.
+	\item Developed a novel algorithm to enable a bipedal robot to follow an arbitrary trajectory.
+	\item Enhanced the aforementioned algorithm to enable the following of complex trajectories.
+	\item Enhanced the aforementioned algorithm to enable the use of Preview Control.
+	\item Developed a Matlab function to communicate joint variables to either the virtual simulation environment or the robot platform.
+	\item Developed a controller within the virtual simulation environment to execute joint variables on the virtual robot platform.
 \end{itemize}
 \clearpage

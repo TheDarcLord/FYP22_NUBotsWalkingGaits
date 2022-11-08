@@ -1,4 +1,4 @@
-Figure \ref{fig:3D_0} depicts NUbots'robot, which is a custom built, 20 degree of freedom (DoF) biped
+Figure~\ref{fig:3D_0} depicts NUbots'robot, which is a custom built, 20 degree of freedom (DoF) biped
 based on Igus Humanoid Open Platform. The legs have 12 DoF, with 6 servos located in each leg, while the 
 arms contain 3 servos each. The remaining 2 DoF are located in the robot's neck.
 
@@ -12,7 +12,7 @@ arms contain 3 servos each. The remaining 2 DoF are located in the robot's neck.
     \end{center}
 \end{figure}
 
-As aforementioned, the torso and subsequent kinematic chains were ignored. Figure \ref{fig:3D_1}
+As aforementioned, the torso and subsequent kinematic chains were ignored. Figure~\ref{fig:3D_1}
 depicts the series of coordinate systems between the base, in black, and the effector, in green. 
 The forward kinematic model (FKM) consisted of the following homogenous transforms from the sole of the right
 foot to the sole of the left foot.
@@ -56,7 +56,7 @@ This form [Siciliano page 61] allowed for the production of the inverse model, f
 foot to the sole of the right foot, without any further work. As $(\mathbf{A}^{0}_{12}(\mathbf{q}))$ began and 
 ended with a rotation as a function of $\phi$ about a $z$ axis, it was therefore invertible.
 Thus, the kinematic chain from the left sole to the right sole, the end effector 
-when the left foot was fixed, was given by equation(\ref{eq:InverseFKM}):
+when the left foot was fixed, was given by equation(\eqref{eq:InverseFKM}):
 
 \begin{equation}\label{eq:InverseFKM}
     \mathbf{T}^{E_{E}}_{B} = (\mathbf{T}^{B}_{E_{E}})^{-1} = 
@@ -107,7 +107,7 @@ the parameters found in table \ref{tab:LinkLengths3D}.
     \end{center}
 \end{table}
 
-The model was plotted in 3D (figure \ref{fig:3D_2}). Note the dotted line between the $global$ origin and 
+The model was plotted in 3D (Figure~\ref{fig:3D_2}). Note the dotted line between the $global$ origin and 
 $base$.
 
 \begin{figure}[!ht]

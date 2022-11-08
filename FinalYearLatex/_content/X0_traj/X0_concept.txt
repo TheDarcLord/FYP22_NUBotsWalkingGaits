@@ -18,10 +18,10 @@ is then bisected by a line normal to $AB$: $DE$. Following equations now describ
     r^{2}   = (x - x_{B})^{2} + (y - y_{B})^{2}                \label{eq:TRJ_Circ}
 \end{align}
 
-Equation \eqref{eq:TRJ_Line} is the formula for line $DE$, where the output $y$ and the input $x$ form
+Equation~\eqref{eq:TRJ_Line} is the formula for line $DE$, where the output $y$ and the input $x$ form
 a point somewhere along the line $DE$. As the gradient of $AB$ is given by $\nabla_{AB}$, the gradient
 of $DE$ must be $(-\nabla_{AB})^{-1}$. The remaining inputs, $x_B$ and $y_B$ are the centre of
-circle $C$. Equation \eqref{eq:TRJ_Circ} is the formula for circle $C$, where point $(x_B,y_B)$ is the 
+circle $C$. Equation~\eqref{eq:TRJ_Circ} is the formula for circle $C$, where point $(x_B,y_B)$ is the 
 centre and the remain input $(x,y)$ is a point on the circumference of the circle. The output, $r$, 
 is the radius of the circle. Ideally the $(x,y)$ point is the a solution to both equations.
 The equations for line $DE$ and circle $C$ are then solved for $y$, and equated to form the quadratic equation:
@@ -31,8 +31,8 @@ The equations for line $DE$ and circle $C$ are then solved for $y$, and equated 
     \alpha = 1 + (\nabla_{AB})^{-2}
 \end{align}
 
-$\alpha$ is temporary variable in order to make the the former quadratic equation, \eqref{eq:TRJ_Quad},
-more manageable. The quadratic formula is then used to find the roots of equation \eqref{eq:TRJ_Quad}, which
+$\alpha$ is temporary variable in order to make the the former quadratic equation,~\eqref{eq:TRJ_Quad},
+more manageable. The quadratic formula is then used to find the roots of equation~\eqref{eq:TRJ_Quad}, which
 are the $X$ components of the intersections between $DE$ and $C$; points $D$ and $E$. At this point, $\alpha$ was 
 substituted back into the equation to yield:
 
@@ -48,14 +48,14 @@ in the sign of the component added to $B_{(x,y)}$.
 
 The distance accumulated up until the the generation of $(X_{DE \cap C},Y_{DE \cap C})$, is then reset.
 Point $A$ then takes the value of $B$, before then returning to the process of iterating along the 
-trajectory until, again, the magnitude of footstep is reached. Equations \ref{eq:TRJ_X} and \ref{eq:TRJ_Y} are
+trajectory until, again, the magnitude of footstep is reached. Equations~\eqref{eq:TRJ_X} and \eqref{eq:TRJ_Y} are
 then applied to a new value of $B_{(x,y)}$ to yield a second pair of footstep positions. This process of 
 iterating along the trajectory, and generating footsteps, continues until the trajectory's end, where 
 the process iss repeated once more with $B_{(x,y)} = \mathbf{Q}(t)_{(:,n)}$. This procedure is described below in
 Algorithm \ref{alg:Glb2Fts}.
 
 Taking the midpoint between the robot's feet as the origin of an arbitrary planar trajectory and following
-algorithm \ref{alg:Glb2Fts} produces the series of footsteps seen in figure \ref{fig:TRJ_Sign}. Notice 
+algorithm \ref{alg:Glb2Fts} produces the series of footsteps seen in Figure~\ref{fig:TRJ_Sign}. Notice 
 the impact of the $STEP$ variable. On the left $STEP$ was initialised with $1$, while on the right $STEP$ was
 initialised with $-1$. Thus, on the left, the first step the robot took is with the left foot, while on the 
 right the opposite is true. Additionally each subsequent step, on either side, is with the formerly planted foot.
@@ -70,9 +70,9 @@ Thus both the FKM and the decision as to which foot is in motion, are driven by 
 \end{figure}
 
 However, this method disintegrates if the trajectory rotates more than $\pm \frac{\pi}{2}$ about the global 
-$Z$ axis. Figure \ref{fig:TRJ_Fail} demonstrates the breakdown which culminates in a double step on a 
+$Z$ axis. Figure~\ref{fig:TRJ_Fail} demonstrates the breakdown which culminates in a double step on a 
 particular side, the side in question depending on the inital value of $STEP$. This is caused by the change 
-in sign of the roots of equation \eqref{eq:TRJ_Quad}.
+in sign of the roots of equation~\eqref{eq:TRJ_Quad}.
 \newline
 
 \begin{figure}[!h]

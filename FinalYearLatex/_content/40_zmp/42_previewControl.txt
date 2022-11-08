@@ -3,7 +3,7 @@ output, $\mathbf{y(k+)}$. To achieve this preview Control is used. This particul
 was developed by Katayama et al. in the late 1980s \citep{katayama_1985_design}.
 
 A performance index, $\mathbf{J}$, is established with weights $\mathbf{Q}_{e}$,
-$\mathbf{Q}_{x}$, and $\mathbf{R}$, which is found in equation \eqref{eq:PC_performanceIndex}. 
+$\mathbf{Q}_{x}$, and $\mathbf{R}$, which is found in equation~\eqref{eq:PC_performanceIndex}. 
 The output tracking error is penalised by $\mathbf{Q}_{e}$, while $\mathbf{Q}_{x}$ penalises 
 the change in state. $\mathbf{R}$ penalises control action. The minimization $\mathbf{J}$
 will result in asymptotic regulation of the output, $\mathbf{y_d}(k)$, to
@@ -18,7 +18,7 @@ control action.
     \mathbf{R}          \lVert   \mathbf{u_d}(k) - \mathbf{u_d}(k-1)  \rVert
 \end{equation}
 
-The optimal control action, $\mathbf{u_d^*}(k)$ is thus given by equation \eqref{eq:PC_optimalControl},
+The optimal control action, $\mathbf{u_d^*}(k)$ is thus given by equation~\eqref{eq:PC_optimalControl},
 with gains $\mathbf{G_{e}}$, $\mathbf{G_{x}}$ and $\mathbf{G_d}(l)$. The gain $\mathbf{G_{e}}$ multiplies
 the accumulated output error, from zero to current time step $k$, which represents integral action 
 on the tracking error. The gain $\mathbf{G_{x}}$ multiplies the current state, and thus represents 
@@ -33,8 +33,8 @@ to time horizon $k+{N_{l}}$.
     - \sum_{l=1}^{N_{l}} \mathbf{G_d}(l)\mathbf{y_d^*}(k + l)
 \end{equation}
 
-These gains are given by the equations \ref{eq:PC_gains1}, \ref{eq:PC_gains2}, and \ref{eq:PC_gains3}, where $\mathbf{\tilde{A}_{c}}$ is
-the closed loop matrix defined in equation \eqref{eq:PC_closedMatrix}.
+These gains are given by the equations~\eqref{eq:PC_gains1}, \eqref{eq:PC_gains2}, and \eqref{eq:PC_gains3}, where $\mathbf{\tilde{A}_{c}}$ is
+the closed loop matrix defined in equation~\eqref{eq:PC_closedMatrix}.
 
 %% GAINS
 \begin{align}
@@ -55,7 +55,7 @@ the closed loop matrix defined in equation \eqref{eq:PC_closedMatrix}.
 \end{equation}
 
 Where $\mathbf{\tilde{K}_{d}}$ is the definite, non-negative solution of the discrete time algebraic Riccati Equation, 
-seen in equation \eqref{eq:AlgRic} \citep{katayama_1985_design}.
+seen in equation~\eqref{eq:AlgRic} \citep{katayama_1985_design}.
 
 %% ALGEBRAIC RICCATI EQUATION
 \begin{equation}\label{eq:AlgRic}
@@ -68,8 +68,8 @@ seen in equation \eqref{eq:AlgRic} \citep{katayama_1985_design}.
 \end{equation}
 
 The matrices $\mathbf{\tilde{B}}$, $\mathbf{\tilde{F}}$, $\mathbf{\tilde{Q}}$, $\mathbf{\tilde{I}}$ and $\mathbf{\tilde{A}}$ are found
-below in equation \eqref{eq:PC_define}. The matrix $\mathbf{\tilde{B}}$ is the augmented input matrix, containing $\mathbf{C_d}$ and 
-$\mathbf{B_d}$ from the discretized model found in equation \eqref{eq:LIPM_discrete}. $\mathbf{\tilde{A}}$ is the 
+below in equation~\eqref{eq:PC_define}. The matrix $\mathbf{\tilde{B}}$ is the augmented input matrix, containing $\mathbf{C_d}$ and 
+$\mathbf{B_d}$ from the discretized model found in equation~\eqref{eq:LIPM_discrete}. $\mathbf{\tilde{A}}$ is the 
 augmented evolution matrix, containing $\mathbf{C_d}$ and $\mathbf{A_d}$ from the aforementioned discretized model while
 the penalty matrix $\mathbf{\tilde{Q}}$ is formed from weights $\mathbf{Q}_{e}$ and $\mathbf{Q}_{x}$.
 

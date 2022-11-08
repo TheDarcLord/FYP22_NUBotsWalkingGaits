@@ -3,13 +3,13 @@ to an objective function in order to find the optimal set of arguments that
 result in the function's maximum or minimum value. [cite numerical optimisation]
 
 \begin{equation}\label{eq:optimisation}
-    \mathbf{x}^{*} = \underset{\mathbf{x}}{\mathrm{arg\:min}}\:\: f(\mathbf{x})
+    \mathbf{x}^{*} = \underset{\mathbf{x}}{\mathrm{\arg\:\min}}\:\: f(\mathbf{x})
 \end{equation}
 
 An objective function is proposed as `$\mathbf{x}^{*}$ \emph{is equal to the 
-argument of the minimum value of} $f(\mathbf{x})$'. equation \eqref{eq:optimisation} is 
+argument of the minimum value of} $f(\mathbf{x})$'. Equation~\eqref{eq:optimisation} is 
 the mathematical notation for this statement, where $\mathbf{x}^{*}$ is the optimal column 
-matrix that minimises $f(\mathbf{x})$. The objective function can also be subject to equality and 
+matrix that minimizes $f(\mathbf{x})$. The objective function can also be subject to equality and 
 inequality constraints of the form;
 
 \begin{align}
@@ -17,7 +17,7 @@ inequality constraints of the form;
     c_{eq}(\mathbf{x})      =       0         \\
     A       \mathbf{x}      \leq    b         \\
     A_{eq}  \mathbf{x}      =       b_{eq}    \\
-    lb      \leq  \mathbf{x} \leq ub
+    lb      \leq  \mathbf{x} \leq ub,
 \end{align}
 
 where $c(\mathbf{x})$ and $c_{eq}(\mathbf{x})$ are non-linear constraints, while the 
@@ -26,11 +26,9 @@ column matrix that forms the lower bound of $\mathbf{x}$, while $ub$ is the colu
 that forms the upper bound of $\mathbf{x}$.
 
 Numerical optimisation is used to solve the Inverse Kinematic Model (IKM), where, given 
-a desired end effector pose, the column matrix of joint variables that achieve the desired pose 
+a desired end effector pose, the column matrix of joint variables, $\mathbf{q^{*}}$, that achieve the desired pose 
 is returned.
 
 \begin{equation}
     \mathbf{q^{*}} = \mathbf{k}^{-1}(\mathbf{x_e})
 \end{equation}
-
-

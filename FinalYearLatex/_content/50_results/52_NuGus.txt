@@ -1,10 +1,10 @@
 Unlike WeBots, the server established on the robot cannot ignore the passing of time. As such
 the select socket function is used to poll for incoming connections from the Matlab client.
 
-Seen below in figure \ref{fig:Real1} is the current Nugus robot in comparison with the WeBots model. 
+Seen below in Figure~\ref{fig:Real1} is the current Nugus robot in comparison with the WeBots model. 
 Of particular note is the differing geometry of the legs. As such, the models that successful ran in WeBots
 had to be slightly modified in order to achieve locomotion. The WeBots model depicted here has
-been initialised with the joint variable array found in \eqref{eq:3D_JA_INIT}. The Nugus Robot on the
+been initialised with the joint variable array found in~\eqref{eq:3D_JA_INIT}. The Nugus Robot on the
 the other hand has been initialised with;
 
 \begin{equation}\label{eq:3D_JA_INIT}
@@ -19,7 +19,7 @@ the other hand has been initialised with;
     \end{center}
 \end{figure}
 
-Figure \ref{fig:Real2} depicts the CoM, in red, for both the Webots model and the Nugus robot. To achieve this
+Figure~\ref{fig:Real2} depicts the CoM, in red, for both the Webots model and the Nugus robot. To achieve this
 similarity, the $X$ position of the CoM in the matlab model was shifted backwards by $0.02$ metres.
 
 \begin{figure}[!h]

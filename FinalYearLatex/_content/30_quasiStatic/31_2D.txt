@@ -7,7 +7,7 @@ found to be invaluable when moving to three dimensions.
 \subsubsection*{Two Dimensional Inverse Kinematic Model}
 
 The two dimensional inverse kinematic Model (IKM) is a quadratic optimisation function solving for the 
-array of joint variables, $\mathbf{q}$, that minimise the equation \eqref{eq:2D_ikm}. Weights, 
+array of joint variables, $\mathbf{q}$, that minimise the equation~\eqref{eq:2D_ikm}. Weights, 
 $\mathbf{K_q}$, $\mathbf{K_e}$, and $\mathbf{K_{CoM}}$, penalise the change in joint variables, the
 end effector error and the displacement of the ground projected CoM from the centre of the support polygon.
 
@@ -34,7 +34,7 @@ joint angles, the new optimal joint variables, $\mathbf{q^{*}}$, could yield lar
 in the value of the joint angles. When considered in the context of time and position, this would have resulted in the 
 acceleration of elements that form the kinematic chain, thus violating the `quasistatic assumption'.
 Similarly, to prevent the CoM from accelerating beyond minimal velocities the IKM is subject to the nonlinear inequality
-constraint, found in \ref{eq:2D_ineq}, where $\Delta_{t}$ is the time step of the system. This prevents the CoM from
+constraint, found in \eqref{eq:2D_ineq}, where $\Delta_{t}$ is the time step of the system. This prevents the CoM from
 traveling more than 10cm per second in any linear direction, thus remaining slow enough to ignore inertial effects.
 
 \begin{equation}\label{eq:2D_ineq}
@@ -57,7 +57,7 @@ was necessary to return the foot to the ground within the desired time period.
     \end{bmatrix}
 \end{equation}
 
-The indefinite integral of equation \eqref{eq:2D_accel} is $\mathbf{\dot r}(t) + \mathbf{b}$, 
+The indefinite integral of equation~\eqref{eq:2D_accel} is $\mathbf{\dot r}(t) + \mathbf{b}$, 
 where $\mathbf{b}$ is some unknown constant. At time $\frac{1}{2}(t_i + t_f)$, halfway along
 the trajectory, the $y$ component of $\mathbf{\dot r}(t)$ must be zero, ceasing the foot's vertical 
 velocity. Concurrently, the $x$ component of $\mathbf{\dot r}(t)$ is $0 + b_{x}$ and thus $b_{x}$
@@ -73,7 +73,7 @@ was set to the average velocity.
     \end{bmatrix}
 \end{equation}
 
-equation \eqref{eq:2D_vel} was indefinitely integrated to yield $\mathbf{r}(t) + \mathbf{c}$, where 
+equation~\eqref{eq:2D_vel} was indefinitely integrated to yield $\mathbf{r}(t) + \mathbf{c}$, where 
 $\mathbf{c}$ is some unknown constant.
 The $y$ component of the trajectory contains three unknown variables, $a_{y}$, $b_{y}$ and $c_{y}$.
 As the robot is stepping along the plane $y = 0$, it is evident that $c_{y} = 0$. To solve the remaining 
@@ -84,10 +84,10 @@ the trajectory.
     y_{d} = -\frac{1}{2} a_{y} (\frac{1}{2}(t_i + t_f))^{2} + b_{y} \, (\frac{1}{2}(t_i + t_f))
 \end{equation}
 
-Substituting $b_{y} = a_{y}(\frac{1}{2}(t_i + t_f))$ into equation \eqref{eq:2D_solve}
+Substituting $b_{y} = a_{y}(\frac{1}{2}(t_i + t_f))$ into equation~\eqref{eq:2D_solve}
 yields the coefficients $a_{y}$ and $b_{y}$. As the $x$ component of the trajectory must equal 
 the $x$ component of the inital position at time $t_i$, it follows that $c_{x} = x_i$.
-This lead to equation \eqref{eq:2D_pos} which paramterises the path of a stepping foot as
+This lead to equation~\eqref{eq:2D_pos} which paramterises the path of a stepping foot as
 a function of time.
 
 \begin{equation}\label{eq:2D_pos}
@@ -100,7 +100,7 @@ a function of time.
     \end{bmatrix}
 \end{equation}
 
-Initialising $t_i$ as zero and $t_f$ as the duration of the step, $t_d$, leads to \ref{eq:2D_qt}.
+Initialising $t_i$ as zero and $t_f$ as the duration of the step, $t_d$, leads to~\eqref{eq:2D_qt}.
 During footstep trajectory generation the time span must now begin at zero time, and finishes
 at time $t_d$. The trajectory matrix, $\mathbf{Q_s}_{2 \times n}(t)$, consists of rows of position vectors describing
 the path with respect to some origin. This path can be iterated through at any time, and 
@@ -117,7 +117,7 @@ can be shifted in time, during the execution of the walking cycle.
 
 The two dimensional model was initialised with $ \mathbf{q_{0}} = 
 [\frac{-\pi}{8}, \frac{2\pi}{8}, \frac{-\pi}{8}, \frac{\pi}{8}, \frac{-2\pi}{8}, \frac{\pi}{8}]^\top$. This
-resulted in the model standing with slightly bent knees, as seen in figure \ref{fig:2D_init}. For simplicity, the rotations associated with
+resulted in the model standing with slightly bent knees, as seen in Figure~\ref{fig:2D_init}. For simplicity, the rotations associated with
 the end effector pose were set to zero. The model was then run at $40Hz$ for 24 seconds,
 with the steps at 0, 8 and 16 seconds. The width of the support polygon was chosen as $0.1$ metres.
 
@@ -131,7 +131,7 @@ with the steps at 0, 8 and 16 seconds. The width of the support polygon was chos
 
 To shift between kinematic chains, a parameter called $STEP$ was established. $STEP$ took values of $-1$ or $1$ depending on 
 which foot to be in motion. This 
-approach was based on the relationship between the dual kinematic chains, as seen in equation \eqref{eq:STEP}.
+approach was based on the relationship between the dual kinematic chains, as seen in equation~\eqref{eq:STEP}.
 
 \begin{equation}\label{eq:STEP}
     (\mathbf{T}^{Left}_{Right})^{1} = (\mathbf{T}^{Right}_{Left})^{-1}
@@ -144,7 +144,7 @@ the kinematic chains within the FKM function. The position of the left sole, and
 global two dimensional arrays, as seen in algorithm \ref{alg:2D_run}. \\
 
 The trajectory followed by each step was designed using 
-equation \eqref{eq:2D_pos}. Rather than a dedicated, parallel kinematic chain and IKM to shift the CoM between steps, 
+equation~\eqref{eq:2D_pos}. Rather than a dedicated, parallel kinematic chain and IKM to shift the CoM between steps, 
 the step duration was halved during step trajectory generation algorithm. 
 The inital half of the step time period was used to shift the CoM to the fixed foot, while the remainder
 stepped the foot. This was achieved by populating the first half of the trajectory matrix, $\mathbf{Q}$, with the 
@@ -154,12 +154,12 @@ its initial position for half the time period of the step, while the CoM shifted
 
 \input{_content/30_quasiStatic/AlgTrajgen.txt}
 
-It should be noted that algorithm \ref{alg:2D_trajGen} drops the $t_i$ term from equation \eqref{eq:2D_pos}, and 
+It should be noted that algorithm \ref{alg:2D_trajGen} drops the $t_i$ term from equation~\eqref{eq:2D_pos}, and 
 generates a parabolic trajectory from an initial time of zero, to the final time $+t_d$. This trajectory
 is then shifted to the the second half of the step time period using $\mathbf{TT}$.
 
-The IKM was a direct implementation of equation \eqref{eq:2D_ikm} and nonlinear constraint \ref{eq:2D_ineq}, 
-with weights found in equations \ref{eq:2D_w2} to \ref{eq:2D_w3}. The large penalty associated with the end effector error, $\mathbf{K_e}$,
+The IKM was a direct implementation of equation~\eqref{eq:2D_ikm} and nonlinear constraint \eqref{eq:2D_ineq}, 
+with weights found in equations~\eqref{eq:2D_w2} to~\eqref{eq:2D_w3}. The large penalty associated with the end effector error, $\mathbf{K_e}$,
 forces the solver to primarily satisfy the pose of the end effector.
 The initial value passed to the numerical solver at each time index,
 was the previous set of optimal joint values, $\mathbf{q}_{(i-1)}$. At each time index, the corresponding
@@ -182,10 +182,10 @@ the optimal joint variables were passed through the FKM to determine the true po
 
 \subsubsection*{Matlab Simulation Results}
 
-Figure \ref{fig:2D_traj} depicts the paths traveled by both feet, with the left foot in red,
+Figure~\ref{fig:2D_traj} depicts the paths traveled by both feet, with the left foot in red,
 and the right foot in blue. These paths were generated by algorithm \ref{alg:2D_trajGen} as 
 trajectories, with a step height of $0.1$ metres and step distance of $0.25$ metres. Both feet
-began from the origin, which is verified in figure \ref{fig:2D_CoM}.
+began from the origin, which is verified in Figure~\ref{fig:2D_CoM}.
 
 \begin{figure}[!h]
     \begin{center}
@@ -195,12 +195,12 @@ began from the origin, which is verified in figure \ref{fig:2D_CoM}.
     \end{center}
 \end{figure}
 
-On the right of figure \ref{fig:2D_CoM} the position of the feet is shown with respect to time, left in red,
+On the right of Figure~\ref{fig:2D_CoM} the position of the feet is shown with respect to time, left in red,
 right in blue. At $t = 4 sec$, the right foot begins stepping, completing its path by $t = 8 sec$. Between 
 $t = 8 sec$ and $t = 12 sec$, it is evident that the robot is in the double support phase as there is no 
 change in the displacement of the left or right foot. This occurs once again at $t = 16sec$. During these
 double support phases the CoM transitions from one foot to the other at a near constant velocity. This is 
-clearly seen on the left side of figure \ref{fig:2D_CoM}.
+clearly seen on the left side of Figure~\ref{fig:2D_CoM}.
 
 \begin{figure}[!h]
     \begin{center}

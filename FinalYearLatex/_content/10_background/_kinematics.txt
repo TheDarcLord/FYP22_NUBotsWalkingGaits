@@ -1,38 +1,44 @@
 \subsubsection*{Homogeneous transforms}
 
-Homogenous transforms consist of a rotation, ${R}^{a}_{b}$, and a translation, 
-$\mathbf{r}^{a}_{b}$, between two coordinate systems. equation \eqref{eq:HT} is interpreted
+Homogeneous transformation describe the combination of a rotation and a translation 
+as a linear operator by lifting vectors in 3D (2D) into a 4D (3D) space.
+They consist of a rotation, ${R}^{a}_{b}$, and a translation, 
+$\mathbf{r}^{a}_{b}$, between two coordinate systems. Equation~\eqref{eq:HT} is interpreted
 as \emph{from $a$, where is $b$}.
 \begin{equation}\label{eq:HT}
     \mathbf{A}^{a}_{b} = \begin{bmatrix}
         \mathbf{R}^{a}_{b}  & \mathbf{r}^{a}_{b} \\
         \mathbf{0}          &  1
-    \end{bmatrix}
+    \end{bmatrix}.
 \end{equation}
 
+The columns of ${R}^{a}_{b}$ are the subscript, $b$, basis vectors expressed in the
+coordinates of the superscript $a$.
 Homogeneous transforms can be chained together to form a single transform
 between two separate coordinate systems, such as;
+
 \begin{equation}
-    \mathbf{T}^{0}_{3} = \mathbf{A}^{0}_{1} \cdot \mathbf{A}^{1}_{2} \cdot \mathbf{A}^{2}_{3}
+    \mathbf{T}^{0}_{3} = \mathbf{A}^{0}_{1} \cdot \mathbf{A}^{1}_{2} \cdot \mathbf{A}^{2}_{3}.
 \end{equation}
-The four basic homogenous transforms, rotation about $x$, rotation about $y$, rotation about $z$
-and translation by $(x,y,z)$, are equations \ref{eq:basicHTs} to \ref{eq:basicHTs2}.
+
+The four basic homogeneous transforms rotation about $x$, rotation about $y$, rotation about $z$
+and translation by $(x,y,z)$, are equations~\eqref{eq:basicHTs} to~\eqref{eq:basicHTs2}.
 \begin{align}\label{eq:basicHTs}
     \mathbf{R_x}(\phi) = \begin{bmatrix}
         1           &  0        &  0        & 0 \\
-        0           &  cos\phi  & -sin\phi  & 0 \\
-        0           &  sin\phi  &  cos\phi  & 0 \\
+        0           &  \cos\phi  & -\sin\phi  & 0 \\
+        0           &  \sin\phi  &  \cos\phi  & 0 \\
         0           &  0        &  0        & 1
     \end{bmatrix}                               \\
     \mathbf{R_y}(\theta) = \begin{bmatrix}
-        cos\theta   &  0        & sin\theta & 0 \\
+        \cos\theta  &  0        & \sin\theta & 0 \\
         0           &  1        & 0         & 0 \\
-    -sin\theta   &  0        & cos\theta & 0 \\
+       -\sin\theta  &  0        & \cos\theta & 0 \\
         0           &  0        & 0         & 1
     \end{bmatrix}                               \\
     \mathbf{R_z}(\psi) = \begin{bmatrix}
-        cos\psi     & -sin\psi  & 0         & 0 \\
-        sin\psi     &  cos\psi  & 0         & 0 \\
+        \cos\psi     & -\sin\psi  & 0         & 0 \\
+        \sin\psi     &  \cos\psi  & 0         & 0 \\
         0           &  0        & 1         & 0 \\
         0           &  0        & 0         & 1
     \end{bmatrix}                               \\
@@ -45,28 +51,23 @@ and translation by $(x,y,z)$, are equations \ref{eq:basicHTs} to \ref{eq:basicHT
 \end{align}
 
 \subsubsection*{Kinematics}
-[Quote Robotics Modelling Control]
-Kinematics is the geometric relationship between physical elements of a system.
+Kinematics is the geometric relationship between physical elements of a system \citep{grimble_2009_robotics}.
 Physical systems, such as a robotic arm, are represented as chain of rigid bodies 
-joined at points of rotation or translation. Each element in the chain is known as 
-a link, while the points of rotation or translation are known as joints. The end effector, $E$,
+joined at points of rotation or translation. Each physical displacement element in the chain known a link, 
+while the points of rotation or translation are joints. The end effector, $E$,
 is the last element of a chain of links and joints. Each joint is parameterised by some 
 displacement, with respect to the parent link, about or along an axis by a joint variable. 
 
 A system can be described by a column vector of joint variables, $\mathbf{q}$, and a chain 
-of homogenous transforms that are functions of the elements of $\mathbf{q}$. 
+of homogeneous transforms that are functions of the elements of $\mathbf{q}$. 
 
 \begin{figure}[h!]
     \begin{center}
-        \includegraphics[width=.6\linewidth]{_content/10_background/fig_emp.png}
-        \caption{
-            Example system
-        }
-        \label{fig:3D_1}
-    \end{center}
+        \includegraphics[width=.6\linewidth]{_content/10_background/fig_emp.png}\label{fig:3D_1}
+        \caption{Example system containing a series of links, and joints.}
+        \end{center}
 \end{figure}
-
-The Direct Kinematic Model (DKM) is the homogenous transform that describes the position
+The Direct Kinematic Model (DKM) is the homogeneous transform that describes the position
 vector and rotation matrix needed to reach the end effector from some base, $B$, coordinate system.
 
 \begin{equation}
@@ -87,7 +88,7 @@ with respect to that same base coordinate system.
 
 $\mathbf{\Theta}$ is the parameterisation of the rotation matrix contained within the 
 DKM, that being $\mathbf{R}_{E}^{B}$. For the purpose of this report, Euler Angles, were 
-chosen to parameterise $\mathbf{\Theta_{E}^{B}}$. Euler angles are determined by the multiplication of a 
+chosen to parameterise $\mathbf{\Theta_{E}^{B}}$. The determination of Euler Angles is by the multiplication of a 
 series of rotations, $\mathbf{R_{z}}(\psi) \mathbf{R_{y}}(\theta) \mathbf{R_{x}}(\phi)$, which results 
 in the rotation matrix;
 \begin{equation}
@@ -96,13 +97,13 @@ in the rotation matrix;
         R_{21} & R_{22} & R_{23} \\
         R_{31} & R_{32} & R_{33} 
     \end{bmatrix} = \begin{bmatrix}
-        cos\psi cos\theta & - sin\psi cos\phi + cos\psi sin\theta sin\phi & + sin\psi sin\phi + cos\psi sin\theta cos\phi  \\
-        sin\psi cos\theta & + cos\psi cos\phi + sin\psi sin\theta sin\phi & - cos\psi sin\phi + sin\psi sin\theta cos\phi  \\
-       -sin\theta & cos\theta sin\phi & cos\theta cos\phi
-    \end{bmatrix}
+        \cos\psi \cos\theta & - \sin\psi \cos\phi + \cos\psi \sin\theta \sin\phi & + \sin\psi \sin\phi + \cos\psi \sin\theta \cos\phi  \\
+        \sin\psi \cos\theta & + \cos\psi \cos\phi + \sin\psi \sin\theta \sin\phi & - \cos\psi \sin\phi + \sin\psi \sin\theta \cos\phi  \\
+       -\sin\theta & \cos\theta \sin\phi & \cos\theta \cos\phi
+    \end{bmatrix}.
 \end{equation}
 
-Thus the inverse map from $\mathbf{R}_{E}^{B}$ to $\mathbf{\Theta_{E}^{B}}$ is;
+Thus, the inverse map from $\mathbf{R}_{E}^{B}$ to $\mathbf{\Theta_{E}^{B}}$ is;
 
 \begin{equation}
     \mathbf{\Theta_{E}^{B}} = \begin{bmatrix}
@@ -111,12 +112,12 @@ Thus the inverse map from $\mathbf{R}_{E}^{B}$ to $\mathbf{\Theta_{E}^{B}}$ is;
         \psi
     \end{bmatrix} = \begin{bmatrix}
         atan2( \mathbf{R}_{32},\mathbf{R}_{33})                                 \\
-        atan2(-\mathbf{R}_{31},\sqrt{ \mathbf{R}_{32}^2 + \mathbf{R}_{33}^2 }   \\
+        atan2(-\mathbf{R}_{31},\sqrt{ \mathbf{R}_{32}^2 + \mathbf{R}_{33}^2 })   \\
         atan2( \mathbf{R}_{21},\mathbf{R}_{11})
-    \end{bmatrix}
+    \end{bmatrix}.
 \end{equation}
 
 The FKM is thus parameterised as;
 \begin{equation}
-    \mathbf{x_{e}} = [ x, y, z, \phi, \theta, \psi ]^{\top} = \mathbf{k}(\mathbf{q})
+    \mathbf{x_{e}} = {[ x, y, z, \phi, \theta, \psi ]}^{\top} = \mathbf{k}(\mathbf{q}).
 \end{equation}

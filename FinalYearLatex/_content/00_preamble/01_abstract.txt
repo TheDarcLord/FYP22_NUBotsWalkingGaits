@@ -14,8 +14,7 @@ position of the centre of mass is driven by the state vector of a linear inverte
 The output of this model is a point that coincides with a desired footstep, to which the pendulum is virtually attached.
 In this way, the acceleration of the centre of mass ensure the robot remains dynamically stable.
 
-The quasistatic and dynamically stable approaches were implemented with a three
-dimensional kinematic model of NUbot's Nugus platform. In order to validate 
-these approaches, a Matlab function was developed to emit the joint 
+The quasistatic and dynamically stable approaches were implemented with a three-dimensional kinematic model of NUbot's 
+Nugus platform. In order to validate these approaches, a Matlab function was developed to emit the joint 
 variable array at each time-step to both a virtual simulation environment 
 and the Nugus platform.

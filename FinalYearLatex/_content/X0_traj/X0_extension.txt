@@ -1,5 +1,5 @@
 $\mathbf{REF}$, mentioned in both algorithm \ref{alg:Glb2Fts} and \ref{alg:Loc2Fts}, stores a discrete 
-time ZMP Reference which drives Kajita's proposed ZMP pattern generator, seen in figure \ref{fig:TRJ_ZMP}.
+time ZMP Reference which drives Kajita's proposed ZMP pattern generator, seen in Figure~\ref{fig:TRJ_ZMP}.
 
 \begin{figure}[!h]
     \begin{center}

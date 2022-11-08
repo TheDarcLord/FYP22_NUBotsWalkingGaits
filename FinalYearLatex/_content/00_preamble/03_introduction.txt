@@ -1,8 +1,8 @@
 The pursuit of creating autonomous humanoids began with the Ancient Greeks \citep{rtruitte_2015_medieval}. 
-Hephaestus, god of smithing, created tripedal automata with golden wheels to serve the other gods of Mount
+Hephaestus, god of blacksmithing, created tripedal automata with golden wheels to serve the other gods of Mount
 Olympus, as well as the Talos, a giant bronze humanoid. Automata and mechanisms were cherished in the world 
 of the Ancient Greeks, as teaching tools, and artworks. However, these were primarily constructed of pipes,
-rope, pulleys and levers. As such, the definition of automata is a machine that completes a singular task, 
+rope, pulleys, and levers. As such, the definition of automata is a machine that completes a singular task, 
 repeatedly.
 
 Following the Greeks, the Islamic world became the home of mechanisms and automata. Ismail al-Jazari, a 12th 
@@ -23,25 +23,25 @@ Clockwork Knight \citep{moran_2006_the} from the 1490s and Gianello della Torre'
 
 Following World War Two, and the development of the first computer, Colossus, at Bletchley Park, 
 Humanoid Automata drifted into Humanoid Robotics. The latter being distinguished by the
-capacity to program a Robot for a series of unrelated tasks, while the former is only ever designed 
-to do one.
+capacity to program a Robot for a series of unrelated tasks, while automata were designed to excel
+at a single task.
 
 \citet{kat_1973_development} developed the first walking humanoid robots. The WaBot series,
-which began in the early 1970s, explored statically stable locomotion, object maniuplation,
+which began in the early 1970s, explored statically stable locomotion, object manipulation,
 human to robot communication. During this period Kato became aware of Miomir Vukobratović's work 
 on dynamically stable systems. This lead to the development of WL-10RD by Kato and his team, which
 was the first dynamically stable walking humanoid robot.
 \begin{figure}[h!]
     \begin{center}
-        \includegraphics[width=.7\linewidth]{_content/00_preamble/intro/kato.png}
+        \includegraphics[width=.9\linewidth]{_content/00_preamble/intro/kato.png}
         \caption{Left: WABOT-1 the first statically stable walking humanoid \citep{humanoidroboticsinstitutewasedauniversity_2007_humanoid} \\ Right: WL-10RD the first dynamically stable walking humanoid \citep{takanishilaboratory_2004_biped}}
     \end{center}
 \end{figure}
 
-In the late 1980's Mark Raibert, base at MIT's `Leg Lab', devised a new method of locomotion
-with his development of a spring loaded inverted pendulum. This robot, the Raibert Hopper \citep{raibert_1986_legged}, 
+In the late 1980s Mark Raibert, base at MIT's `Leg Lab', devised a new method of locomotion
+with his development of a spring-loaded inverted pendulum. This robot, the Raibert Hopper \citep{raibert_1986_legged}, 
 was the first of series from Raibert and the `Leg Lab' team. Today, what was the MIT `Leg Lab'
-in the 1980s has formed the Boston Dynamics group, with Raibert as its head. Boston Dyanmic 
+in the 1980s has formed the Boston Dynamics, with Raibert as its head. Boston Dynamic 
 is currently at the forefront of humanoid research and development, with their robot Atlas.
 \begin{figure}[h!]
     \begin{center}
@@ -50,26 +50,26 @@ is currently at the forefront of humanoid research and development, with their r
     \end{center}
 \end{figure}
 
-RoboCup \citep{robocupfederation_2020_robocup} was established in 1997 as a compltition 
+RoboCup \citep{robocupfederation_2020_robocup} was established in 1997 as a competition 
 between university research groups, with the objective of developing a humanoid football
 to compete with the Football World Cup victors of that year. To drive development, the RoboCup
 has a yearly football competition. This competition is split into different classes; Humanoid, 
 Standard Platform, Middle Size, Small Size and now, Simulation.
 
-NuBots \citep{nubots_2022_nubots} is the University of Newcastle's RoboCup team, and Robotics 
+NUbots \citep{nubots_2022_nubots} is the University of Newcastle's RoboCup team, and Robotics 
 research group. Their current platform, Nugus, is based on the iGus Open Platform 
 \citep{bonnuniversityinstituteforcomputerscience_university} developed by Bonn University.
 
 \begin{figure}[h!]
     \begin{center}
-        \includegraphics[width=.7\linewidth]{_content/00_preamble/intro/nugus.jpg}
+        \includegraphics[width=.5\linewidth]{_content/00_preamble/intro/nugus.jpg}
         \caption{NUbots' Nugus Platform}
     \end{center}
 \end{figure}
 
-NuBots currently runs a machine learned walk referred to as `The Quintic Walk' by the members of the team.
+NUbots currently runs a machine learned walk referred to as `The Quintic Walk' by the members of the team.
 However, this walk causes serious oscillation within the rest of the platform's body. Additionally,
-this walk engine was all but become a black box to the members of the team. To manage this, the
+this walk engine has become a black box to the members of the team. To manage this, the
 team has sunk hundreds of hours into simulating and executing various sets of tuning parameters 
 that lead to a somewhat stable walk. In addition, they have built a Webots simulation of 
 the Nugus platform. 

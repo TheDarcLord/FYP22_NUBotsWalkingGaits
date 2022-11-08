@@ -28,7 +28,7 @@
                     \State $    \mathbf{Q_{step}}       \:\gets \text{StepTrajGen}(\: \mathbf{REF}_{[:,k]}, \: \mathbf{x_e}, \: \text{run} \to \text{stop} \: ) $
                     \For {$ j \:\gets \:run \:\mathbf{to} stop$    }        \Comment{ In effect, time only moves during this \textbf{For} loop}
                         \State $    \mathbf{x_e^*}      \:\gets \mathbf{Q_{step}}_{[:,j]}                           $
-                        \State $    \mathbf{q}_{[:,j]}  \:\gets \text{IKM}(\mathbf{x_e^*},\mathbf{q}_{[:,j-1]})     $   \Comment{ STEP dependent, see equation \eqref{eq:STEP}}
+                        \State $    \mathbf{q}_{[:,j]}  \:\gets \text{IKM}(\mathbf{x_e^*},\mathbf{q}_{[:,j-1]})     $   \Comment{ STEP dependent, see equation~\eqref{eq:STEP}}
                     \EndFor
                     \State %%--------------------------- BLANK ------------------------%%
                     \State $    init                    \:\gets stop                         $
