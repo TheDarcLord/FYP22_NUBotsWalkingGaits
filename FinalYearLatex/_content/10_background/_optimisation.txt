@@ -1,6 +1,6 @@
 Numerical optimisation is process of applying recursive algorithms
 to an objective function in order to find the optimal set of arguments that 
-result in the function's maximum or minimum value. [cite numerical optimisation]
+result in the function's maximum or minimum value \citep{nocedal_2006_numerical}.
 
 \begin{equation}\label{eq:optimisation}
     \mathbf{x}^{*} = \underset{\mathbf{x}}{\mathrm{\arg\:\min}}\:\: f(\mathbf{x})

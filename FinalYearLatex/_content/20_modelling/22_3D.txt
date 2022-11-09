@@ -5,7 +5,7 @@ arms contain three servos each. The remaining two degrees of freedom are located
 
 \begin{figure}[h!]
     \begin{center}
-        \includegraphics[width=.7\linewidth]{_content/20_modelling/NUgusC.png}
+        \includegraphics[width=.65\linewidth]{_content/20_modelling/NUgusC.png}
         \caption{Schematic of the Nugus, sourced from NUbots' Onshape document.}\label{fig:3D_0}
     \end{center}
 \end{figure}
