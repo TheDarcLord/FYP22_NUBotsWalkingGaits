@@ -1,8 +1,0 @@
-I must express my deepest gratitude to my supervisor, Dr Joel Ferguson, for supporting me 
-in my initial foray into legged robots in 2021 and for guiding me through a logical progression 
-of knowledge in the field of humanoid robotics this year.
-
-I must also thank my colleagues at both SAPHI and Ampcontrol for enabling me to work flexibly
-between bouts of research and development.
-
-Finally, I dedicate this work to my Year 12 Mathematics Teacher, Mr Gerardo Aguirre.
