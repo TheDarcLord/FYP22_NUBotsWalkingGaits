@@ -1,18 +1,18 @@
-## 2022 Final Year Project
-### TwoDimensions
-#### Status: Quasi Static 
-- 2 Steps with CoM shift between steps
-- Displaying CoM
-- CoM sticks to planted foot, and transitions to the forward foot during a dual support phase
-- Quintic Splines for Trajectory Generation
-- Trajectories: Feet/Ankles, CoM during dual support
-- Pseudo Optimised, runtime ~ 50 sec
-- 3D aspects to ease transition to 3D
-### ThreeDimensions
-#### Status:
-- Multiple Steps with CoM shift between steps
-- Displaying CoM in 3D, lacking 2D 'shadow'
-- CoM sticks to planted foot, and transitions to the forward foot during a dual support phase
-- Quintic Splines for Trajectory Generation
-- Trajectories: Feet/Ankles, CoM during dual support
-- Pseudo Optimised, runtime ~ 500 sec
+## **2022 Final Year Project** - *NUBots Walking Gaits*
+***
+**Supervisor**
+: Dr Joel Ferguson
+
+**Student**
+: Darcy Byrne
+
+### **_Formative**
+Formative contains a collection of MATLAB examples. Each of these run independently.
+### **NUgus_Global_Quasi**
+Simulation of NUbots' original robot using the *Quasistatic* approach to walking. Global Coordinates means the position of each **End Effector** (The *Left* and *Right* Foot) is tracked for all time. Thus, when plotted, 
+the NUgus travels from the **zero** position to the end of an arbitrary trajectory. Global simulations run slowly as these are relatively large variables, repeatedly stored and accessed.
+### **NUgus_Local_Quasi**
+
+### **NUgus_Global_ZMP**
+
+### **NUgus_Local_ZMP**
