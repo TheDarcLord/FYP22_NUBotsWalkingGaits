@@ -1,0 +1,59 @@
+function [qStar] = k_Inv(q0, xe, kt, m, prms)
+% q = k⁻¹(xₑ)  [UTILITY] Inverse Kinematic Model.
+%              Returns: q ~ Joint Variables for END EFFECTOR Postion xₑ
+%              xe:      [X Y Z ϕ θ Ψ]ᵀ
+%              qStar:   necessary joint variables
+%
+% SOLUTION: qˣ = ARG MIN (q): qᵀ W q + (k(q) - xeˣ)ᵀ K (k(q) - xeˣ)
+    Kxe     = 1e5*eye(length(xe),length(xe));           %
+    Kq      = 1e1*eye(length(q0),length(q0));           %  
+    Km      = 1e4*eye(length(xe(1:3)),length(xe(1:3))); %
+    Ktj     = 1e1;                                      %
+    kNEG    = kt - 1;   
+    vTJg    = m.glbTrj(:,kt)-m.glbTrj(:,kNEG);  %
+
+    Rzyx   = @(Rz,Ry,Rx) ...
+        [ cos(Rz)*cos(Ry), -sin(Rz)*cos(Rx)+cos(Rz)*sin(Ry)*sin(Rx),...
+                    sin(Rz)*sin(Rx)+cos(Rz)*sin(Ry)*cos(Rx);
+          sin(Rz)*cos(Ry),  cos(Rz)*cos(Rx)+sin(Rz)*sin(Ry)*sin(Rx),...
+                   -cos(Rz)*sin(Rx)+sin(Rz)*sin(Ry)*cos(Rx);
+                 -sin(Ry),  cos(Ry)*sin(Rx)                        ,...
+                    cos(Ry)*cos(Rx)];
+
+    if prms.mode == 1
+        ABEL = [Rzyx(m.r0Lg(6,kNEG),  ...
+                     m.r0Lg(5,kNEG),  ...
+                     m.r0Lg(4,kNEG)), ... 
+                     m.r0Lg(1:3,kNEG); % LEFT Ankle Position from 
+                     zeros(1,3),  1]; %          0rigin in Global
+        ASP = ABEL*[eye(3), [0.022; prms.zc; 0.011];
+                    zeros(1,3),  1];
+    else
+        ABER = [Rzyx(m.r0Rg(6,kNEG), ...
+                     m.r0Rg(5,kNEG), ...
+                     m.r0Rg(4,kNEG)),... 
+                     m.r0Rg(1:3,kNEG);  % RIGHT Ankle Position from 
+                     zeros(1,3),  1]; %           0rigin in Global
+        ASP = ABER*[eye(3), [0.022; prms.zc; -0.011];
+                    zeros(1,3),  1];
+    end
+  
+    NU   = [];  % NOT USED
+    options = optimoptions("fmincon", ...
+                           "Display",'notify',...
+                           "MaxFunctionEvaluations",1e5,...
+                           "MaxIterations",1e5, ...
+                           "ConstraintTolerance",1e-5,...
+                           "EnableFeasibilityMode",true);
+                       
+    argmin = @(q)            (k(q, kNEG, m, prms) - xe)'* Kxe * ... Xe
+                             (k(q, kNEG, m, prms) - xe) +       ...
+                  (rCoM(q, kNEG, m, prms) - ASP(1:3,4))'* Km  * ... CoM
+                  (rCoM(q, kNEG, m, prms) - ASP(1:3,4)) +       ... 
+                                               (q0 - q)'* Kq  * ... q-diff
+                                               (q0 - q) +       ...
+                         vTJg'*rWaist(q, kNEG, m, prms) * Ktj * ... Traj
+                               rWaist(q, kNEG, m, prms)'*vTJg;
+    
+    qStar = fmincon(argmin,q0,NU,NU,NU,NU,prms.lb,prms.ub,@(q)nonlcon(q, kNEG, m, prms),options);
+end
